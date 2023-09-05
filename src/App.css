@@ -1,0 +1,142 @@
+.buttonik{
+  border-radius: 77px;
+  border: 1px solid #01A86C;
+  background-color: transparent;
+  width: 45%;
+  min-width: 160px;
+  height: 54px;
+  color: white;
+  font-size: 18px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  line-height: 27.5px;
+  letter-spacing: 1.44px;
+  text-transform: uppercase;
+  outline: none;
+  margin-top: 20px;
+  margin-left: 10px
+}
+
+.buttonik2{
+  border-radius: 77px;
+  background: #01A76B;
+  border: none;
+  outline: 1px solid white ;
+  width: 45%;
+  min-width: 190px;
+  height: 54px;
+  color: #FFF;
+  font-size: 18px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  line-height: 27.5px;
+  letter-spacing: 1.44px;
+  text-transform: uppercase;
+  outline: none;
+  margin-top: 20px;
+}
+
+
+body{
+  background: #466551;
+}
+
+.navbar{
+  list-style-type: none;
+  margin: 0;
+  padding: 30px 16%;
+  padding-bottom: 0px;
+
+}
+
+.navbar-collapse{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.navbar-toggler-icon{
+  color: white;
+}
+
+/* .nav-item{
+  padding: 0px 10px;
+ 
+} */
+
+.navbar-brand{
+color: #FFF;
+font-size: 20px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+text-transform: uppercase;
+font-family: 'Nova Square', cursive;
+font-family: 'Outfit', sans-serif;
+  
+}
+
+.nav-link{
+  background-color: transparent;
+  color: white;
+  font-family: 'Nova Square', cursive;
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+
+
+.home-slogan{
+  margin: 5px 0px;
+  color: #FFF;
+  font-family: 'Nova Square', cursive;
+  font-family: 'Outfit', sans-serif;
+  font-size: 4.375rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+}
+
+.home-title{
+color: #FFF;
+font-family: 'Roboto', sans-serif;
+font-size: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: 27px;
+
+}
+
+.container{
+  margin-top: 30px;
+  margin-bottom: 30px;
+  
+}
+
+.tekst{
+  margin-top: 13%;
+}
+
+.image-column{
+  margin-top: 20px;
+  width: 100% \9;
+}
+
+.logos-con{
+  height: 91px; 
+  background: rgba(102.04, 142.38, 116.35, 0.45); 
+  border-radius: 7px;
+}
+
+.img-logo{
+  margin-top: 15px;
+}
+
+.pb-logo{
+  margin-left: 30px;
+}
