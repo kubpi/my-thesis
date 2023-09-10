@@ -5,7 +5,7 @@ export function HeroSection() {
       <div className="container">
         <div className="row hero-row">
           <div className="col-sm">
-            <div className="container tekst">
+            <div className="container1 tekst">
               <div className="row">
                 <div className="home-slogan">Wszystko <br></br> o piłce nożnej</div>
               </div>
