@@ -125,6 +125,7 @@ body {
   height: 91px;
   background: rgba(102.04, 142.38, 116.35, 0.45);
   border-radius: 7px;
+  justify-content: center;
 }
 
 .img-logo {

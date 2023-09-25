@@ -3,7 +3,7 @@
 export function Pblogos() {
   return (
     <>
-    <div className="container">
+    <div className="container15">
         <div className="row home-title">
         <p>Praca dyplomowa napisana dla uczelni:</p>
         </div>

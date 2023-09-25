@@ -2,7 +2,7 @@
 export function HeroSection() {
   return (
     <>
-      <div className="container">
+      <div className="container15">
         <div className="row hero-row">
           <div className="col-sm">
             <div className="container1 tekst">
