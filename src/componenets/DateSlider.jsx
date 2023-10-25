@@ -4,17 +4,18 @@ import { useRef, useState, useEffect } from "react";
 export function DateSlider({ onDateSelect }) {
   const sliderRef = useRef(null);
   const [dates, setDates] = useState([]);
-  
-  const [selectedButton, setSelectedButton] = useState(null);
+
   const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     const today = new Date();
-    const numberOfDates = 367; // You can adjust the number of dates to display
+    const tomorrow = new Date(today);
+    const currentYear = today.getFullYear(); // Pobierz obecny rok
+    tomorrow.setDate(today.getDate() + 1);
 
-   
+    const numberOfDates = 100; // You can adjust the number of dates to display
 
-    const handleDateClick = (date, nextDate, event) => {
+    const handleDateClick = (date, nextDate) => {
       onDateSelect(date, nextDate);
       setSelectedDate(date);
       console.log("Wybrana data:", date);
@@ -25,7 +26,19 @@ export function DateSlider({ onDateSelect }) {
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
       const date = new Date(today);
       date.setDate(today.getDate() + index);
-      const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+       let formattedDate;
+      if (date.toDateString() === today.toDateString()) {
+        formattedDate = "dziś";
+      } else if (date.toDateString() === tomorrow.toDateString()) {
+        formattedDate = "jutro";
+      } else {
+        // Jeśli rok danej daty jest równy obecnemu roku, pomiń rok w formacie
+        if (date.getFullYear() === currentYear) {
+          formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
+        } else {
+          formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+        }
+      }
       const apiFormatDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       
       const nextDate = new Date(date);
