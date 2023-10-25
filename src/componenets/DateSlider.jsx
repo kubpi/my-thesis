@@ -1,26 +1,51 @@
 import "../css/DateSlider.css";
 import { useRef, useState, useEffect } from "react";
 
-export function DateSlider() {
+export function DateSlider({ onDateSelect }) {
   const sliderRef = useRef(null);
   const [dates, setDates] = useState([]);
+  
+  const [selectedButton, setSelectedButton] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     const today = new Date();
     const numberOfDates = 367; // You can adjust the number of dates to display
 
+   
+
+    const handleDateClick = (date, nextDate, event) => {
+      onDateSelect(date, nextDate);
+      setSelectedDate(date);
+      console.log("Wybrana data:", date);
+    };
+    
+  
+  
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
       const date = new Date(today);
       date.setDate(today.getDate() + index);
-      const formattedDate = `${date.getDate()}.${
-        date.getMonth() + 1
-      }.${date.getFullYear()}`;
+      const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+      const apiFormatDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+      const apiFormatNextDate = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+    
+      return (
+        <button 
+        key={index} 
+        onClick={(e) => handleDateClick(apiFormatDate, apiFormatNextDate, e)}
+        className={apiFormatDate === selectedDate ? 'button-selected' : ''}
+      >
+        {formattedDate}
+      </button>
 
-      return <button key={index}>{formattedDate}</button>;
+      );
     });
 
     setDates(dateButtons);
-  }, []);
+  }, [selectedDate]);
 
   const handleLeftClick = () => {
     // Obsługa kliknięcia w lewy przycisk

@@ -43,6 +43,7 @@ body {
   aspect-ratio: 16 / 9;
   padding: var(--img-gap);
   border-radius: 1rem;
+  margin: 2px;
 }
 
 .handle {
@@ -103,3 +104,12 @@ body {
     --items-per-screen: 2;
   }
 }
+
+.button-selected {
+  background-color: #E2B1B1;  /* Background color for the selected button */
+  border: 5px solid #E2B1B1;    /* Border for the selected button */
+  box-shadow: 0 0 100px 3px rgba(255, 0, 0, 0.3); /* Red shadow around the button */
+  transform: scale(1.05);  /* Slightly increase the size of the selected button for emphasis */
+  transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out; /* Smooth transition for the transform and box-shadow changes */
+}
+
