@@ -1,5 +1,5 @@
-import "./DateSlider.css";
-import { useRef, useState,useEffect } from "react";
+import "../css/DateSlider.css";
+import { useRef, useState, useEffect } from "react";
 
 export function DateSlider() {
   const sliderRef = useRef(null);
@@ -7,16 +7,16 @@ export function DateSlider() {
 
   useEffect(() => {
     const today = new Date();
-    const numberOfDates = 100; // You can adjust the number of dates to display
+    const numberOfDates = 367; // You can adjust the number of dates to display
 
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
       const date = new Date(today);
       date.setDate(today.getDate() + index);
-      const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
+      const formattedDate = `${date.getDate()}.${
+        date.getMonth() + 1
+      }.${date.getFullYear()}`;
 
-      return (
-        <button key={index}>{formattedDate}</button>
-      );
+      return <button key={index}>{formattedDate}</button>;
     });
 
     setDates(dateButtons);
@@ -70,7 +70,7 @@ export function DateSlider() {
               </button>
               <div className="over">
                 <div className="slider" ref={sliderRef}>
-                {dates}
+                  {dates}
                 </div>
               </div>
               <button

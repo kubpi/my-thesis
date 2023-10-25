@@ -1,4 +1,4 @@
-export function Navbar2() {
+export function Navbar() {
   return (
     <>
       <nav className="navbar navbar-expand-sm "data-bs-theme="dark">
