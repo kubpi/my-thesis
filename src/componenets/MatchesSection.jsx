@@ -36,35 +36,88 @@ export function MatchesSection() {
   const [matchesData, setMatchesData] = useState({});
 
   useEffect(() => {
-    if (!selectedDate) return; // Nie rób nic, jeśli data nie została wybrana
+    if (!selectedDate) return;
+
+    const fetchMatchesPage = async (
+      tournament,
+      pageNumber = 0,
+      accumulatedMatches = []
+    ) => {
+      const response = await fetch(
+        `https://api.sofascore.com/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/next/${pageNumber}`
+      );
+
+      // Jeśli mamy status 404, zakończ rekursję i zwróć zebrane do tej pory mecze
+      if (response.status === 404) {
+        return accumulatedMatches;
+      }
+
+      try {
+        const data = await response.json();
+
+        if (!data || data.length === 0 || pageNumber >= 10) {
+          return accumulatedMatches;
+        }
+
+        return await fetchMatchesPage(
+          tournament,
+          pageNumber + 1,
+          accumulatedMatches.concat(data)
+        );
+      } catch (error) {
+        console.error(
+          "Error fetching page",
+          pageNumber,
+          "for",
+          tournament.name,
+          ":",
+          error
+        );
+        return accumulatedMatches;
+      }
+    };
 
     const fetchMatches = async () => {
-      const allPromises = tournaments.map((tournament) =>
-        fetch(
-          `https://api.sofascore.com/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/next/0`
-        )
-          .then((response) => response.json())
-
-          .then((data) => {
-            console.log(data); // Dodaj tę linię, aby zobaczyć, co zwraca API
-            return { ...tournament, matches: data };
-          })
-      );
+      const allPromises = tournaments.map(async (tournament) => {
+        const matches = await fetchMatchesPage(tournament);
+        return { ...tournament, matches };
+      });
 
       Promise.all(allPromises)
         .then((results) => {
           const newMatchesData = {};
           results.forEach((result) => {
-            newMatchesData[result.name] = result.matches;
+            newMatchesData[result.name] = result.matches.reduce((acc, curr) => {
+              return acc.concat(curr.events);
+            }, []);
+
+          
+           const filteredMatches = newMatchesData[result.name].filter((match) => {
+             const matchDate = new Date(match.startTimestamp * 1000);
+             
+            const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+              matchDate.getMonth() + 1
+            ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+            console.log(apiFormatMatchDate === selectedDate)
+            // Porównaj datę meczu z wybraną datą
+            return apiFormatMatchDate === selectedDate;
+           });
+           newMatchesData[result.name] = filteredMatches;
           });
+
+          console.log(newMatchesData);
+          
+         
           setMatchesData(newMatchesData);
+s
+          console.log(matchesData)
+        
         })
         .catch((error) => console.error("Error fetching matches data:", error));
     };
 
-    // Call the fetch function
     fetchMatches();
-  }, [selectedDate]); // Empty dependency array to ensure it runs once when component mounts
+  }, [selectedDate]);
 
   console.log(matchesData);
 
@@ -79,12 +132,14 @@ export function MatchesSection() {
     UEFAEuropLeague,
   } = matchesData;
 
-  console.log(ChampionsLeague);
+  console.log(Ekstraklasa)
+  // console.log(Bundesliga)
+
 
   return (
     <>
       <DateSlider onDateSelect={handleDateSelect} />
-      <CardBoxForMatches matches={ChampionsLeague}></CardBoxForMatches>
+      <CardBoxForMatches matches={Ekstraklasa}></CardBoxForMatches>
       <CardBoxForMatches matches={Bundesliga}></CardBoxForMatches>
     </>
   );

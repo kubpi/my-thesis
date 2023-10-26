@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 export function CardBoxForMatches(props) {
   const matches = props.matches;
   let img;
-  if (matches && matches.events.length > 0) {
-    console.log(matches.events);
+  if (matches && matches.length > 0) {
+    console.log(matches);
   }
   return (
     <>
@@ -19,7 +19,7 @@ export function CardBoxForMatches(props) {
 
         <div className="card-body">
           {matches &&
-            matches.events.map((match, index) => (
+            matches.map((match, index) => (
               <Teams
                 key={index}
                 homeTeam={match.homeTeam}

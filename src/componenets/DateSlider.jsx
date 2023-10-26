@@ -20,13 +20,11 @@ export function DateSlider({ onDateSelect }) {
       setSelectedDate(date);
       console.log("Wybrana data:", date);
     };
-    
-  
-  
+
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
       const date = new Date(today);
       date.setDate(today.getDate() + index);
-       let formattedDate;
+      let formattedDate;
       if (date.toDateString() === today.toDateString()) {
         formattedDate = "dziś";
       } else if (date.toDateString() === tomorrow.toDateString()) {
@@ -36,24 +34,29 @@ export function DateSlider({ onDateSelect }) {
         if (date.getFullYear() === currentYear) {
           formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
         } else {
-          formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+          formattedDate = `${date.getDate()}.${
+            date.getMonth() + 1
+          }.${date.getFullYear()}`;
         }
       }
-      const apiFormatDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      
+      const apiFormatDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
       const nextDate = new Date(date);
       nextDate.setDate(nextDate.getDate() + 1);
-      const apiFormatNextDate = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
-    
-      return (
-        <button 
-        key={index} 
-        onClick={(e) => handleDateClick(apiFormatDate, apiFormatNextDate, e)}
-        className={apiFormatDate === selectedDate ? 'button-selected' : ''}
-      >
-        {formattedDate}
-      </button>
+      const apiFormatNextDate = `${nextDate.getFullYear()}-${String(
+        nextDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(nextDate.getDate()).padStart(2, "0")}`;
 
+      return (
+        <button
+          key={index}
+          onClick={(e) => handleDateClick(apiFormatDate, apiFormatNextDate, e)}
+          className={apiFormatDate === selectedDate ? "button-selected" : ""}
+        >
+          {formattedDate}
+        </button>
       );
     });
 
