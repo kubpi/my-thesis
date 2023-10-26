@@ -139,10 +139,10 @@ s
   return (
     <>
       <DateSlider onDateSelect={handleDateSelect} />
-      {Ekstraklasa.length > 0 && (
+      {Ekstraklasa?.length > 0 && (
         <CardBoxForMatches matches={Ekstraklasa}></CardBoxForMatches>
       )}
-      {Bundesliga.length > 0 && (
+      {Bundesliga?.length > 0 && (
         <CardBoxForMatches matches={Bundesliga}></CardBoxForMatches>
         )}
     </>
