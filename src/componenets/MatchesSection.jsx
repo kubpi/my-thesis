@@ -139,8 +139,12 @@ s
   return (
     <>
       <DateSlider onDateSelect={handleDateSelect} />
-      <CardBoxForMatches matches={Ekstraklasa}></CardBoxForMatches>
-      <CardBoxForMatches matches={Bundesliga}></CardBoxForMatches>
+      {Ekstraklasa.length > 0 && (
+        <CardBoxForMatches matches={Ekstraklasa}></CardBoxForMatches>
+      )}
+      {Bundesliga.length > 0 && (
+        <CardBoxForMatches matches={Bundesliga}></CardBoxForMatches>
+        )}
     </>
   );
 }
