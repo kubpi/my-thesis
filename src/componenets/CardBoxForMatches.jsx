@@ -3,10 +3,10 @@ import { Teams } from "./Teams";
 import PropTypes from "prop-types";
 export function CardBoxForMatches(props) {
   const matches = props.matches;
-  let img;
-  if (matches && matches.length > 0) {
-    console.log(matches);
-  }
+  let img = props.img;
+
+    
+  
   return (
     <>
       <div
@@ -14,7 +14,7 @@ export function CardBoxForMatches(props) {
         style={{ width: "25rem", background: "#689577", position: "relative" }}
       >
         <div className="football-logo">
-          {/* <img src={img} alt="Logo piłkarskie" /> */}
+          <img src={img} alt="Logo piłkarskie" />
         </div>
 
         <div className="card-body">
@@ -34,4 +34,5 @@ export function CardBoxForMatches(props) {
 }
 CardBoxForMatches.propTypes = {
   matches: PropTypes.object.isRequired,
+  img: PropTypes.string.isRequired,
 };

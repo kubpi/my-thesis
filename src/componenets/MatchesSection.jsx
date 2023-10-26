@@ -140,10 +140,10 @@ s
     <>
       <DateSlider onDateSelect={handleDateSelect} />
       {Ekstraklasa?.length > 0 && (
-        <CardBoxForMatches matches={Ekstraklasa}></CardBoxForMatches>
+        <CardBoxForMatches matches={Ekstraklasa} img={"https://api.sofascore.app/api/v1/unique-tournament/202/image/dark"}></CardBoxForMatches>
       )}
       {Bundesliga?.length > 0 && (
-        <CardBoxForMatches matches={Bundesliga}></CardBoxForMatches>
+        <CardBoxForMatches matches={Bundesliga} img={"https://api.sofascore.app/api/v1/unique-tournament/35/image/dark"}></CardBoxForMatches>
         )}
     </>
   );
