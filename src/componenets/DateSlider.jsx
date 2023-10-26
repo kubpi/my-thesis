@@ -5,7 +5,10 @@ export function DateSlider({ onDateSelect }) {
   const sliderRef = useRef(null);
   const [dates, setDates] = useState([]);
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const todayFormatted = `${new Date().getFullYear()}-${String(
+    new Date().getMonth() + 1
+  ).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+  const [selectedDate, setSelectedDate] = useState(todayFormatted);
 
   useEffect(() => {
     const today = new Date();
@@ -21,23 +24,26 @@ export function DateSlider({ onDateSelect }) {
       console.log("Wybrana data:", date);
     };
 
+    const daysOfWeek = ["niedz.", "pon.", "wt.", "śr.", "czw.", "pt.", "sob."];
+
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
       const date = new Date(today);
       date.setDate(today.getDate() + index);
+  
+      const dayOfWeek = daysOfWeek[date.getDay()];  // Dodajemy to, aby pobrać nazwę dnia tygodnia
+  
       let formattedDate;
       if (date.toDateString() === today.toDateString()) {
-        formattedDate = "dziś";
-      } else if (date.toDateString() === tomorrow.toDateString()) {
-        formattedDate = "jutro";
-      } else {
-        // Jeśli rok danej daty jest równy obecnemu roku, pomiń rok w formacie
-        if (date.getFullYear() === currentYear) {
-          formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
-        } else {
-          formattedDate = `${date.getDate()}.${
-            date.getMonth() + 1
-          }.${date.getFullYear()}`;
-        }
+          formattedDate = "dziś";
+      }  else {
+          // Jeśli rok danej daty jest równy obecnemu roku, pomiń rok w formacie
+          if (date.getFullYear() === currentYear) {
+              formattedDate = `${dayOfWeek} ${date.getDate()}.${date.getMonth() + 1}`; // Dodajemy tu dzień tygodnia
+          } else {
+              formattedDate = `${dayOfWeek} ${date.getDate()}.${
+              date.getMonth() + 1
+              }.${date.getFullYear()}`;
+          }
       }
       const apiFormatDate = `${date.getFullYear()}-${String(
         date.getMonth() + 1
