@@ -1,7 +1,7 @@
 import "../css/DateSlider.css";
 import { useRef, useState, useEffect } from "react";
 
-export function DateSlider({ onDateSelect }) {
+export function DateSlider({ onDateSelect, disabledDates }) {
   const sliderRef = useRef(null);
   const [dates, setDates] = useState([]);
 
@@ -57,12 +57,19 @@ export function DateSlider({ onDateSelect }) {
 
       return (
         <button
-          key={index}
-          onClick={(e) => handleDateClick(apiFormatDate, apiFormatNextDate, e)}
-          className={apiFormatDate === selectedDate ? "button-selected" : ""}
-        >
-          {formattedDate}
-        </button>
+        key={index}
+        onClick={(e) => handleDateClick(apiFormatDate, apiFormatNextDate, e)}
+        className={
+          apiFormatDate === selectedDate
+            ? "button-selected"
+            : disabledDates.includes(apiFormatDate)
+            ? "button-disabled"
+            : ""
+        }
+        disabled={disabledDates.includes(apiFormatDate)}
+      >
+        {formattedDate}
+      </button>
       );
     });
 

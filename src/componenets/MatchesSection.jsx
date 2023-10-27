@@ -22,7 +22,11 @@ const getTurnamentImgURL = function (turnamentName) {
   return `https://api.sofascore.app/api/v1/unique-tournament/${turnamentObj.id}/image/light`;
 };
 
+
 export function MatchesSection() {
+  const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
+
+
   const today = new Date();
   const apiFormatDate = `${today.getFullYear()}-${String(
     today.getMonth() + 1
@@ -93,37 +97,53 @@ export function MatchesSection() {
       });
 
       Promise.all(allPromises)
-        .then((results) => {
-          const newMatchesData = {};
-          results.forEach((result) => {
-            newMatchesData[result.name] = result.matches.reduce((acc, curr) => {
-              return acc.concat(curr.events);
-            }, []);
+  .then((results) => {
+    const newMatchesData = {};
+    const allMatchDates = [];
 
-            const filteredMatches = newMatchesData[result.name].filter(
-              (match) => {
-                const matchDate = new Date(match.startTimestamp * 1000);
+    results.forEach((result) => {
+      newMatchesData[result.name] = result.matches.reduce((acc, curr) => {
+        return acc.concat(curr.events);
+      }, []);
 
-                const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-                  matchDate.getMonth() + 1
-                ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(
-                  2,
-                  "0"
-                )}`;
-                console.log(apiFormatMatchDate === selectedDate);
-                // Porównaj datę meczu z wybraną datą
-                return apiFormatMatchDate === selectedDate;
-              }
-            );
-            newMatchesData[result.name] = filteredMatches;
-          });
+      newMatchesData[result.name].forEach((match) => {
+        const matchDate = new Date(match.startTimestamp * 1000);
+        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+          matchDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+        allMatchDates.push(apiFormatMatchDate);
+      });
+    });
 
-          console.log(newMatchesData);
+    results.forEach((result) => {
+      newMatchesData[result.name] = result.matches
+        .reduce((acc, curr) => {
+          return acc.concat(curr.events);
+        }, [])
+        .filter((match) => { // Filtruj mecze na podstawie wybranej daty
+          const matchDate = new Date(match.startTimestamp * 1000);
+          const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+            matchDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+          return apiFormatMatchDate === selectedDate;
+        });
+    });
+    setMatchesData(newMatchesData);
+    const uniqueMatchDates = [...new Set(allMatchDates)];
+    const daysWithNoMatches = Array.from({ length: 100 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + index);
+      const apiFormatDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
+    }).filter(Boolean);
 
-          setMatchesData(newMatchesData);
-          console.log(matchesData);
-        })
-        .catch((error) => console.error("Error fetching matches data:", error));
+    setDaysWithNoMatches(daysWithNoMatches);
+    
+  })
+  .catch((error) => console.error("Error fetching matches data:", error));
+
     };
 
     fetchMatches();
@@ -155,7 +175,8 @@ const flattenedMatchesArray = [];
 
   return (
     <>
-      <DateSlider onDateSelect={handleDateSelect} />
+     <DateSlider onDateSelect={handleDateSelect} disabledDates={daysWithNoMatches} />
+
       <div className="container">
         <div className="row">
           {tournaments
