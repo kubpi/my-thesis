@@ -1,5 +1,6 @@
 import "./Matches.css";
 import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 const convertDate = (timestamp) => {
   let date = new Date(timestamp * 1000); // Mnożymy przez 1000, aby uzyskać milisekundy
   let hours = date.getUTCHours().toString().padStart(2, "0"); // Pobieramy godziny i dodajemy zero na początku, jeśli to konieczne
@@ -21,16 +22,22 @@ export function Teams(props) {
 
   console.log(homeTeamImg);
   
+
+  const [key, setKey] = useState(Math.random()); // początkowy klucz
+
+  useEffect(() => {
+    // Aktualizuj klucz za każdym razem, gdy komponent się renderuje
+    setKey(Math.random());
+  }, [homeTeam, awayTeam]); // możesz tu dodać zależności, które powodują ponowne renderowanie
   return (
     <div className="team-container">
-      <div className="teams">
+      <div className="teams fadeanime" key={key}>
         <div className="single-team">
           <img src={homeTeamImg} alt="Barcelona" className="team-logo" />
           <span className="team-name">{homeTeam.name}</span>
         </div>
         <div className="single-team">
-          <img src={awayTeamImg} alt="Szachtar" className="team-logo" />{" "}
-          {/* Zastąp "URL_LOGO_SZACHTAR" rzeczywistym adresem URL loga Szachtar */}
+          <img src={awayTeamImg} alt="Szachtar" className="team-logo" />
           <span className="team-name">{awayTeam.name}</span>
         </div>
       </div>

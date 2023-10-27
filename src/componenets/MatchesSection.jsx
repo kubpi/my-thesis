@@ -23,30 +23,29 @@ const getTurnamentImgURL = function (turnamentName) {
 };
 
 export function MatchesSection() {
-
+  
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
-  
+  const [matchesData, setMatchesData] = useState({});
+
   const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const apiFormatDate = `${today.getFullYear()}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
   const apiFormatNextDate = `${tomorrow.getFullYear()}-${String(
     tomorrow.getMonth() + 1
   ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+
 
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
   const handleDateSelect = (date, nextDate) => {
     setSelectedDate(date);
-    setSelectedNextDate(nextDate); // Ustawienie wybranej daty\
+    setSelectedNextDate(nextDate); // Ustawienie wybranej daty
   };
-
-  const [matchesData, setMatchesData] = useState({});
 
   const filterMatchesByDate = (allData, date) => {
     const newMatchesData = {};
@@ -159,33 +158,13 @@ export function MatchesSection() {
     setMatchesData(filteredMatches);
   }, [selectedDate, allMatchesData]);
 
-  console.log(matchesData);
-
-  console.log(daysWithNoMatches)
-  const {
-    Bundesliga,
-    ChampionsLeague,
-    Ekstraklasa,
-    LaLiga,
-    PremierLeague,
-    SerieA,
-    UEFAEuropaConferenceLeague,
-    UEFAEuropLeague,
-  } = matchesData;
-
-  console.log(Ekstraklasa);
-  // console.log(Bundesliga)
-
- 
-
   return (
     <>
       <DateSlider
         onDateSelect={handleDateSelect}
         disabledDates={daysWithNoMatches}
       />
-
-      <div className="container">
+      <div className="container slider-margin-top">
         <div className="row">
           {tournaments
             .sort(

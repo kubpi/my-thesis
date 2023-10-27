@@ -39,6 +39,7 @@
 body {
   background: #466551;
   margin: 0;
+  overflow-x: hidden;
 }
 
 .navbar {

@@ -1,12 +1,13 @@
 import "./Matches.css";
 import { Teams } from "./Teams";
 import PropTypes from "prop-types";
+
 export function CardBoxForMatches(props) {
   const matches = props.matches;
   let img = props.img;
 
-    
   
+ 
   return (
     <>
       <div
@@ -18,13 +19,14 @@ export function CardBoxForMatches(props) {
         </div>
 
         <div className="card-body">
-          {matches &&
+          {
             matches.map((match, index) => (
-              <Teams
+               <Teams
                 key={index}
                 homeTeam={match.homeTeam}
                 awayTeam={match.awayTeam}
                 startTimestamp={match.startTimestamp}
+               
               />
             ))}
         </div>
