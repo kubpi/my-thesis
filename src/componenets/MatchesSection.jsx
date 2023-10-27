@@ -2,17 +2,25 @@ import { CardBoxForMatches } from "./CardBoxForMatches";
 import { useState, useEffect } from "react";
 import { DateSlider } from "./DateSlider";
 
+const tournaments = [
+  { id: 202, name: "Ekstraklasa", season: 52176 },
+  { id: 8, name: "LaLiga", season: 52376 },
+  { id: 7, name: "ChampionsLeague", season: 52162 },
+  { id: 17, name: "PremierLeague", season: 52186 },
+  { id: 35, name: "Bundesliga", season: 52608 },
+  { id: 23, name: "SerieA", season: 52760 },
+  { id: 679, name: "UEFAEuropaLeague", season: 53654 },
+  { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
+];
+
+const getTurnamentImgURL = function (turnamentName) {
+  const turnamentObj = tournaments.find((turnament) => turnament.name === turnamentName)
+  if (!turnamentObj) return null;
+  return `https://api.sofascore.app/api/v1/unique-tournament/${turnamentObj.id}/image/light`;
+}
+
 export function MatchesSection() {
-  const tournaments = [
-    { id: 202, name: "Ekstraklasa", season: 52176 },
-    { id: 8, name: "LaLiga", season: 52376 },
-    { id: 7, name: "ChampionsLeague", season: 52162 },
-    { id: 17, name: "PremierLeague", season: 52186 },
-    { id: 35, name: "Bundesliga", season: 52608 },
-    { id: 23, name: "SerieA", season: 52760 },
-    { id: 679, name: "UEFAEuropaLeague", season: 53654 },
-    { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
-  ];
+  
 
   const today = new Date();
   const apiFormatDate = `${today.getFullYear()}-${String(
@@ -109,7 +117,6 @@ export function MatchesSection() {
           
          
           setMatchesData(newMatchesData);
-s
           console.log(matchesData)
         
         })
@@ -135,15 +142,34 @@ s
   console.log(Ekstraklasa)
   // console.log(Bundesliga)
 
+  console.log(getTurnamentImgURL('Ekstraklasa'));
 
   return (
     <>
       <DateSlider onDateSelect={handleDateSelect} />
       {Ekstraklasa?.length > 0 && (
-        <CardBoxForMatches matches={Ekstraklasa} img={"https://api.sofascore.app/api/v1/unique-tournament/202/image/dark"}></CardBoxForMatches>
+        <CardBoxForMatches matches={Ekstraklasa} img={getTurnamentImgURL('Ekstraklasa')}></CardBoxForMatches>
       )}
       {Bundesliga?.length > 0 && (
-        <CardBoxForMatches matches={Bundesliga} img={"https://api.sofascore.app/api/v1/unique-tournament/35/image/dark"}></CardBoxForMatches>
+        <CardBoxForMatches matches={Bundesliga} img={getTurnamentImgURL('Bundesliga')}></CardBoxForMatches>
+      )}
+      {ChampionsLeague?.length > 0 && (
+        <CardBoxForMatches matches={ChampionsLeague} img={getTurnamentImgURL('ChampionsLeague')}></CardBoxForMatches>
+      )}
+      {LaLiga?.length > 0 && (
+        <CardBoxForMatches matches={LaLiga} img={getTurnamentImgURL('LaLiga')}></CardBoxForMatches>
+      )}
+      {PremierLeague?.length > 0 && (
+        <CardBoxForMatches matches={PremierLeague} img={getTurnamentImgURL('PremierLeague')}></CardBoxForMatches>
+      )}
+      {SerieA?.length > 0 && (
+        <CardBoxForMatches matches={SerieA} img={getTurnamentImgURL('SerieA')}></CardBoxForMatches>
+      )}
+      {UEFAEuropaConferenceLeague?.length > 0 && (
+        <CardBoxForMatches matches={UEFAEuropaConferenceLeague} img={getTurnamentImgURL('UEFAEuropaConferenceLeague')}></CardBoxForMatches>
+      )}
+      {UEFAEuropLeague?.length > 0 && (
+        <CardBoxForMatches matches={UEFAEuropLeague} img={getTurnamentImgURL('UEFAEuropLeague')}></CardBoxForMatches>
         )}
     </>
   );
