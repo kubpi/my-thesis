@@ -1,62 +1,82 @@
 .football-logo {
-    width: 100px;
-    height: 100px;
-    background-color: #FFF;
-    border-radius: 50%;
-    position: absolute; /* Dodane, aby umieścić logo w odpowiedniej pozycji na karcie */
-    top: -50px; /* Przesuwa logo do góry o połowę jego wysokości */
-    left: 50%; /* Wyśrodkowuje logo w poziomie */
-    transform: translateX(-50%); /* Poprawia położenie w poziomie, aby było dokładnie na środku */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border: 3px solid black;
+  width: 100px;
+  height: 100px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute; /* Dodane, aby umieścić logo w odpowiedniej pozycji na karcie */
+  top: -50px; /* Przesuwa logo do góry o połowę jego wysokości */
+  left: 50%; /* Wyśrodkowuje logo w poziomie */
+  transform: translateX(
+    -50%
+  ); /* Poprawia położenie w poziomie, aby było dokładnie na środku */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 3px solid black;
+}
+
+.football-logo img {
+  max-width: 70%;
+  max-height: 70%;
+}
+.team-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  padding: 15px;
+  margin-top: 15px;
+  background: rgba(65, 90, 74, 0.45);
+}
+
+.teams {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.single-team {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.team-logo {
+  width: auto;
+  height: 50px;
+  margin-right: 15px;
+}
+
+.team-name {
+  font-size: 20px;
+}
+
+.match-time {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+}
+
+.clock-icon {
+  margin-right: 8px;
+}
+
+.independent-height {
+  height: auto !important;
+  min-height: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  > .col,
+  > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
   }
+
   
-  .football-logo img {
-    max-width: 70%;
-    max-height: 70%;
-  }
-  .team-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: white;
-    padding: 15px;
-    margin-top: 15px;
-    background: rgba(65, 90, 74, 0.45);
-  }
-  
-  .teams {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .single-team {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .team-logo {
-    width: auto;
-    height: 50px;
-    margin-right: 15px;
-  }
-  
-  .team-name {
-    font-size: 20px;
-  }
-  
-  .match-time {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-  }
-  
-  .clock-icon {
-    margin-right: 8px;
-  }
-  
+}

@@ -146,37 +146,31 @@ export function MatchesSection() {
   // console.log(Bundesliga)
 
   console.log(getTurnamentImgURL("Ekstraklasa"));
-const flattenedMatchesArray = [];
-  Object.values(matchesData).forEach((matches) => {
-    if (matches?.length > 0) {
-      flattenedMatchesArray.push(...matches);
-    }
-  });
 
   return (
     <>
       <DateSlider onDateSelect={handleDateSelect} />
       <div className="container">
-        <div className="row">
-          {tournaments
-            .sort(
-              (a, b) =>
-                (matchesData[a.name]?.length || 0) - (matchesData[b.name]?.length || 0)
-            )
-            .map((tournament) => {
-              const tournamentMatches = matchesData[tournament.name];
-              if (tournamentMatches?.length > 0) {
-                return (
-                  <div className="col-md-auto d-flex justify-content-center mb-3" key={tournament.id}>
-  <CardBoxForMatches
-    matches={tournamentMatches}
-    img={getTurnamentImgURL(tournament.name)}
-  />
-</div>
-                );
-              }
-              return null;
-            })}
+        <div className="row no-gutters ">
+          {tournaments.map((tournament) => {
+            const tournamentMatches = matchesData[tournament.name];
+            if (tournamentMatches?.length > 0) {
+              return (
+                <>
+                  <div className="col-md-auto">
+                    <CardBoxForMatches
+                      key={tournament.id}
+                      matches={tournamentMatches}
+                      img={getTurnamentImgURL(tournament.name)}
+                    />
+                    
+                    </div>
+                    
+                </>
+              );
+            }
+            return null;
+          })}
         </div>
       </div>
     </>
