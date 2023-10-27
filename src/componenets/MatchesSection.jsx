@@ -160,11 +160,13 @@ export function MatchesSection() {
 
   return (
     <>
+      <div className="slider-margin-top">
       <DateSlider
         onDateSelect={handleDateSelect}
         disabledDates={daysWithNoMatches}
-      />
-      <div className="container slider-margin-top">
+        />
+        </div>
+      <div className="container">
         <div className="row">
           {tournaments
             .sort(
@@ -177,7 +179,7 @@ export function MatchesSection() {
               if (tournamentMatches?.length > 0) {
                 return (
                   <div
-                    className="col-md-auto d-flex justify-content-center mb-3"
+                    className="col-md-auto d-flex justify-content-center mb-5 mt-4"
                     key={tournament.id}
                   >
                     <CardBoxForMatches

@@ -2,7 +2,7 @@
   width: 100px;
   height: 100px;
   background-color: #fff;
-  border-radius: 50%; 
+  border-radius: 50%;
   position: absolute;
   top: -50px;
   left: 50%;
@@ -43,17 +43,17 @@
   background: rgba(65, 90, 74, 0.6); /* Zmiana tła po najechaniu */
 }
 
-.fadeanime{
+.fadeanime {
   opacity: 0; /* Początkowa wartość przed animacją */
   animation-name: fade;
   animation-duration: 0.5s; /* Czas trwania animacji - możesz dostosować */
-  animation-delay: 0.3s;   /* Opóźnienie animacji */
+  animation-delay: 0.3s; /* Opóźnienie animacji */
   animation-fill-mode: forwards; /* Aby element pozostał w stanie końcowym animacji */
 }
 .teams {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;  
+  align-items: flex-start;
 }
 
 @keyframes fade {
@@ -64,7 +64,6 @@
     opacity: 1;
   }
 }
-
 
 .single-team {
   display: flex;
@@ -82,7 +81,7 @@
 .team-name {
   font-size: 20px;
   font-weight: 500;
-   /* Pogrubienie */
+  /* Pogrubienie */
 }
 
 .match-time {
@@ -114,5 +113,5 @@
 }
 
 .slider-margin-top {
-  margin-top: 100px;
+  margin-bottom: 70px;
 }

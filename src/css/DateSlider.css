@@ -46,12 +46,18 @@ body {
   margin: 2px;
 }
 
+.slider > button:hover {
+  background-color: #E2B1B1; /* Zmieniony kolor tła podczas najechania */
+}
+
 .handle {
   border: none;
   border-radius: 1rem;
   flex-grow: 0;
   flex-shrink: 0;
-  background-color: rgba(255, 255, 255, 0.25);
+  /* background-color: rgba(255, 255, 255, 0.25); */
+  /* background-color: white; */
+  background-color: #1F2937;
   z-index: 10;
   margin: var(--img-gap) 0;
   width: var(--handle-size);
@@ -60,7 +66,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: black;
+  /* color: black; */
+  color: white;
   line-height: 0;
   transition: background-color 150ms ease-in-out;
 }
@@ -75,9 +82,10 @@ body {
   border-bottom-right-radius: 0;
 }
 
-.handle:hover,
-.handle:focus {
-  background-color: rgba(255, 255, 255, 0.5);
+/* .handle:focus, */
+.handle:hover{
+  /* background-color: rgba(255, 255, 255, 0.5); */
+  background-color: #4B5563;
 }
 
 .text {
@@ -118,3 +126,6 @@ body {
   pointer-events: none;
 }
 
+.slider-margin-top {
+  margin-bottom: 5rem;
+}
