@@ -22,11 +22,11 @@ const getTurnamentImgURL = function (turnamentName) {
   return `https://api.sofascore.app/api/v1/unique-tournament/${turnamentObj.id}/image/light`;
 };
 
-
 export function MatchesSection() {
+
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
-
-
+  const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
+  
   const today = new Date();
   const apiFormatDate = `${today.getFullYear()}-${String(
     today.getMonth() + 1
@@ -48,6 +48,22 @@ export function MatchesSection() {
 
   const [matchesData, setMatchesData] = useState({});
 
+  const filterMatchesByDate = (allData, date) => {
+    const newMatchesData = {};
+
+    Object.keys(allData).forEach((tournamentName) => {
+      newMatchesData[tournamentName] = allData[tournamentName].filter((match) => {
+        const matchDate = new Date(match.startTimestamp * 1000);
+        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+          matchDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+        return apiFormatMatchDate === date;
+      });
+    });
+
+    return newMatchesData;
+  };
+  
   useEffect(() => {
     if (!selectedDate) return;
 
@@ -97,60 +113,55 @@ export function MatchesSection() {
       });
 
       Promise.all(allPromises)
-  .then((results) => {
-    const newMatchesData = {};
-    const allMatchDates = [];
+        .then((results) => {
+          const tempAllMatchesData = {};
+          const allMatchDates = [];
 
-    results.forEach((result) => {
-      newMatchesData[result.name] = result.matches.reduce((acc, curr) => {
-        return acc.concat(curr.events);
-      }, []);
+          results.forEach((result) => {
+            tempAllMatchesData[result.name] = result.matches.reduce((acc, curr) => {
+              return acc.concat(curr.events);
+            }, []);
 
-      newMatchesData[result.name].forEach((match) => {
-        const matchDate = new Date(match.startTimestamp * 1000);
-        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-          matchDate.getMonth() + 1
-        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
-        allMatchDates.push(apiFormatMatchDate);
-      });
-    });
+            tempAllMatchesData[result.name].forEach((match) => {
+              const matchDate = new Date(match.startTimestamp * 1000);
+              const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+                matchDate.getMonth() + 1
+              ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+              allMatchDates.push(apiFormatMatchDate);
+            });
+          });
 
-    results.forEach((result) => {
-      newMatchesData[result.name] = result.matches
-        .reduce((acc, curr) => {
-          return acc.concat(curr.events);
-        }, [])
-        .filter((match) => { // Filtruj mecze na podstawie wybranej daty
-          const matchDate = new Date(match.startTimestamp * 1000);
-          const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-            matchDate.getMonth() + 1
-          ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
-          return apiFormatMatchDate === selectedDate;
-        });
-    });
-    setMatchesData(newMatchesData);
-    const uniqueMatchDates = [...new Set(allMatchDates)];
-    const daysWithNoMatches = Array.from({ length: 100 }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
-      const apiFormatDate = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
-    }).filter(Boolean);
+          const uniqueMatchDates = [...new Set(allMatchDates)];
+          const daysWithoutMatches = Array.from({ length: 218 }, (_, index) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() + index);
+            const apiFormatDate = `${date.getFullYear()}-${String(
+              date.getMonth() + 1
+            ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+            return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
+          }).filter(Boolean);
 
-    setDaysWithNoMatches(daysWithNoMatches);
-    
-  })
-  .catch((error) => console.error("Error fetching matches data:", error));
 
+          
+          setAllMatchesData(tempAllMatchesData);
+          setDaysWithNoMatches(daysWithoutMatches);
+          const filteredMatches = filterMatchesByDate(tempAllMatchesData, selectedDate);
+          setMatchesData(filteredMatches);
+        })
+        .catch((error) => console.error("Error fetching matches data:", error));
     };
 
     fetchMatches();
-  }, [selectedDate]);
+  }, []);
+
+  useEffect(() => {
+    const filteredMatches = filterMatchesByDate(allMatchesData, selectedDate);
+    setMatchesData(filteredMatches);
+  }, [selectedDate, allMatchesData]);
 
   console.log(matchesData);
 
+  console.log(daysWithNoMatches)
   const {
     Bundesliga,
     ChampionsLeague,
@@ -165,35 +176,36 @@ export function MatchesSection() {
   console.log(Ekstraklasa);
   // console.log(Bundesliga)
 
-  console.log(getTurnamentImgURL("Ekstraklasa"));
-const flattenedMatchesArray = [];
-  Object.values(matchesData).forEach((matches) => {
-    if (matches?.length > 0) {
-      flattenedMatchesArray.push(...matches);
-    }
-  });
+ 
 
   return (
     <>
-     <DateSlider onDateSelect={handleDateSelect} disabledDates={daysWithNoMatches} />
+      <DateSlider
+        onDateSelect={handleDateSelect}
+        disabledDates={daysWithNoMatches}
+      />
 
       <div className="container">
         <div className="row">
           {tournaments
             .sort(
               (a, b) =>
-                (matchesData[a.name]?.length || 0) - (matchesData[b.name]?.length || 0)
+                (matchesData[a.name]?.length || 0) -
+                (matchesData[b.name]?.length || 0)
             )
             .map((tournament) => {
               const tournamentMatches = matchesData[tournament.name];
               if (tournamentMatches?.length > 0) {
                 return (
-                  <div className="col-md-auto d-flex justify-content-center mb-3" key={tournament.id}>
-  <CardBoxForMatches
-    matches={tournamentMatches}
-    img={getTurnamentImgURL(tournament.name)}
-  />
-</div>
+                  <div
+                    className="col-md-auto d-flex justify-content-center mb-3"
+                    key={tournament.id}
+                  >
+                    <CardBoxForMatches
+                      matches={tournamentMatches}
+                      img={getTurnamentImgURL(tournament.name)}
+                    />
+                  </div>
                 );
               }
               return null;

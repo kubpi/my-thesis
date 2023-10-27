@@ -16,7 +16,7 @@ export function DateSlider({ onDateSelect, disabledDates }) {
     const currentYear = today.getFullYear(); // Pobierz obecny rok
     tomorrow.setDate(today.getDate() + 1);
 
-    const numberOfDates = 100; // You can adjust the number of dates to display
+    const numberOfDates = 218; // You can adjust the number of dates to display
 
     const handleDateClick = (date, nextDate) => {
       onDateSelect(date, nextDate);
@@ -66,6 +66,7 @@ export function DateSlider({ onDateSelect, disabledDates }) {
             ? "button-disabled"
             : ""
         }
+          
         disabled={disabledDates.includes(apiFormatDate)}
       >
         {formattedDate}
@@ -74,7 +75,7 @@ export function DateSlider({ onDateSelect, disabledDates }) {
     });
 
     setDates(dateButtons);
-  }, [selectedDate]);
+  }, [selectedDate,disabledDates]);
 
   const handleLeftClick = () => {
     // Obsługa kliknięcia w lewy przycisk
@@ -130,6 +131,7 @@ export function DateSlider({ onDateSelect, disabledDates }) {
               <button
                 className="handle right-handle "
                 onClick={handleRightClick}
+                
               >
                 <div className="text">&#8250;</div>
               </button>
