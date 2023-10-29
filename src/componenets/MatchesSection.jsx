@@ -12,11 +12,14 @@ const tournaments = [
   { id: 23, name: "SerieA", season: 52760 },
   { id: 679, name: "UEFAEuropaLeague", season: 53654 },
   { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
-  { id: 325, name: "BrasileiroSerieA", season: 48982 },
+  //{ id: 325, name: "BrasileiroSerieA", season: 48982 },
   { id: 242, name: "MLS", season: 47955 },
-  { id: 13475, name: "CopadelaLigaProfesional", season: 13475 },
-  { id: 649, name: "CFASuperLeague", season: 49950 },
-  { id: 682, name: "PremierLeagueKaz", season: 48738 },
+  //{ id: 13475, name: "CopadelaLigaProfesional", season: 13475 },
+  //{ id: 649, name: "CFASuperLeague", season: 49950 },
+  //{ id: 682, name: "PremierLeagueKaz", season: 48738 },
+  //{ id: 544, name: "SegundaFederación", season: 53413 },
+  { id: 34, name: "Ligue1", season: 52571 },
+  { id: 37, name: "Eredivisie", season: 52554 },
 ];
 
 const getTurnamentImgURL = function (turnamentName) {
@@ -81,10 +84,11 @@ export function MatchesSection() {
       }
       try {
         const data = await response.json();
+       
         const filteredLiveMatches = data.events.filter(event => 
-          tournamentIds.includes(event.tournament.uniqueTournament.id)
-        );
-        
+          tournamentIds.includes(event?.tournament?.uniqueTournament?.id)
+        ); 
+   
         // Aktualizacja tempAllMatchesData z nowymi meczami na żywo
          updatedAllMatchesData = { ...allMatchesData };
          filteredLiveMatches.forEach(liveMatch => {

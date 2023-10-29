@@ -25,14 +25,14 @@ export function CardBoxForMatches(props) {
               // Jeśli bieżąca kolejka jest inna niż poprzednia, ustaw poprzednią kolej na bieżącą i wyświetl nazwę kolejki
               const isNewRound = prevRound !== match?.roundInfo?.round;
               prevRound = match?.roundInfo?.round;
-              
+      
               return (
                 <React.Fragment key={index}>
                   {isNewRound && (
-                    <div className="round">
-                      {match?.roundInfo?.round && <p>Kolejka {match?.roundInfo?.round}</p>}
-
-                    </div>
+                    match?.roundInfo?.round && (<div className="round">
+                       <p>Kolejka {match?.roundInfo?.round}</p>
+                    </div>)
+                    
                   )}
                   <Teams
                     homeTeam={match?.homeTeam}
@@ -40,7 +40,11 @@ export function CardBoxForMatches(props) {
                     awayTeam={match?.awayTeam}
                     awayScore={match?.awayScore}
                     startTimestamp={match?.startTimestamp}
-                    roundInfo={match?.roundInfo}
+                    statusTime={match?.statusTime}
+                    time={match?.time}
+                    changes={match?.changes.changeTimestamp}
+                    matchStatus={match?.status.description}
+                    currentPeriodStartTimestamp={match?.time.currentPeriodStartTimestamp}
                   />
                 </React.Fragment>
               );

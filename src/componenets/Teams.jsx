@@ -14,9 +14,39 @@ function ReturnTeamImage(teamId) {
   const url = `${baseUrl}/${teamId}/image`;
   return url;
 }
+const calculateMatchTimeInMinutes = (startTimestamp, statusTime, time, matchStatus, changes) => {
+  // const currentTime = Date.now() / 1000; // Aktualny czas w sekundach
+  const currentTime = Date.now() / 1000; // Aktualny czas w sekundach
+
+const timik = currentTime - time.currentPeriodStartTimestamp + time?.initial
+  const elapsed_minutes = Math.floor(timik / 60)
+  return elapsed_minutes+1; // Pierwsza połowa
+
+  // Sprawdzanie czy mecz się zakończył
+//   if (time.currentPeriodStartTimestamp === time.max) {
+//     return 90; // Mecz zakończył się po pełnych 90 minutach
+//   }
+//   if (matchStatus?.description === "Halftime") {
+//     return "Przerwa"; // Mecz zakończył się po pełnych 90 minutach
+// }
+//   const elapsedTime = currentTime - time.currentPeriodStartTimestamp // Czas, który upłynął od początku meczu
+
+//   return Math.floor(elapsedTime / 60); // Pierwsza połowa
+  
+  // if (elapsedTime <= 45 * 60) {
+  //     return Math.floor(elapsedTime / 60); // Pierwsza połowa
+  // } else {
+  //     // Dodajemy przerwę między połówkami (na przykład 15 minut)
+  //     //const halftimeBreak = 15; 
+  //     return 45  + Math.floor((elapsedTime - 45 * 60) / 60); // Druga połowa
+  // }
+
+};
+
+
 
 export function Teams(props) {
-  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp, roundInfo } = props;
+  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp, statusTime, time, changes,matchStatus, currentPeriodStartTimestamp } = props;
   //console.log(homeTeam.id)
   const homeTeamImg = ReturnTeamImage(homeTeam.id)
   const awayTeamImg = ReturnTeamImage(awayTeam.id)
@@ -29,19 +59,22 @@ export function Teams(props) {
 
   useEffect(() => {
     // Aktualizuj klucz za każdym razem, gdy komponent się renderuje
+    const redColor = '#CD4439'
+    const greenColor = '#72B896'
+    const grayColor = '#A9A9A9'
     if (typeof homeScore.display === 'undefined' || typeof awayScore.display === 'undefined' || homeScore.display === null || awayScore.display === null) {
       // jeśli jedno z wyświetleń wyniku jest niezdefiniowane lub null
       setHomeColor(null);
       setAwayColor(null);
   } else if (homeScore.display > awayScore.display) {
-      setHomeColor('green');
-      setAwayColor('red');
+      setHomeColor(greenColor);
+      setAwayColor(redColor);
   } else if (homeScore.display < awayScore.display) {
-      setHomeColor('red');
-      setAwayColor('green');
+      setHomeColor(redColor);
+      setAwayColor(greenColor);
   } else if(homeScore.display == awayScore.display) {
-      setHomeColor('gray'); // jeśli wynik jest równy
-      setAwayColor('gray'); // jeśli wynik jest równy
+      setHomeColor(grayColor); // jeśli wynik jest równy
+      setAwayColor(grayColor); // jeśli wynik jest równy
   }
   
     setKey(Math.random());
@@ -54,12 +87,19 @@ export function Teams(props) {
         <div className="single-team">
           <img src={homeTeamImg} alt="Barcelona" className="team-logo" />
           <span className="team-name">{homeTeam?.name}</span>
-          <span className="score" style={{"background-color": homeColor}}>{homeScore?.display}</span>
+          {typeof homeScore.display !== 'undefined' && <div className="match-time">
+          <span className="score" style={{backgroundColor: homeColor}}>{homeScore?.display}</span>
+        
+      </div>}
+          
         </div>
         <div className="single-team">
           <img src={awayTeamImg} alt="Szachtar" className="team-logo" />
           <span className="team-name">{awayTeam?.name}</span>
-          <span className="score" style={{"background-color": awayColor}}>{awayScore?.display}</span>
+          {typeof awayScore.display !== 'undefined' && <div className="match-time">
+          <span className="score" style={{backgroundColor: awayColor}}>{awayScore?.display}</span>
+        
+      </div>}
         </div>
       </div>
 
@@ -67,7 +107,14 @@ export function Teams(props) {
         <span className="clock-icon">⏰</span> {convertDate(startTimestamp)}
         
       </div>}
-      
+      {typeof statusTime !== 'undefined' && <div className="match-time">
+        <span className="clock-icon"></span> {calculateMatchTimeInMinutes(startTimestamp, statusTime, time,matchStatus,changes)}'
+        
+      </div>}
+      {matchStatus === "Halftime" && <div className="match-time">
+        <span className="clock-icon"></span> Przerwa
+        
+      </div>}
     </div>
   );
 }
