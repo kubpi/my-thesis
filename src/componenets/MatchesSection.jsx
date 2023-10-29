@@ -15,6 +15,8 @@ const tournaments = [
   { id: 325, name: "BrasileiroSerieA", season: 48982 },
   { id: 242, name: "MLS", season: 47955 },
   { id: 13475, name: "CopadelaLigaProfesional", season: 13475 },
+  { id: 649, name: "CFASuperLeague", season: 49950 },
+  { id: 682, name: "PremierLeagueKaz", season: 48738 },
 ];
 
 const getTurnamentImgURL = function (turnamentName) {
@@ -229,8 +231,8 @@ Object.keys(updatedAllMatchesData).forEach(key => {
           {tournaments
             .sort(
               (a, b) =>
-                (matchesData[a.name]?.length || 0) -
-                (matchesData[b.name]?.length || 0)
+                (matchesData[b.name]?.length || 0) -
+                (matchesData[a.name]?.length || 0)
             )
             .map((tournament) => {
               const tournamentMatches = matchesData[tournament.name];
