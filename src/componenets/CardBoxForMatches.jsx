@@ -23,9 +23,11 @@ export function CardBoxForMatches(props) {
             matches.map((match, index) => (
                <Teams
                 key={index}
-                homeTeam={match.homeTeam}
-                awayTeam={match.awayTeam}
-                startTimestamp={match.startTimestamp}
+                homeTeam={match?.homeTeam}
+                homeScore={match?.homeScore}
+                awayTeam={match?.awayTeam}
+                awayScore={match?.awayScore}
+                startTimestamp={match?.startTimestamp}
                
               />
             ))}

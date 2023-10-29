@@ -47,7 +47,8 @@ body {
 }
 
 .slider > button:hover {
-  background-color: #E2B1B1; /* Zmieniony kolor tła podczas najechania */
+  /* background-color: #E2B1B1; Zmieniony kolor tła podczas najechania */
+  background-color: #ddde99; /* Zmieniony kolor tła podczas najechania */
 }
 
 .handle {
@@ -114,8 +115,8 @@ body {
 }
 
 .button-selected {
-  background-color: #E2B1B1;  /* Background color for the selected button */
-  border: 5px solid #E2B1B1;    /* Border for the selected button */
+  background-color: #ddde99;  /* Background color for the selected button */
+  border: 5px solid #ddde99;    /* Border for the selected button */
   box-shadow: 0 0 100px 3px rgba(255, 0, 0, 0.3); /* Red shadow around the button */
   transform: scale(1.05);  /* Slightly increase the size of the selected button for emphasis */
   transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out; /* Smooth transition for the transform and box-shadow changes */

@@ -7,6 +7,7 @@ import { Navbar } from "./componenets/Nabar";
 import { HeroSection } from "./componenets/HeroSection";
 import { Pblogos } from "./componenets/Pblogos";
 import { MatchesSection } from "./componenets/MatchesSection";
+import { LeagueTable } from "./componenets/LeagueTable";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <HeroSection></HeroSection>
       <Pblogos></Pblogos>
       <MatchesSection></MatchesSection>
+      
     </>
   );
 }

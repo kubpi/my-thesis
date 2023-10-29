@@ -1,0 +1,49 @@
+/* Ogólne style dla tabeli */
+.matches-table {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Nagłówek tabeli */
+.matches-table thead {
+    background-color: #333;
+    color: #fff;
+}
+
+.matches-table thead th {
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+/* Ciało tabeli */
+.matches-table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.matches-table tbody tr:hover {
+    background-color: #e5e5e5;
+}
+
+/* Ikony drużyn */
+.matches-table .team-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Czas rozpoczęcia meczu */
+.matches-table .match-time {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Usuń dolną krawędź dla ostatniego wiersza */
+.matches-table tbody tr:last-child td {
+    border-bottom: none;
+}

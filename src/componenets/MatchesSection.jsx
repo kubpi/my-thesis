@@ -12,6 +12,9 @@ const tournaments = [
   { id: 23, name: "SerieA", season: 52760 },
   { id: 679, name: "UEFAEuropaLeague", season: 53654 },
   { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
+  { id: 325, name: "BrasileiroSerieA", season: 48982 },
+  { id: 242, name: "MLS", season: 47955 },
+  { id: 13475, name: "CopadelaLigaProfesional", season: 13475 },
 ];
 
 const getTurnamentImgURL = function (turnamentName) {
@@ -27,7 +30,9 @@ export function MatchesSection() {
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
   const [matchesData, setMatchesData] = useState({});
-
+  const [liveMatches, setLiveMatches] = useState([]);
+  const [filteredMatches, setFilteredMatches] = useState([]);
+  
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -64,6 +69,42 @@ export function MatchesSection() {
   };
   
   useEffect(() => {
+    const tournamentIds = tournaments.map(t => t.id); 
+    let updatedAllMatchesData = {};  // Deklaracja poza zakresem funkcji fetchAllMatchesLive
+    const fetchAllMatchesLive = async () => {
+      const response = await fetch('https://66rlxf-3000.csb.app/api/v1/sport/football/events/live');
+      if (response.status === 404) {
+        console.error("Błąd serwera");
+        return;
+      }
+      try {
+        const data = await response.json();
+        const filteredLiveMatches = data.events.filter(event => 
+          tournamentIds.includes(event.tournament.uniqueTournament.id)
+        );
+        
+        // Aktualizacja tempAllMatchesData z nowymi meczami na żywo
+         updatedAllMatchesData = { ...allMatchesData };
+         filteredLiveMatches.forEach(liveMatch => {
+          const tournamentName = tournaments.find(t => t.id === liveMatch.tournament.uniqueTournament.id).name;
+          if (!updatedAllMatchesData[tournamentName]) {
+            updatedAllMatchesData[tournamentName] = [];
+          }
+          // Sprawdzanie, czy mecz już istnieje w updatedAllMatchesData
+          if (!updatedAllMatchesData[tournamentName].some(match => match.id === liveMatch.id)) {
+            updatedAllMatchesData[tournamentName].unshift(liveMatch);
+          }
+        });
+        
+
+        console.log(updatedAllMatchesData)
+        setLiveMatches(data.events); // Zakładam, że odpowiedź zawiera pole 'events'
+      } catch (error) {
+        console.error("Error fetching", error);
+      }
+    }
+    fetchAllMatchesLive()
+
     if (!selectedDate) return;
 
     const fetchMatchesPage = async (
@@ -72,16 +113,20 @@ export function MatchesSection() {
       accumulatedMatches = []
     ) => {
       const response = await fetch(
-        `https://api.sofascore.com/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/next/${pageNumber}`
+        `https://66rlxf-3000.csb.app/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/next/${pageNumber}`
       );
 
       // Jeśli mamy status 404, zakończ rekursję i zwróć zebrane do tej pory mecze
-      if (response.status === 404) {
-        return accumulatedMatches;
-      }
-
+      // if (response.status === 404) {
+      //   return accumulatedMatches;
+      // }
+      
       try {
         const data = await response.json();
+        if (data.error && data.error.code === 404) {
+          return accumulatedMatches;
+      }
+        //console.log(data);  // after response.json() in fetchMatchesPage
 
         if (!data || data.length === 0 || pageNumber >= 10) {
           return accumulatedMatches;
@@ -110,7 +155,7 @@ export function MatchesSection() {
         const matches = await fetchMatchesPage(tournament);
         return { ...tournament, matches };
       });
-
+    
       Promise.all(allPromises)
         .then((results) => {
           const tempAllMatchesData = {};
@@ -120,6 +165,19 @@ export function MatchesSection() {
             tempAllMatchesData[result.name] = result.matches.reduce((acc, curr) => {
               return acc.concat(curr.events);
             }, []);
+// Połączenie updatedAllMatchesData z tempAllMatchesData
+Object.keys(updatedAllMatchesData).forEach(key => {
+  if (tempAllMatchesData[key]) {
+    // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
+    updatedAllMatchesData[key].forEach(liveMatch => {
+      if (!tempAllMatchesData[key].some(match => match.id === liveMatch.id)) {
+        tempAllMatchesData[key].unshift(liveMatch);
+      }
+    });
+  } else {
+    tempAllMatchesData[key] = updatedAllMatchesData[key];
+  }
+});
 
             tempAllMatchesData[result.name].forEach((match) => {
               const matchDate = new Date(match.startTimestamp * 1000);
@@ -141,7 +199,7 @@ export function MatchesSection() {
           }).filter(Boolean);
 
 
-          
+          console.log(tempAllMatchesData)
           setAllMatchesData(tempAllMatchesData);
           setDaysWithNoMatches(daysWithoutMatches);
           const filteredMatches = filterMatchesByDate(tempAllMatchesData, selectedDate);
