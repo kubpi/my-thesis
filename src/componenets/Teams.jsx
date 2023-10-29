@@ -16,7 +16,7 @@ function ReturnTeamImage(teamId) {
 }
 
 export function Teams(props) {
-  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp } = props;
+  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp, roundInfo } = props;
   //console.log(homeTeam.id)
   const homeTeamImg = ReturnTeamImage(homeTeam.id)
   const awayTeamImg = ReturnTeamImage(awayTeam.id)
@@ -49,7 +49,8 @@ export function Teams(props) {
 
   return (
     <div className="team-container">
-      <div className="teams fadeanime" key={key}>
+      
+      <div className="teams fadeanime" key={key}>       
         <div className="single-team">
           <img src={homeTeamImg} alt="Barcelona" className="team-logo" />
           <span className="team-name">{homeTeam?.name}</span>

@@ -91,6 +91,12 @@
   flex: 1; /* Pozwala nazwie drużyny rozciągnąć się */
 }
 
+.round{
+  font-size: 20px;
+  font-weight: 500;
+  flex: 1; /* Pozwala nazwie drużyny rozciągnąć się */
+  margin-bottom: 10px;
+}
 .score {
   width: 50px; /* ustawić stałą szerokość */
   height: 50px; /* ustawić stałą wysokość */

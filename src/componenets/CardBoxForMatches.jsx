@@ -1,13 +1,14 @@
 import "./Matches.css";
 import { Teams } from "./Teams";
 import PropTypes from "prop-types";
-
+import React from "react";
 export function CardBoxForMatches(props) {
   const matches = props.matches;
   let img = props.img;
-
   
- 
+  // Deklaracja zmiennej do śledzenia poprzedniej kolejki
+  let prevRound = null;
+
   return (
     <>
       <div
@@ -20,23 +21,38 @@ export function CardBoxForMatches(props) {
 
         <div className="card-body">
           {
-            matches.map((match, index) => (
-               <Teams
-                key={index}
-                homeTeam={match?.homeTeam}
-                homeScore={match?.homeScore}
-                awayTeam={match?.awayTeam}
-                awayScore={match?.awayScore}
-                startTimestamp={match?.startTimestamp}
-               
-              />
-            ))}
+            matches.map((match, index) => {
+              // Jeśli bieżąca kolejka jest inna niż poprzednia, ustaw poprzednią kolej na bieżącą i wyświetl nazwę kolejki
+              const isNewRound = prevRound !== match?.roundInfo?.round;
+              prevRound = match?.roundInfo?.round;
+              
+              return (
+                <React.Fragment key={index}>
+                  {isNewRound && (
+                    <div className="round">
+                      {match?.roundInfo?.round && <p>Kolejka {match?.roundInfo?.round}</p>}
+
+                    </div>
+                  )}
+                  <Teams
+                    homeTeam={match?.homeTeam}
+                    homeScore={match?.homeScore}
+                    awayTeam={match?.awayTeam}
+                    awayScore={match?.awayScore}
+                    startTimestamp={match?.startTimestamp}
+                    roundInfo={match?.roundInfo}
+                  />
+                </React.Fragment>
+              );
+            })
+          }
         </div>
       </div>
     </>
   );
 }
+
 CardBoxForMatches.propTypes = {
-  matches: PropTypes.object.isRequired,
+  matches: PropTypes.arrayOf(PropTypes.object).isRequired,
   img: PropTypes.string.isRequired,
 };
