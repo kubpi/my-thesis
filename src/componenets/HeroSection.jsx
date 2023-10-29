@@ -18,7 +18,7 @@ export function HeroSection() {
               </div>
             </div>
           </div>
-          <div className="col-sm d-flex align-items-center justify-content-left image-column"><img className="img-fluid" src="./src/assets/13.png"></img></div>
+          <div className="col-sm d-flex align-items-center justify-content-left image-column"><img className="img-fluid" src="src/assets/13.png"></img></div>
         </div>
       </div>
     </>
