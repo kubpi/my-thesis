@@ -81,8 +81,6 @@ const fetchMatchesPage = async (
   }
 };
 
-
-
 export function MatchesSection() {
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
@@ -170,7 +168,6 @@ export function MatchesSection() {
 
     if (!selectedDate) return;
 
-
     const fetchMatches = async () => {
       const allPromises = tournaments.map(async (tournament) => {
         const matches = await fetchMatchesPage(tournament, "next");
@@ -185,26 +182,24 @@ export function MatchesSection() {
       let tempLastAllMatchesData = {};
       let tempAllMatchesData = {};
 
-      Promise.all(lastMatchesPromises).then((results) => {
-       
-        results.forEach((result) => {
-          tempLastAllMatchesData[result.name] = result.matches.reduce(
-            (acc, curr) => {
-              return acc.concat(curr.events);
-            },
-            []
-          );
+      Promise.all(lastMatchesPromises)
+        .then((allMatchesResults) => {
+          allMatchesResults.forEach((result) => {
+            tempLastAllMatchesData[result.name] = result.matches.reduce(
+              (acc, curr) => {
+                return acc.concat(curr.events);
+              },
+              []
+            );
 
-         // console.log(tempLastAllMatchesData)
+            // console.log(tempLastAllMatchesData)
+          });
         })
-      })
 
-      Promise.all(allPromises)
+        .then(() => Promise.all(allPromises))
         .then((results) => {
-     
           const allMatchDates = [];
 
-          
           results.forEach((result) => {
             tempAllMatchesData[result.name] = result.matches.reduce(
               (acc, curr) => {
@@ -213,6 +208,7 @@ export function MatchesSection() {
               []
             );
 
+            console.log(tempLastAllMatchesData);
             Object.keys(tempLastAllMatchesData).forEach((key) => {
               if (tempAllMatchesData[key]) {
                 // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
@@ -230,8 +226,7 @@ export function MatchesSection() {
               }
             });
 
-      
-           //console.log(tempAllMatchesData)
+            //console.log(tempAllMatchesData)
 
             // Połączenie updatedAllMatchesData z tempAllMatchesData
             Object.keys(updatedAllMatchesData).forEach((key) => {
@@ -302,8 +297,6 @@ export function MatchesSection() {
         })
         .catch((error) => console.error("Error fetching matches data:", error));
     };
-
-
 
     fetchAllMatchesLive();
     //fetchLastAllMatches();
