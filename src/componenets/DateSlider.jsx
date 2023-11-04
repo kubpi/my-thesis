@@ -12,11 +12,11 @@ export function DateSlider({ onDateSelect, disabledDates }) {
 
   useEffect(() => {
     const today = new Date();
-    const tomorrow = new Date(today);
-    const currentYear = today.getFullYear(); // Pobierz obecny rok
-    tomorrow.setDate(today.getDate() + 1);
-
-    const numberOfDates = 218; // You can adjust the number of dates to display
+    const weekBefore = new Date(today); // Nowa data reprezentująca tydzień przed dzisiaj
+    weekBefore.setDate(today.getDate() - 30); // Odejmujemy 7 dni, aby uzyskać datę sprzed tygodnia
+    const currentYear = today.getFullYear();
+  
+    const numberOfDates = 218 + 30; // Dodajemy 7 dni do istniejącej liczby dni
 
     const handleDateClick = (date, nextDate) => {
       onDateSelect(date, nextDate);
@@ -27,8 +27,8 @@ export function DateSlider({ onDateSelect, disabledDates }) {
     const daysOfWeek = ["niedz.", "pon.", "wt.", "śr.", "czw.", "pt.", "sob."];
 
     const dateButtons = Array.from({ length: numberOfDates }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
+      const date = new Date(weekBefore);
+      date.setDate(weekBefore.getDate() + index);
   
       const dayOfWeek = daysOfWeek[date.getDay()];  // Dodajemy to, aby pobrać nazwę dnia tygodnia
   
@@ -75,8 +75,25 @@ export function DateSlider({ onDateSelect, disabledDates }) {
     });
 
     setDates(dateButtons);
+    
+
+    
   }, [selectedDate,disabledDates]);
 
+  useEffect(() => {
+// Nowy kod do ustawienia suwaka na dzisiejszą datę
+const todayIndex = 11.8; // Ponieważ odejmujesz 30 dni od dzisiejszej daty, indeks dla 'dziś' to 30
+const slider = sliderRef.current;
+const itemsPerScreen = parseInt(
+  getComputedStyle(slider).getPropertyValue("--items-per-screen"),
+  10
+);
+
+// Ustaw właściwość CSS, aby przesunąć suwak do 'dzisiaj'
+const sliderIndex = todayIndex - Math.floor(itemsPerScreen);
+slider.style.setProperty("--slider-index", sliderIndex >= 0 ? sliderIndex : 0);
+  },[])
+  
   const handleLeftClick = () => {
     // Obsługa kliknięcia w lewy przycisk
     const slider = sliderRef.current;

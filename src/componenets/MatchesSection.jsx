@@ -20,7 +20,13 @@ const tournaments = [
   //{ id: 544, name: "SegundaFederación", season: 53413 },
   { id: 34, name: "Ligue1", season: 52571 },
   { id: 37, name: "Eredivisie", season: 52554 },
+  { id: 808, name: "PremierLeagueEG", season: 55005 },
+  { id: 955, name: "SaudiProfessionalLeague", season: 53241 },
+  { id: 281, name: "PucharPolski", season: 52567 },
+  { id: 329, name: "CopadelRey", season: 55373 },
 ];
+
+const tournamentIds = tournaments.map((t) => t.id);
 
 const getTurnamentImgURL = function (turnamentName) {
   const turnamentObj = tournaments.find(
@@ -30,14 +36,59 @@ const getTurnamentImgURL = function (turnamentName) {
   return `https://api.sofascore.app/api/v1/unique-tournament/${turnamentObj.id}/image/light`;
 };
 
+const fetchMatchesPage = async (
+  tournament,
+  time,
+  pageNumber = 0,
+  accumulatedMatches = []
+) => {
+  const response = await fetch(
+    `https://66rlxf-3000.csb.app/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/${time}/${pageNumber}`
+  );
+
+  // Jeśli mamy status 404, zakończ rekursję i zwróć zebrane do tej pory mecze
+  // if (response.status === 404) {
+  //   return accumulatedMatches;
+  // }
+
+  try {
+    const data = await response.json();
+    if (data.error && data.error.code === 404) {
+      return accumulatedMatches;
+    }
+    //console.log(data);  // after response.json() in fetchMatchesPage
+
+    if (!data || data.length === 0 || pageNumber >= 10) {
+      return accumulatedMatches;
+    }
+
+    return await fetchMatchesPage(
+      tournament,
+      time,
+      pageNumber + 1,
+      accumulatedMatches.concat(data)
+    );
+  } catch (error) {
+    console.error(
+      "Error fetching page",
+      pageNumber,
+      "for",
+      tournament.name,
+      ":",
+      error
+    );
+    return accumulatedMatches;
+  }
+};
+
+
+
 export function MatchesSection() {
-  
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
   const [matchesData, setMatchesData] = useState({});
   const [liveMatches, setLiveMatches] = useState([]);
-  const [filteredMatches, setFilteredMatches] = useState([]);
-  
+  const [lastMatches, setLastMatches] = useState([]);
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -47,8 +98,6 @@ export function MatchesSection() {
   const apiFormatNextDate = `${tomorrow.getFullYear()}-${String(
     tomorrow.getMonth() + 1
   ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
-
-
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
@@ -61,135 +110,155 @@ export function MatchesSection() {
     const newMatchesData = {};
 
     Object.keys(allData).forEach((tournamentName) => {
-      newMatchesData[tournamentName] = allData[tournamentName].filter((match) => {
-        const matchDate = new Date(match.startTimestamp * 1000);
-        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-          matchDate.getMonth() + 1
-        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
-        return apiFormatMatchDate === date;
-      });
+      newMatchesData[tournamentName] = allData[tournamentName].filter(
+        (match) => {
+          const matchDate = new Date(match.startTimestamp * 1000);
+          const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+            matchDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+          return apiFormatMatchDate === date;
+        }
+      );
     });
 
     return newMatchesData;
   };
-  
+
   useEffect(() => {
-    const tournamentIds = tournaments.map(t => t.id); 
-    let updatedAllMatchesData = {};  // Deklaracja poza zakresem funkcji fetchAllMatchesLive
+    let updatedAllMatchesData = {}; // Deklaracja poza zakresem funkcji fetchAllMatchesLive
+
     const fetchAllMatchesLive = async () => {
-      const response = await fetch('https://66rlxf-3000.csb.app/api/v1/sport/football/events/live');
+      const response = await fetch(
+        "https://66rlxf-3000.csb.app/api/v1/sport/football/events/live"
+      );
       if (response.status === 404) {
         console.error("Błąd serwera");
         return;
       }
       try {
         const data = await response.json();
-       
-        const filteredLiveMatches = data.events.filter(event => 
+
+        const filteredLiveMatches = data.events.filter((event) =>
           tournamentIds.includes(event?.tournament?.uniqueTournament?.id)
-        ); 
-   
+        );
+
         // Aktualizacja tempAllMatchesData z nowymi meczami na żywo
-         updatedAllMatchesData = { ...allMatchesData };
-         filteredLiveMatches.forEach(liveMatch => {
-          const tournamentName = tournaments.find(t => t.id === liveMatch.tournament.uniqueTournament.id).name;
+        updatedAllMatchesData = { ...allMatchesData };
+        filteredLiveMatches.forEach((liveMatch) => {
+          const tournamentName = tournaments.find(
+            (t) => t.id === liveMatch.tournament.uniqueTournament.id
+          ).name;
           if (!updatedAllMatchesData[tournamentName]) {
             updatedAllMatchesData[tournamentName] = [];
           }
           // Sprawdzanie, czy mecz już istnieje w updatedAllMatchesData
-          if (!updatedAllMatchesData[tournamentName].some(match => match.id === liveMatch.id)) {
+          if (
+            !updatedAllMatchesData[tournamentName].some(
+              (match) => match.id === liveMatch.id
+            )
+          ) {
             updatedAllMatchesData[tournamentName].unshift(liveMatch);
           }
         });
-        
 
-        console.log(updatedAllMatchesData)
+        // console.log(updatedAllMatchesData)
         setLiveMatches(data.events); // Zakładam, że odpowiedź zawiera pole 'events'
       } catch (error) {
         console.error("Error fetching", error);
       }
-    }
-    fetchAllMatchesLive()
+    };
 
     if (!selectedDate) return;
 
-    const fetchMatchesPage = async (
-      tournament,
-      pageNumber = 0,
-      accumulatedMatches = []
-    ) => {
-      const response = await fetch(
-        `https://66rlxf-3000.csb.app/api/v1/unique-tournament/${tournament.id}/season/${tournament.season}/events/next/${pageNumber}`
-      );
-
-      // Jeśli mamy status 404, zakończ rekursję i zwróć zebrane do tej pory mecze
-      // if (response.status === 404) {
-      //   return accumulatedMatches;
-      // }
-      
-      try {
-        const data = await response.json();
-        if (data.error && data.error.code === 404) {
-          return accumulatedMatches;
-      }
-        //console.log(data);  // after response.json() in fetchMatchesPage
-
-        if (!data || data.length === 0 || pageNumber >= 10) {
-          return accumulatedMatches;
-        }
-
-        return await fetchMatchesPage(
-          tournament,
-          pageNumber + 1,
-          accumulatedMatches.concat(data)
-        );
-      } catch (error) {
-        console.error(
-          "Error fetching page",
-          pageNumber,
-          "for",
-          tournament.name,
-          ":",
-          error
-        );
-        return accumulatedMatches;
-      }
-    };
 
     const fetchMatches = async () => {
       const allPromises = tournaments.map(async (tournament) => {
-        const matches = await fetchMatchesPage(tournament);
+        const matches = await fetchMatchesPage(tournament, "next");
         return { ...tournament, matches };
       });
-    
+
+      const lastMatchesPromises = tournaments.map(async (tournament) => {
+        const matches = await fetchMatchesPage(tournament, "last");
+        return { ...tournament, matches };
+      });
+
+      let tempLastAllMatchesData = {};
+      let tempAllMatchesData = {};
+
+      Promise.all(lastMatchesPromises).then((results) => {
+       
+        results.forEach((result) => {
+          tempLastAllMatchesData[result.name] = result.matches.reduce(
+            (acc, curr) => {
+              return acc.concat(curr.events);
+            },
+            []
+          );
+
+         // console.log(tempLastAllMatchesData)
+        })
+      })
+
       Promise.all(allPromises)
         .then((results) => {
-          const tempAllMatchesData = {};
+     
           const allMatchDates = [];
 
+          
           results.forEach((result) => {
-            tempAllMatchesData[result.name] = result.matches.reduce((acc, curr) => {
-              return acc.concat(curr.events);
-            }, []);
-// Połączenie updatedAllMatchesData z tempAllMatchesData
-Object.keys(updatedAllMatchesData).forEach(key => {
-  if (tempAllMatchesData[key]) {
-    // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
-    updatedAllMatchesData[key].forEach(liveMatch => {
-      if (!tempAllMatchesData[key].some(match => match.id === liveMatch.id)) {
-        tempAllMatchesData[key].unshift(liveMatch);
-      }
-    });
-  } else {
-    tempAllMatchesData[key] = updatedAllMatchesData[key];
-  }
-});
+            tempAllMatchesData[result.name] = result.matches.reduce(
+              (acc, curr) => {
+                return acc.concat(curr.events);
+              },
+              []
+            );
+
+            Object.keys(tempLastAllMatchesData).forEach((key) => {
+              if (tempAllMatchesData[key]) {
+                // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
+                tempLastAllMatchesData[key].forEach((liveMatch) => {
+                  if (
+                    !tempAllMatchesData[key].some(
+                      (match) => match.id === liveMatch.id
+                    )
+                  ) {
+                    tempAllMatchesData[key].unshift(liveMatch);
+                  }
+                });
+              } else {
+                tempAllMatchesData[key] = tempLastAllMatchesData[key];
+              }
+            });
+
+      
+           //console.log(tempAllMatchesData)
+
+            // Połączenie updatedAllMatchesData z tempAllMatchesData
+            Object.keys(updatedAllMatchesData).forEach((key) => {
+              if (tempAllMatchesData[key]) {
+                // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
+                updatedAllMatchesData[key].forEach((liveMatch) => {
+                  if (
+                    !tempAllMatchesData[key].some(
+                      (match) => match.id === liveMatch.id
+                    )
+                  ) {
+                    tempAllMatchesData[key].unshift(liveMatch);
+                  }
+                });
+              } else {
+                tempAllMatchesData[key] = updatedAllMatchesData[key];
+              }
+            });
 
             tempAllMatchesData[result.name].forEach((match) => {
               const matchDate = new Date(match.startTimestamp * 1000);
               const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
                 matchDate.getMonth() + 1
-              ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+              ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(
+                2,
+                "0"
+              )}`;
               allMatchDates.push(apiFormatMatchDate);
             });
           });
@@ -201,19 +270,43 @@ Object.keys(updatedAllMatchesData).forEach(key => {
             const apiFormatDate = `${date.getFullYear()}-${String(
               date.getMonth() + 1
             ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-            return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
+            return uniqueMatchDates.includes(apiFormatDate)
+              ? null
+              : apiFormatDate;
           }).filter(Boolean);
 
+          // //fetchLastAllMatches()
+          // Object.keys(tournamentsWithMatches).forEach(tournamentName => {
+          //   const newMatches = lastMatches[tournamentName];
 
-          console.log(tempAllMatchesData)
+          //   console.log(newMatches);
+
+          //   // newMatches.forEach(matches => {
+          //   //   if (!tempAllMatchesData[tournamentName].some(match => match.id === matches.id)) {
+          //   //     tempAllMatchesData[tournamentName].push(matches)
+          //   //   }
+
+          //   //  })
+
+          //   // tempAllMatchesData[tournamentName].push(newMatches[0])
+          // })
+
+          console.log(tempAllMatchesData);
           setAllMatchesData(tempAllMatchesData);
           setDaysWithNoMatches(daysWithoutMatches);
-          const filteredMatches = filterMatchesByDate(tempAllMatchesData, selectedDate);
+          const filteredMatches = filterMatchesByDate(
+            tempAllMatchesData,
+            selectedDate
+          );
           setMatchesData(filteredMatches);
         })
         .catch((error) => console.error("Error fetching matches data:", error));
     };
 
+
+
+    fetchAllMatchesLive();
+    //fetchLastAllMatches();
     fetchMatches();
   }, []);
 
@@ -225,11 +318,11 @@ Object.keys(updatedAllMatchesData).forEach(key => {
   return (
     <>
       <div className="slider-margin-top">
-      <DateSlider
-        onDateSelect={handleDateSelect}
-        disabledDates={daysWithNoMatches}
+        <DateSlider
+          onDateSelect={handleDateSelect}
+          disabledDates={daysWithNoMatches}
         />
-        </div>
+      </div>
       <div className="container">
         <div className="row">
           {tournaments

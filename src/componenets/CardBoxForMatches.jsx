@@ -42,9 +42,9 @@ export function CardBoxForMatches(props) {
                     startTimestamp={match?.startTimestamp}
                     statusTime={match?.statusTime}
                     time={match?.time}
-                    changes={match?.changes.changeTimestamp}
-                    matchStatus={match?.status.description}
-                    currentPeriodStartTimestamp={match?.time.currentPeriodStartTimestamp}
+                    changes={match?.changes?.changeTimestamp}
+                    matchStatus={match?.status?.description}
+                    currentPeriodStartTimestamp={match?.time?.currentPeriodStartTimestamp}
                   />
                 </React.Fragment>
               );
