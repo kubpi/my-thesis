@@ -6,6 +6,16 @@ export function CardBoxForMatches(props) {
   const matches = props.matches;
   let img = props.img;
   
+
+    // Sortowanie meczów, mecze w trakcie będą pierwsze
+    const sortedMatches = matches.slice().sort((a, b) => {
+      if (a.status.type === "inprogress" && b.status.type !== "inprogress") {
+        return -1; // a przed b
+      } else if (a.status.type !== "inprogress" && b.status.type === "inprogress") {
+        return 1; // b przed a
+      }
+      return 0; // bez zmiany kolejności
+    });
   // Deklaracja zmiennej do śledzenia poprzedniej kolejki
   let prevRound = null;
 
@@ -21,13 +31,13 @@ export function CardBoxForMatches(props) {
 
         <div className="card-body">
           {
-            matches.map((match, index) => {
+            sortedMatches.map((match) => {
               // Jeśli bieżąca kolejka jest inna niż poprzednia, ustaw poprzednią kolej na bieżącą i wyświetl nazwę kolejki
               const isNewRound = prevRound !== match?.roundInfo?.round;
               prevRound = match?.roundInfo?.round;
       
               return (
-                <React.Fragment key={index}>
+                <React.Fragment key={match.id}>
                   {isNewRound && (
                     match?.roundInfo?.round && (<div className="round">
                        <p>Kolejka {match?.roundInfo?.round}</p>
