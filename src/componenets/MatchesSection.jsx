@@ -50,9 +50,9 @@ const getAllMatchesDays = function (obj,arrayToSaveDates) {
 const getDaysWithoutMatches = function (allMatchesDates) {
   const today = new Date();
   const uniqueMatchDates = [...new Set(allMatchesDates)];
-  const daysWithoutMatches = Array.from({ length: 218 }, (_, index) => {
+  const daysWithoutMatches = Array.from({ length: 218+120 }, (_, index) => {
     const date = new Date(today);
-    date.setDate(today.getDate() - 30 + index);
+    date.setDate(today.getDate() - 30 - 90 + index);
     const apiFormatDate = `${date.getFullYear()}-${String(
       date.getMonth() + 1
     ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;

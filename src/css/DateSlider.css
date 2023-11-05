@@ -108,9 +108,15 @@ body {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 485px) {
   .slider {
     --items-per-screen: 2;
+  }
+}
+
+@media (max-width: 431px) {
+  .slider {
+    --items-per-screen: 1;
   }
 }
 
@@ -130,3 +136,4 @@ body {
 .slider-margin-top {
   margin-bottom: 5rem;
 }
+
