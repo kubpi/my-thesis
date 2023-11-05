@@ -261,7 +261,7 @@ export function MatchesSection() {
           const uniqueMatchDates = [...new Set(allMatchDates)];
           const daysWithoutMatches = Array.from({ length: 218 }, (_, index) => {
             const date = new Date(today);
-            date.setDate(today.getDate() + index);
+            date.setDate(today.getDate() - 30 + index);
             const apiFormatDate = `${date.getFullYear()}-${String(
               date.getMonth() + 1
             ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
