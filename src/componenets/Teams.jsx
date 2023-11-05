@@ -46,7 +46,7 @@ const timik = currentTime - time.currentPeriodStartTimestamp + time?.initial
 
 
 export function Teams(props) {
-  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp, statusTime, time, changes,matchStatus, currentPeriodStartTimestamp } = props;
+  const { homeTeam, homeScore, awayTeam, awayScore ,startTimestamp, statusTime, time, changes, matchStatus, matchStatusType, currentPeriodStartTimestamp } = props;
   //console.log(homeTeam.id)
   const homeTeamImg = ReturnTeamImage(homeTeam.id)
   const awayTeamImg = ReturnTeamImage(awayTeam.id)
@@ -56,6 +56,8 @@ export function Teams(props) {
   const [awayColor, setAwayColor] = useState(''); // Kolor dla wyniku awayTeam
 
   const [key, setKey] = useState(Math.random()); // początkowy klucz
+  const [isLive, setIsLive] = useState(false);
+
 
   useEffect(() => {
     // Aktualizuj klucz za każdym razem, gdy komponent się renderuje
@@ -79,9 +81,16 @@ export function Teams(props) {
   
     setKey(Math.random());
   }, [homeTeam, awayTeam, awayScore.display, homeScore.display]); // możesz tu dodać zależności, które powodują ponowne renderowanie
-
+  useEffect(() => {
+    // Sprawdź, czy mecz jest na żywo
+    if (matchStatus && matchStatusType === "inprogress") {
+      setIsLive(true);
+    } else {
+      setIsLive(false);
+    }
+  }, [matchStatus]); // Zależność od matchStatus, który może się zmieniać
   return (
-    <div className="team-container">
+    <div className={`team-container ${isLive ? "match-live" : ""}`}>
       
       <div className="teams fadeanime" key={key}>       
         <div className="single-team">

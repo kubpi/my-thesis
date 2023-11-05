@@ -218,7 +218,7 @@ export function MatchesSection() {
                       (match) => match.id === liveMatch.id
                     )
                   ) {
-                    tempAllMatchesData[key].unshift(liveMatch);
+                    tempAllMatchesData[key].push(liveMatch);
                   }
                 });
               } else {
