@@ -1,5 +1,11 @@
-//import { Buttons } from "./Buttons";
+import { useState } from "react";
+import LoginModal from "./LoginModal";
+import RegisterModal from "./RegisterModal";
+import "./login.css";
 export function HeroSection() {
+  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+  const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
+  
   return (
     <>
       <div className="container15">
@@ -7,20 +13,43 @@ export function HeroSection() {
           <div className="col-sm">
             <div className="container1 tekst">
               <div className="row">
-                <div className="home-slogan">Wszystko <br></br> o piłce nożnej</div>
+                <div className="home-slogan">
+                  Wszystko <br></br> o piłce nożnej
+                </div>
               </div>
               <div className="row">
-                <div className="home-title">Przegladaj mecze, obstawiaj transfery, baw się ze <br></br> znajomymi w obstawianie.</div>
+                <div className="home-title">
+                  Przegladaj mecze, obstawiaj transfery, baw się ze <br></br>{" "}
+                  znajomymi w obstawianie.
+                </div>
               </div>
               <div className="row">
-              <button type="button"  className="buttonik2">zarejestruj się</button>
-                <button type="button"  className="buttonik">zaloguj się</button>
+              <button type="button" onClick={() => setLoginModalIsOpen(true)} className="buttonik">
+        zaloguj się
+      </button>
+      <button type="button" onClick={() => setRegisterModalIsOpen(true)} className="buttonik2">
+        zarejestruj się
+      </button>
               </div>
             </div>
           </div>
-          <div className="col-sm d-flex align-items-center justify-content-left image-column"><img className="img-fluid" src="/src/assets/footballerpicture.png"></img></div>
+          <div className="col-sm d-flex align-items-center justify-content-left image-column">
+            <img
+              className="img-fluid"
+              src="/src/assets/footballerpicture.png"
+            ></img>
+          </div>
         </div>
       </div>
+      <LoginModal
+        isOpen={loginModalIsOpen}
+        onRequestClose={() => setLoginModalIsOpen(false)}
+      />
+
+      <RegisterModal
+        isOpen={registerModalIsOpen}
+        onRequestClose={() => setRegisterModalIsOpen(false)}
+      />
     </>
   );
 }

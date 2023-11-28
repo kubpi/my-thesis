@@ -1,0 +1,109 @@
+/* login.css */
+.Modal {
+    position: relative;
+    background: #232323; /* Dark background for the modal */
+    color: white;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 8px;
+    margin: 100px auto;
+    animation: 0.5s ease-out 0s 1 slideInFromTop; /* Apply the animation to your modal */
+  }
+  
+  .Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent black background */
+  }
+  
+  input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333; /* Slightly lighter black for input backgrounds */
+    color: white;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  button[type="submit"]:hover, .buttonik2:hover, .buttonik:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  a {
+    color: #1A75FF; /* Blue text for links */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .close-modal-button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .close-modal-button:hover {
+    text-decoration: underline;
+  }
+  
+  /* Adding some spacing and alignment */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .help-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9em;
+  }
+  
+  /* Inside login.css */
+
+  .close-button {
+    position: absolute;
+    top: 10px;  /* Adjust top and right as needed */
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px; /* Larger font size for the 'X' */
+    cursor: pointer;
+  }
+  
+  .close-button:hover {
+    color: #aaa; /* Lighter grey to indicate hover state */
+  }
+  
+  @keyframes slideInFromTop {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
