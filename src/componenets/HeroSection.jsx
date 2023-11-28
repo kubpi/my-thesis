@@ -5,7 +5,15 @@ import "./login.css";
 export function HeroSection() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
-  
+  function handleRegisterLink() {
+    setLoginModalIsOpen(false);
+    setRegisterModalIsOpen(true);
+  }
+
+  function handleForgotPassword() {
+    // Logic for forgot password
+    // Possibly set another modal state for forgot password or redirect
+  }
   return (
     <>
       <div className="container15">
@@ -24,12 +32,20 @@ export function HeroSection() {
                 </div>
               </div>
               <div className="row">
-              <button type="button" onClick={() => setLoginModalIsOpen(true)} className="buttonik">
-        zaloguj się
-      </button>
-      <button type="button" onClick={() => setRegisterModalIsOpen(true)} className="buttonik2">
-        zarejestruj się
-      </button>
+                <button
+                  type="button"
+                  onClick={() => setLoginModalIsOpen(true)}
+                  className="buttonik"
+                >
+                  zaloguj się
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRegisterModalIsOpen(true)}
+                  className="buttonik2"
+                >
+                  zarejestruj się
+                </button>
               </div>
             </div>
           </div>
@@ -44,8 +60,9 @@ export function HeroSection() {
       <LoginModal
         isOpen={loginModalIsOpen}
         onRequestClose={() => setLoginModalIsOpen(false)}
+        onRegisterClick={handleRegisterLink}
+        onForgotPasswordClick={handleForgotPassword}
       />
-
       <RegisterModal
         isOpen={registerModalIsOpen}
         onRequestClose={() => setRegisterModalIsOpen(false)}

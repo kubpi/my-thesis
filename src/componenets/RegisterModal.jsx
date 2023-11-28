@@ -11,7 +11,7 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
       overlayClassName="Overlay"
     >
       <button onClick={onRequestClose} className="close-button">&times;</button>
-      <h2>Zarejestruj się</h2>
+      <h2  className="login-header">Załóż nowe konto</h2>
       <form>
         <input type="text" placeholder="Nazwa użytkownika" />
         <input type="email" placeholder="Email" />

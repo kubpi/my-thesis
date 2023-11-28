@@ -1,7 +1,7 @@
 /* login.css */
 .Modal {
     position: relative;
-    background: #232323; /* Dark background for the modal */
+    background: #466551; /* Dark background for the modal */
     color: white;
     max-width: 400px;
     padding: 40px;
@@ -25,8 +25,10 @@
     padding: 15px;
     border: none;
     border-radius: 5px;
-    background-color: #333; /* Slightly lighter black for input backgrounds */
-    color: white;
+    /* background-color: #333; Slightly lighter black for input backgrounds */
+    /* background-color: #ffffff; Slightly lighter black for input backgrounds */
+    background-color: #cdcbcb;
+    color: rgb(4, 4, 4);
   }
   
   button[type="submit"] {
@@ -40,7 +42,7 @@
   }
   
   button[type="submit"]:hover, .buttonik2:hover, .buttonik:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #80b47c; /* Darker blue on hover */
   }
   
   a {
@@ -107,3 +109,48 @@
       opacity: 1;
     }
   }
+  /* login.css */
+
+/* login.css */
+
+/* ... other styles ... */
+
+.login-help-links {
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+}
+
+.login-help-links a {
+  color: #f6e5e5;
+  text-decoration: none;
+}
+
+.login-help-links a:hover {
+  text-decoration: underline;
+}
+
+/* Separate the two links with a vertical bar */
+.login-help-links span {
+  margin: 0 10px;
+  color: white;
+}
+
+/* Use pseudo-elements for the 'or' text to style it differently */
+.login-help-links span::before,
+.login-help-links span::after {
+  content: ' | ';
+  color: white;
+}
+
+.login-help-links span::before {
+  margin-right: 10px;
+}
+
+.login-help-links span::after {
+  margin-left: 10px;
+}
+.login-header {
+  text-align: center; /* Centers text horizontally */
+  margin-bottom: 20px; /* Adds some space below the header */
+}
