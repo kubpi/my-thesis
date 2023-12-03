@@ -29,6 +29,7 @@
     /* background-color: #ffffff; Slightly lighter black for input backgrounds */
     background-color: #cdcbcb;
     color: rgb(4, 4, 4);
+    margin-bottom: 5px;
   }
   
   button[type="submit"] {
@@ -36,7 +37,7 @@
     padding: 15px;
     border: none;
     border-radius: 5px;
-
+    margin-top: 20px;
     margin-bottom: 10px;
     cursor: pointer;
   }
@@ -153,4 +154,13 @@
 .login-header {
   text-align: center; /* Centers text horizontally */
   margin-bottom: 20px; /* Adds some space below the header */
+}
+
+/* Style for error messages */
+.error {
+  color: #e74c3c; /* Use a color that stands out, such as a shade of red */
+  font-size: 0.85em; /* Keep the font size smaller than the input text */
+  margin-top: 0px; /* Remove top margin if any */
+  margin-bottom: 10px; /* Add some space before the next input field */
+  display: block; /* Ensure it takes its own line */
 }

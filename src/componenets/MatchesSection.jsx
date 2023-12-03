@@ -197,6 +197,31 @@ export function MatchesSection() {
     setMatchesData(filteredMatches);
   }, [selectedDate, allMatchesData]);
 
+// State to hold favorite matches
+const [favoriteMatches, setFavoriteMatches] = useState(
+  JSON.parse(localStorage.getItem('favorites')) || []
+);
+
+// Add match to favorites
+const addToFavorites = (match) => {
+  const newFavorites = [...favoriteMatches, match];
+  setFavoriteMatches(newFavorites);
+  localStorage.setItem('favorites', JSON.stringify(newFavorites));
+};
+
+// Remove match from favorites
+const removeFromFavorites = (matchId) => {
+  const newFavorites = favoriteMatches.filter((m) => m.id !== matchId);
+  setFavoriteMatches(newFavorites);
+  localStorage.setItem('favorites', JSON.stringify(newFavorites));
+};
+
+// Check if match is in favorites
+const isMatchFavorite = (matchId) => {
+  return favoriteMatches.some((m) => m.id === matchId);
+};
+
+  
   return (
     <>
       <div className="slider-margin-top">
@@ -224,6 +249,9 @@ export function MatchesSection() {
                     <CardBoxForMatches
                       matches={tournamentMatches}
                       img={getTurnamentImgURL(tournament.name)}
+                      addToFavorites={addToFavorites}
+                      removeFromFavorites={removeFromFavorites}
+                      isFavorite={(matchId) => isMatchFavorite(matchId)}
                     />
                   </div>
                 );

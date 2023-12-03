@@ -19,6 +19,7 @@ export function CardBoxForMatches(props) {
   // Deklaracja zmiennej do śledzenia poprzedniej kolejki
   let prevRound = null;
 
+  
   return (
     <>
       <div
@@ -44,6 +45,16 @@ export function CardBoxForMatches(props) {
                     </div>)
                     
                   )}
+                  <button
+      className="favorite-button"
+      onClick={() => {
+        const isFav = props.isFavorite(match.id);
+        isFav ? props.removeFromFavorites(match.id) : props.addToFavorites(match);
+      }}
+      aria-label={props.isFavorite(match.id) ? 'Remove from favorites' : 'Add to favorites'}
+    >
+      {props.isFavorite(match.id) ? '❤️' : '🤍'} {/* Filled heart if favorite, empty heart if not */}
+    </button>
                   <Teams
                     homeTeam={match?.homeTeam}
                     homeScore={match?.homeScore}

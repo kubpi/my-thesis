@@ -160,3 +160,16 @@
   background-color: rgba(0, 64, 255, 0.297)/* Lub jakiś inny kolor dla meczu na żywo */
 }
 
+/* Add this to your Matches.css */
+
+.favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+  font-size: 24px; /* Adjust size as needed */
+}
+
+.favorite-button:focus {
+  outline: none;
+}
