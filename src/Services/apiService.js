@@ -36,7 +36,6 @@ export const tournaments = [
   { id: 34, name: "Ligue1", season: 52571 },
   { id: 37, name: "Eredivisie", season: 52554 },
   { id: 281, name: "PucharPolski", season: 52567 },
-  { id: 281, name: "PucharPolski", season: 52567 },
   { id: 27, name: "EuropeanChampionshipQualification", season: 46599 },
   { id: 54, name: "LaLiga2", season: 52563 },
 ];

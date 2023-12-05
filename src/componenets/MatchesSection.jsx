@@ -4,25 +4,26 @@ import { DateSlider } from "./DateSlider";
 import {
   getTurnamentImgURL,
   fetchAllMatchesLive,
-  divideMatchesToLeagues,tournaments,tournamentIds
+  divideMatchesToLeagues,
+  tournaments,
+  tournamentIds,
 } from "../Services/apiService";
 import "./Matches.css";
 
-
-const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr, pushOrUnshift) {
+const addMatchesTotempAllMatchesData = function (
+  tempAllMatchesData,
+  arr,
+  pushOrUnshift
+) {
   Object.keys(arr).forEach((key) => {
     if (tempAllMatchesData[key]) {
       // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
       arr[key].forEach((liveMatch) => {
         if (
-          !tempAllMatchesData[key].some(
-            (match) => match.id === liveMatch.id
-          )
+          !tempAllMatchesData[key].some((match) => match.id === liveMatch.id)
         ) {
-          if(pushOrUnshift === "push")
-            tempAllMatchesData[key].push(liveMatch);
-          else
-          tempAllMatchesData[key].unshift(liveMatch);
+          if (pushOrUnshift === "push") tempAllMatchesData[key].push(liveMatch);
+          else tempAllMatchesData[key].unshift(liveMatch);
         }
       });
     } else {
@@ -30,38 +31,33 @@ const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr, pushOr
     }
   });
   return tempAllMatchesData;
-}
+};
 
-const getAllMatchesDays = function (obj,arrayToSaveDates) {
+const getAllMatchesDays = function (obj, arrayToSaveDates) {
   obj.forEach((match) => {
     const matchDate = new Date(match.startTimestamp * 1000);
     const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
       matchDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(
-      2,
-      "0"
-    )}`;
+    ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
     arrayToSaveDates.push(apiFormatMatchDate);
   });
-  console.log(arrayToSaveDates)
-  return arrayToSaveDates
-}
+  console.log(arrayToSaveDates);
+  return arrayToSaveDates;
+};
 
 const getDaysWithoutMatches = function (allMatchesDates) {
   const today = new Date();
   const uniqueMatchDates = [...new Set(allMatchesDates)];
-  const daysWithoutMatches = Array.from({ length: 218+120 }, (_, index) => {
+  const daysWithoutMatches = Array.from({ length: 218 + 120 }, (_, index) => {
     const date = new Date(today);
     date.setDate(today.getDate() - 30 - 90 + index);
     const apiFormatDate = `${date.getFullYear()}-${String(
       date.getMonth() + 1
     ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    return uniqueMatchDates.includes(apiFormatDate)
-      ? null
-      : apiFormatDate;
+    return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
   }).filter(Boolean);
-  return daysWithoutMatches
-}
+  return daysWithoutMatches;
+};
 
 export function MatchesSection() {
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
@@ -69,7 +65,9 @@ export function MatchesSection() {
   const [matchesData, setMatchesData] = useState({});
   const [liveMatches, setLiveMatches] = useState([]);
   const [lastMatches, setLastMatches] = useState([]);
-  
+  const [selectedLeague, setSelectedLeague] = useState("all");
+  const [disabledDates, setDisabledDates] = useState([]);
+
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -170,17 +168,26 @@ export function MatchesSection() {
               []
             );
 
-            tempAllMatchesData = addMatchesTotempAllMatchesData(tempAllMatchesData, tempLastAllMatchesData,"push");
-            tempAllMatchesData = addMatchesTotempAllMatchesData(tempAllMatchesData, updatedAllMatchesData,"unshift");
+            tempAllMatchesData = addMatchesTotempAllMatchesData(
+              tempAllMatchesData,
+              tempLastAllMatchesData,
+              "push"
+            );
+            tempAllMatchesData = addMatchesTotempAllMatchesData(
+              tempAllMatchesData,
+              updatedAllMatchesData,
+              "unshift"
+            );
             console.log(tempLastAllMatchesData);
-           
 
-            allMatchDates = getAllMatchesDays(tempAllMatchesData[result.name],allMatchDates)
+            allMatchDates = getAllMatchesDays(
+              tempAllMatchesData[result.name],
+              allMatchDates
+            );
           });
 
-
-          console.log(allMatchDates);        
-          const daysWithoutMatches = getDaysWithoutMatches(allMatchDates)
+          console.log(allMatchDates);
+          const daysWithoutMatches = getDaysWithoutMatches(allMatchDates);
 
           console.log(tempAllMatchesData);
 
@@ -191,48 +198,105 @@ export function MatchesSection() {
     };
     fetchMatches();
   }, []);
-  
+
   useEffect(() => {
     const filteredMatches = filterMatchesByDate(allMatchesData, selectedDate);
     setMatchesData(filteredMatches);
   }, [selectedDate, allMatchesData]);
 
-// State to hold favorite matches
-const [favoriteMatches, setFavoriteMatches] = useState(
-  JSON.parse(localStorage.getItem('favorites')) || []
-);
+  // State to hold favorite matches
+  const [favoriteMatches, setFavoriteMatches] = useState(
+    JSON.parse(localStorage.getItem("favorites")) || []
+  );
 
-// Add match to favorites
-const addToFavorites = (match) => {
-  const newFavorites = [...favoriteMatches, match];
-  setFavoriteMatches(newFavorites);
-  localStorage.setItem('favorites', JSON.stringify(newFavorites));
-};
+  // Add match to favorites
+  const addToFavorites = (match) => {
+    const newFavorites = [...favoriteMatches, match];
+    setFavoriteMatches(newFavorites);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+  };
 
-// Remove match from favorites
-const removeFromFavorites = (matchId) => {
-  const newFavorites = favoriteMatches.filter((m) => m.id !== matchId);
-  setFavoriteMatches(newFavorites);
-  localStorage.setItem('favorites', JSON.stringify(newFavorites));
-};
+  // Remove match from favorites
+  const removeFromFavorites = (matchId) => {
+    const newFavorites = favoriteMatches.filter((m) => m.id !== matchId);
+    setFavoriteMatches(newFavorites);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+  };
 
-// Check if match is in favorites
-const isMatchFavorite = (matchId) => {
-  return favoriteMatches.some((m) => m.id === matchId);
-};
+  // Check if match is in favorites
+  const isMatchFavorite = (matchId) => {
+    return favoriteMatches.some((m) => m.id === matchId);
+  };
 
-  
+  console.log(tournaments);
+
+  const updateDisabledDates = (selectedLeague) => {
+    // If 'all' leagues are selected, use the existing daysWithNoMatches
+    if (selectedLeague === "all") {
+      setDisabledDates(daysWithNoMatches);
+      return;
+    }
+
+    // Gather all match dates for the selected league
+    const leagueMatchDates = new Set();
+    allMatchesData[selectedLeague]?.forEach((match) => {
+      const matchDate = new Date(match.startTimestamp * 1000);
+      const formattedDate = `${matchDate.getFullYear()}-${String(
+        matchDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+      leagueMatchDates.add(formattedDate);
+    });
+
+    // Calculate disabled dates by excluding dates that have matches in the selected league
+    const newDisabledDates = [];
+    for (let i = 0; i < 218 + 120; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - 30 - 90 + i);
+      const formattedDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      if (!leagueMatchDates.has(formattedDate)) {
+        newDisabledDates.push(formattedDate);
+      }
+    }
+
+    setDisabledDates(newDisabledDates);
+  };
+
+  useEffect(() => {
+    updateDisabledDates(selectedLeague);
+    console.log("Disabled dates:", disabledDates); // Add this line for debugging
+  }, [selectedLeague, allMatchesData, daysWithNoMatches]);
+
   return (
     <>
+      <div className="league-selector">
+        <select
+          value={selectedLeague}
+          onChange={(e) => setSelectedLeague(e.target.value)}
+        >
+          <option value="all">All Leagues</option>
+          {tournaments.map((tournament) => (
+            <option key={tournament.id} value={tournament.name}>
+              {tournament.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="slider-margin-top">
         <DateSlider
           onDateSelect={handleDateSelect}
-          disabledDates={daysWithNoMatches}
+          disabledDates={disabledDates} // Update this prop
         />
       </div>
       <div className="container">
         <div className="row">
           {tournaments
+            .filter(
+              (tournament) =>
+                selectedLeague === "all" || tournament.name === selectedLeague
+            )
             .sort(
               (a, b) =>
                 (matchesData[b.name]?.length || 0) -
