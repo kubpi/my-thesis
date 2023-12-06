@@ -1,22 +1,19 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/App.css";
-// import { CardBody } from './componenets/CardBody'
-import { Navbar } from "./componenets/Nabar";
-// import { Navbar } from './componenets/Navbar'
-// import { TopNavbar } from './componenets/TopNavbar'
-import { HeroSection } from "./componenets/HeroSection";
-import { Pblogos } from "./componenets/Pblogos";
-import { MatchesSection } from "./componenets/MatchesSection";
-import { LeagueTable } from "./componenets/LeagueTable";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/home";
+import Account from "./pages/Account";
+
 
 export default function App() {
   return (
     <>
-      <Navbar></Navbar>
-      <HeroSection></HeroSection>
-      <Pblogos></Pblogos>
-      <MatchesSection></MatchesSection>
-      
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />}> /</Route>          
+          <Route path="/account" element={<Account />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

@@ -3,7 +3,7 @@ export function Navbar() {
     <>
       <nav className="navbar navbar-expand-sm "data-bs-theme="dark">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
+          <a className="navbar-brand" href="/">
             betting-score
           </a>
 
@@ -37,8 +37,8 @@ export function Navbar() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
-                  forum
+                <a className="nav-link" href="/account">
+                  Witaj imie
                 </a>
               </li>
             </ul>
