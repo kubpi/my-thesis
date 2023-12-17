@@ -1,209 +1,32 @@
-.profile-page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: 'Arial', sans-serif;
-  background-color: #f6f8fa;
-  padding: 40px;
-}
-
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 5px solid white; /* Adjust to match the screenshot */
-  margin-bottom: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-section h1 {
-  margin: 10px 0;
+.matches-table-container {
+  font-family: "Arial", sans-serif;
   color: #333;
 }
 
-.profile-section p {
-  color: #666;
-  margin-bottom: 20px;
+table {
+  border-collapse: collapse;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.edit-profile-btn {
-  background-color: #2ea44f; /* GitHub green */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.repositories-section h2 {
+th {
+  background-color: #e9e9e9;
   color: #333;
-  margin: 20px 0;
-}
-
-.repository-card {
-  background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  border: 1px solid #d0d7de;
-  padding: 16px;
-  transition: transform 0.2s ease-in-out;
-}
-
-.repository-card:hover {
-  transform: translateY(-5px);
-}
-
-.repository-content {
-  margin-bottom: 10px;
-}
-
-.language-dot {
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 5px;
-}
-
-.repository-info {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.repository-visibility {
-  margin-left: auto;
-  padding: 2px 6px;
-  background-color: #e1e4e8;
-  border-radius: 10px;
-  font-size: 0.8em;
-}
-
-.repository-card h3 {
-  font-size: 1.1em;
-  color: #0366d6; /* GitHub blue */
   font-weight: bold;
-  margin-bottom: 8px;
+  padding: 15px;
+  text-align: left;
 }
 
-.repository-card p {
-  font-size: 0.9em;
-  color: #586069;
+td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
-.repository-card .forked {
-  font-style: italic;
-  color: #586069;
-  font-size: 0.9em;
+tr:hover {
+  background-color: #f5f5f5;
 }
 
-/* Add media queries for responsive adjustments if necessary */
-/* ... previous styles ... */
-
-.repositories-grid {
-    display: flex;
-    justify-content: center; /* Center items on the main axis */
-    flex-wrap: wrap; /* Allow items to wrap as needed */
-    gap: 20px; /* Spacing between items */
-  }
-  
-  .repository-card {
-    flex: 0 1 calc(25% - 20px); /* Take up 25% of the container width minus the gap */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Align items to the center on cross axis */
-    justify-content: center; /* Center content inside the card */
-    box-sizing: border-box;
-    /* ... other styles ... */
-  }
-  
-  /* Adjustments for different screen sizes */
-  @media (max-width: 1200px) {
-    .repository-card {
-      flex: 0 1 calc(33.333% - 20px); /* 3 cards per row on smaller screens */
-    }
-  }
-  
-  @media (max-width: 900px) {
-    .repository-card {
-      flex: 0 1 calc(50% - 20px); /* 2 cards per row on even smaller screens */
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .repository-card {
-      flex: 0 1 100%; /* 1 card per row on very small screens */
-    }
-  }
-  
-  /* ... other styles ... */
-  
-
-
-
-
-
-
-
-  .scoreboard {
-    font-family: 'Arial', sans-serif;
-    background-color: #0e1a2b; /* Dark blue background */
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 3%; /* Adjust the width as necessary */
-    margin: 40px auto; /* Center scoreboard */
-  }
-  
-  .league-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-  
-  .match {
-    display: grid;
-    grid-template-columns: 1fr auto; /* Two columns: one for the team and one for the score */
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #244a68;
-  }
-  
-  .teamName {
-    justify-self: start; /* Aligns team name to the start of the grid column */
-    padding-right: 16px; /* Adds spacing after team name */
-  }
-  
-  .teamscore {
-    justify-self: end; /* Aligns score to the end of the grid column */
-    padding-left: 16px; /* Adds spacing before team score */
-  }
-  
-  /* Responsive design adjustments */
-  @media (max-width: 768px) {
-    .scoreboard {
-      width: 95%;
-    }
-  
-    .match {
-      grid-template-columns: repeat(2, 1fr); /* On smaller screens, each team name and score takes up equal space */
-    }
-  }
-  
- 
-  
-  /* Additional styles for hover effects, responsive design, etc., would be needed */
-  
-  
+tr:first-child {
+  border-radius: 8px;
+}

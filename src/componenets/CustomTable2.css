@@ -1,0 +1,90 @@
+.match-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+
+.match-results-table thead {
+  background: #34a853; /* Green color for the table header */
+  color: #ffffff; /* White color for the text in the table header */
+}
+
+.match-results-table thead tr {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.match-results-table th,
+.match-results-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 2px solid #e7e7e7; /* Light grey for separator */
+}
+
+.match-results-table tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.match-results-table tbody tr:hover {
+  background-color: #f1f8e9; /* Light green for hover effect */
+}
+
+.match-results-table tbody td {
+  color: #5f6368; /* Dark grey for content to ensure readability */
+  vertical-align: middle; /* Align content */
+}
+
+.match-results-table tbody tr:nth-child(even) {
+  background-color: #e6f4ea; /* Slightly darker shade of light green for zebra-striping */
+}
+
+.match-results-table .avatar {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.match-results-table .checkbox {
+  margin-right: 10px;
+}
+
+.match-results-table .time {
+  color: #999999;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .match-results-table thead {
+    display: none;
+  }
+
+  .match-results-table tbody td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .match-results-table tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .match-results-table tbody tr {
+    border-bottom: 3px solid #e7e7e7;
+  }
+}
