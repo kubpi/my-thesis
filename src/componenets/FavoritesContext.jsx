@@ -23,8 +23,15 @@ export const FavoritesProvider = ({ children }) => {
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
+  // Remove match from favorites
+  const removeFavoriteid = (matchId) => {
+    const newFavorites = favorites.filter((m) => m.id !== matchId);
+    setFavorites(newFavorites);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+  };
+
   return (
-    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite }}>
+    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite,removeFavoriteid }}>
       {children}
     </FavoritesContext.Provider>
   );

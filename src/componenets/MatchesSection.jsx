@@ -65,7 +65,7 @@ const getDaysWithoutMatches = function (allMatchesDates) {
 }
 
 export function MatchesSection() {
-  const { addFavorite, removeFavorite, favorites } = useContext(FavoritesContext);
+  const { addFavorite, removeFavorite, favorites,removeFavoriteid } = useContext(FavoritesContext);
 
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
@@ -82,6 +82,7 @@ export function MatchesSection() {
   const apiFormatNextDate = `${tomorrow.getFullYear()}-${String(
     tomorrow.getMonth() + 1
   ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
@@ -200,30 +201,27 @@ export function MatchesSection() {
     setMatchesData(filteredMatches);
   }, [selectedDate, allMatchesData]);
 
-// State to hold favorite matches
-const [favoriteMatches, setFavoriteMatches] = useState(
-  JSON.parse(localStorage.getItem('favorites')) || []
-);
+  console.log(allMatchesData);
+  const getUpcomingMatches = (allMatches) => {
+    // Assuming that allMatches is an object with tournament names as keys
+    // and arrays of match objects as values
+    const upcomingMatches = {};
+    Object.keys(allMatches).forEach((tournament) => {
+      upcomingMatches[tournament] = allMatches[tournament].filter(
+        (match) => match.status.type === 'notstarted'
+      );
+    });
+    return upcomingMatches;
+  };
 
-// Add match to favorites
-const addToFavorites = (match) => {
-  const newFavorites = [...favoriteMatches, match];
-  setFavoriteMatches(newFavorites);
-  localStorage.setItem('favorites', JSON.stringify(newFavorites));
-};
-
-// Remove match from favorites
-const removeFromFavorites = (matchId) => {
-  const newFavorites = favoriteMatches.filter((m) => m.id !== matchId);
-  setFavoriteMatches(newFavorites);
-  localStorage.setItem('favorites', JSON.stringify(newFavorites));
-};
+  const bettingViewData = getUpcomingMatches(allMatchesData);
 
 const isMatchFavorite = (matchId) => {
   return favorites.some((m) => m.id === matchId);
 };
 
-  
+  console.log(liveMatches);
+  console.log(allMatchesData)
   return (
     <>
       <div className="slider-margin-top">
@@ -252,7 +250,7 @@ const isMatchFavorite = (matchId) => {
                       matches={tournamentMatches}
                       img={getTurnamentImgURL(tournament.name)}
                       addToFavorites={addFavorite}
-                      removeFromFavorites={removeFavorite}
+                      removeFromFavorites={removeFavoriteid}
                       isFavorite={(matchId) => isMatchFavorite(matchId)}
                     />
                   </div>

@@ -7,9 +7,11 @@ import { FavoritesProvider } from "./componenets/FavoritesContext";
 
 
 
+
 export default function App() {
   return (
     <>
+     
       <FavoritesProvider>
       <BrowserRouter>
         <Routes>
@@ -18,6 +20,7 @@ export default function App() {
         </Routes>
         </BrowserRouter>
         </FavoritesProvider>
+  
     </>
   );
 }
