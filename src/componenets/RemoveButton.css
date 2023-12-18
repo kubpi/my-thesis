@@ -1,0 +1,27 @@
+.remove-button {
+    background-color: #ff4d4d; /* Red color for deletion */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.3s ease;
+  }
+  
+  .remove-button:hover {
+    background-color: #ff3333; /* Slightly darker red on hover */
+  }
+  
+  .remove-button:focus {
+    outline: none;
+  }
+  
+  .remove-button svg {
+    font-size: 20px; /* Icon size */
+  }
+  

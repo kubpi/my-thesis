@@ -57,3 +57,11 @@
 }
 
 /* Reszta stylów... */
+.buttons-container {
+  display: flex;
+  gap: 10px; /* Adjust the gap to your preference */
+  padding: 10px;
+}
+.searchBar-container {
+ margin-top: 15px;
+}

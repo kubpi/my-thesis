@@ -1,5 +1,5 @@
 import { CardBoxForMatches } from "./CardBoxForMatches";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { DateSlider } from "./DateSlider";
 import {
   getTurnamentImgURL,
@@ -7,6 +7,7 @@ import {
   divideMatchesToLeagues,tournaments,tournamentIds
 } from "../Services/apiService";
 import "./Matches.css";
+import { FavoritesContext } from "./FavoritesContext";
 
 
 const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr, pushOrUnshift) {
@@ -64,6 +65,8 @@ const getDaysWithoutMatches = function (allMatchesDates) {
 }
 
 export function MatchesSection() {
+  const { addFavorite, removeFavorite, favorites } = useContext(FavoritesContext);
+
   const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
   const [allMatchesData, setAllMatchesData] = useState({}); // przechowuje wszystkie mecze
   const [matchesData, setMatchesData] = useState({});
@@ -216,9 +219,8 @@ const removeFromFavorites = (matchId) => {
   localStorage.setItem('favorites', JSON.stringify(newFavorites));
 };
 
-// Check if match is in favorites
 const isMatchFavorite = (matchId) => {
-  return favoriteMatches.some((m) => m.id === matchId);
+  return favorites.some((m) => m.id === matchId);
 };
 
   
@@ -249,8 +251,8 @@ const isMatchFavorite = (matchId) => {
                     <CardBoxForMatches
                       matches={tournamentMatches}
                       img={getTurnamentImgURL(tournament.name)}
-                      addToFavorites={addToFavorites}
-                      removeFromFavorites={removeFromFavorites}
+                      addToFavorites={addFavorite}
+                      removeFromFavorites={removeFavorite}
                       isFavorite={(matchId) => isMatchFavorite(matchId)}
                     />
                   </div>

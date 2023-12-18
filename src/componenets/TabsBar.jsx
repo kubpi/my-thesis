@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './TabsBar.css';
-import MatchesTable2 from './MatchesTable2';
+
 import SearchBar from './SearchBar';
 import MatchesTable3 from './MatchesTable3';
+import FilterButton from './FilterButton';
+import FavoriteMatches from './FavoriteMatches';
+import RemoveButton from './RemoveButton';
+import { FavoritesContext } from './FavoritesContext';
 
 function TabsBar() {
   const [activeTab, setActiveTab] = useState('Ulubione');
-
+  const { favorites, removeFavorite } = useContext(FavoritesContext);
   return (
     <>
       <div className="container">
@@ -17,7 +21,7 @@ function TabsBar() {
           className={`tab ${activeTab === 'Ulubione' ? 'active' : ''}`}
           onClick={() => setActiveTab('Ulubione')}
         >
-          Ulubione <span className="tab-count">1500</span>
+          Ulubione <span className="tab-count">{favorites.length}</span>
           <div className={`progress-bar ${activeTab === 'Ulubione' ? '' : 'deactivated'}`}></div>
         </div>
         <div 
@@ -30,10 +34,17 @@ function TabsBar() {
         
             </div>
          
-              <div className="row tab-content">
-                  <SearchBar></SearchBar>
-        {activeTab === 'Ulubione' && <MatchesTable3 />}
-        {activeTab === 'Obstawianie' && <MatchesTable2 />}
+          <div className="row tab-content r">
+          <div className="col-sm searchBar-container ">
+            <SearchBar></SearchBar>
+            </div>
+            <div className="col-sm buttons-container">
+              <FilterButton></FilterButton>
+              <RemoveButton></RemoveButton>
+            </div>
+          
+        {activeTab === 'Ulubione' && <FavoriteMatches />}
+     
         {/* Możesz tu dodać inne komponenty dla różnych zakładek, jeśli są potrzebne */}
               </div>
         </div>

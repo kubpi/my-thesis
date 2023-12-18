@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import './CustomTable3.css';
 
-export default function MatchesTable3() {
+export default function MatchesTable3(props) {
+  const { matches } = props;
+  console.log(matches)
   const users = [
     {
       id: 1,
@@ -54,6 +56,7 @@ export default function MatchesTable3() {
       </div>
       <div className="users-table-body">
         {users.map((user, index) => (
+
           <div className="table-row " key={user.id}>
             <div className="row-item select-column">
               <input

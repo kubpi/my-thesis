@@ -15,9 +15,10 @@
   }
   
   .users-table-header {
-  /* font-weight: bold; */
+  font-weight: bold; 
     color: #333; /* Dark text for headers */
-    background-color: rgba(47, 128, 237, 0.10);
+    /* background-color: rgba(47, 128, 237, 0.10); */
+    background-color: #ddde99;
     border-radius: 10px;
   }
   
