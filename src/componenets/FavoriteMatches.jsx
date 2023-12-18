@@ -101,13 +101,13 @@ export function FavoriteMatches() {
                       onChange={() => handleCheckboxChange(user.id)}
                     />
                   </div>
-                  <div className="row-item"><img src={getTurnamentImgURLbyId(user.tournament.uniqueTournament.id)} className="team-logo" alt={user.homeTeam.name}></img>{user.tournament.name}</div>
+                  <div className="row-item"><img src={getTurnamentImgURLbyId(user.tournament.uniqueTournament.id)} className="team-logo2" alt={user.homeTeam.name}></img>{user.tournament.name}</div>
                   <div className="row-item">
                     <div>
-                      <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo" alt={user.homeTeam.name}></img>
+                      <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo2" alt={user.homeTeam.name}></img>
                       {user.homeTeam.name}
                     </div>
-                    <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo" alt={user.awayTeam.name}></img>
+                    <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo2" alt={user.awayTeam.name}></img>
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">

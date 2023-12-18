@@ -2,25 +2,49 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import './BettingView.css';
-import { useMatchesData } from './MatchesDataProvider';
-import { ReturnTeamImage, getTurnamentImgURL } from '../Services/apiService';
 
-const BettingView = ({ isOpen, onClose, onAddTab }) => {
+import { useMatchesData } from './MatchesDataProvider';
+import { ReturnTeamImage, getTurnamentImgURL, getTurnamentImgURLbyId } from '../Services/apiService';
+
+const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onAddTab }) => {
     const [tabName, setTabName] = React.useState('');
     const { allMatchesData } = useMatchesData();
 
-    if (!isOpen) return null;
+    
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (tabName.trim()) {
-            onAddTab(tabName.trim());
+    // Function to handle the checkbox change
+    const handleCheckboxChange = (matchId) => {
+        setSelectedMatches(prevSelectedMatches => {
+            if (prevSelectedMatches.includes(matchId)) {
+                // If the match is already selected, remove it from the array
+                return prevSelectedMatches.filter(id => id !== matchId);
+            } else {
+                // If the match is not selected, add it to the array
+                return [...prevSelectedMatches, matchId];
+            }
+        });
+    };
+
+    // Function to handle the Save button click
+    const handleSave = () => {
+        if (tabName.trim() && selectedMatches.length > 0) {
+            // Call the onAddTab function with the new tab name and the selected matches
+            onAddTab(tabName.trim(), selectedMatches);
+            // Reset the state
             setTabName('');
-            onClose();
+            setSelectedMatches([]);
+            onClose(); // Close the modal
         } else {
-            alert("Tab name cannot be empty.");
+            alert('Please enter a tab name and select at least one match.');
         }
     };
+
+
+
+
+
+    if (!isOpen) return null;
+
 
     const convertDate = (timestamp) => {
         let date = new Date(timestamp * 1000);
@@ -48,15 +72,15 @@ const BettingView = ({ isOpen, onClose, onAddTab }) => {
     return (
         <div className="modal-backdrop">
             <div className="modal-content">
-                <h2>Betting View</h2>
+                <h2>Wybierz mecze do obstawiania</h2>
                 <input
-                    type="text"
+                    className='textView'
                     placeholder="Tab name"
                     value={tabName}
                     onChange={(e) => setTabName(e.target.value)}
                 />
-                <button onClick={handleSubmit}>Add</button>
-                <button onClick={onClose}>Cancel</button>
+               
+
                 <button className="close-button" onClick={onClose}>
                     <FontAwesomeIcon icon={faTimes} />
                 </button>
@@ -64,11 +88,13 @@ const BettingView = ({ isOpen, onClose, onAddTab }) => {
                 <div className="users-table">
                     <div className="users-table-header">
                         <div className="header-item select-column">
-                            <input type="checkbox" />
+                            <input
+                                type="checkbox" 
+
+                            />
                         </div>
                         <div className="header-item">Liga</div>
-                        <div className="header-item">Gospodarze <div>Goście</div></div>
-                        <div className="header-item">Wynik</div>
+                        <div className="header-item">Gospodarze <div>Goście</div></div>                  
                         <div className="header-item">Data</div>
                         <div className="header-item">Status</div>
                     </div>
@@ -77,24 +103,24 @@ const BettingView = ({ isOpen, onClose, onAddTab }) => {
                             return bettingViewData[tournamentName].map((user) => (
                                 <div className="table-row" key={user.id}>
                                     <div className="row-item select-column">
-                                        <input type="checkbox" />
+                                    <input
+                                        type="checkbox"
+                            checked={selectedMatches.includes(user)}
+                                            onChange={() => handleCheckboxChange(user)}
+                                        ></input>
                                     </div>
                                     <div className="row-item">
-                                        <img src={getTurnamentImgURL(user.tournament.uniqueTournament.id)} className="team-logo" alt={user.tournament.name} />
+                                        <img src={getTurnamentImgURLbyId(user.tournament.uniqueTournament.id)} className="team-logo2" alt={user.tournament.name} />
                                         {user.tournament.name}
                                     </div>
                                     <div className="row-item">
                                         <div>
-                                            <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo" alt={user.homeTeam.name} />
+                                            <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo2" alt={user.homeTeam.name} />
                                             {user.homeTeam.name}
                                         </div>
-                                        <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo" alt={user.awayTeam.name} />
+                                        <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo2" alt={user.awayTeam.name} />
                                         {user.awayTeam.name}
-                                    </div>
-                                    <div className="row-item">
-                                        <div>{user.homeScore.display}</div>
-                                        {user.awayScore.display}
-                                    </div>
+                                    </div>                                   
                                     <div className="row-item">
                                         {convertDate(user.startTimestamp)}
                                     </div>
@@ -104,6 +130,7 @@ const BettingView = ({ isOpen, onClose, onAddTab }) => {
                         })}
                     </div>
                 </div>
+                <button onClick={handleSave}>Zapisz</button>  
             </div>
             
         </div>

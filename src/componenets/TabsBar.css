@@ -1,4 +1,5 @@
 .tabs-container {
+  margin-top: 40px;
   background-color: #f2f2f2; /* Szary kolor tła */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lekkie cieniowanie dla głębi */
@@ -66,3 +67,64 @@
  margin-top: 15px;
 }
 
+.tabs-container {
+  display: flex;
+  align-items: center;
+  margin-top: 40px;
+  background-color: #f2f2f2; /* Grey background color */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  overflow: hidden; /* Prevents children from overflowing rounded corners */
+  padding: 10px; /* Added padding */
+}
+
+.tabs-bar {
+  display: flex;
+  flex: 1; /* Allows tabs bar to grow and fill space */
+  align-items: center; /* Centers items vertically */
+  background: #ffffff;
+  padding-right: 10px; /* Adjusted padding for spacing */
+}
+
+/* Update your .tab styles if necessary */
+.tab {
+  margin-right: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Rest of your .tab styles */
+
+/* Style for the add tab button */
+.add-tab-button {
+  margin-left: auto; /* Pushes the button to the end of the container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Adjust width as necessary */
+  height: 40px; /* Adjust height as necessary */
+  background-color: #466551;
+  color: white;
+  border-radius: 50%;
+  font-size: 20px; /* Adjust font size as necessary */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow to the button */
+}
+
+.add-tab-button:hover {
+  background-color: #0056b3; /* Color change on hover */
+}
+
+/* Style adjustments for the search bar container */
+.searchBar-container {
+  margin-top: 0; /* Removes additional top margin */
+}
+
+/* Responsive table container */
+.users-table {
+  overflow-x: auto; /* Allows horizontal scrolling on smaller screens */
+}
+
+/* Rest of your styles */

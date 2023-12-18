@@ -67,13 +67,7 @@
   padding: 10px;
 }
 
-/* Add this to your CSS */
-.team-logo {
-  height: 30px; /* or any size that fits well in your table */
-  width: auto; /* maintains the aspect ratio */
-  object-fit: contain; /* ensures the image is scaled correctly */
-  margin-right: 8px; /* optional: adds some space between the image and text */
-}
+
 
 /* Update your .row-item to handle the flex layout with images */
 
@@ -88,3 +82,28 @@
 }
 
 /* ... rest of your styles ... */
+
+/* Kontener dla wyszukiwarki i przycisków */
+.search-and-buttons-container {
+  display: flex;
+  align-items: center; /* Wyrównanie elementów pionowo */
+  justify-content: space-between; /* Rozłożenie elementów na całej dostępnej szerokości */
+}
+
+/* Styl dla SearchBar */
+.search-bar {
+  flex-grow: 1; /* Pozwala wyszukiwarce rozciągnąć się, aby zająć dostępną przestrzeń */
+}
+
+/* Kontener dla przycisków */
+.buttons-container {
+  display: flex;
+  align-items: center; /* To powinno już być ustawione, ale warto upewnić się */
+}
+
+/* Przyciski */
+.remove-button, .filter-button {
+  /* Twoje istniejące style */
+  height: 38px; /* Przykładowa wysokość, dostosuj do wysokości SearchBar */
+  margin-left: 8px; /* Dostosuj według potrzeb */
+}
