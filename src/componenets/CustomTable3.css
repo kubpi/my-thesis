@@ -60,3 +60,9 @@
   margin-right: auto;
   display: block;
 }
+
+.buttons-container {
+  display: flex;
+  gap: 10px; /* Adjust the gap to your preference */
+  padding: 10px;
+}

@@ -17,8 +17,8 @@ export const FavoritesProvider = ({ children }) => {
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
-  const removeFavorite = (matchId) => {
-    const updatedFavorites = favorites.filter((m) => m.id !== matchId);
+  const removeFavorite = (matchIds) => {
+    const updatedFavorites = favorites.filter((match) => !matchIds.includes(match.id));
     setFavorites(updatedFavorites);
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };

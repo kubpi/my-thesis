@@ -11,6 +11,7 @@ import { FavoritesContext } from './FavoritesContext';
 function TabsBar() {
   const [activeTab, setActiveTab] = useState('Ulubione');
   const { favorites, removeFavorite } = useContext(FavoritesContext);
+  
   return (
     <>
       <div className="container">
@@ -36,11 +37,11 @@ function TabsBar() {
          
           <div className="row tab-content r">
           <div className="col-sm searchBar-container ">
-            <SearchBar></SearchBar>
+           
             </div>
             <div className="col-sm buttons-container">
-              <FilterButton></FilterButton>
-              <RemoveButton></RemoveButton>
+             
+              
             </div>
           
         {activeTab === 'Ulubione' && <FavoriteMatches />}
