@@ -90,6 +90,15 @@ export const getTurnamentImgURL = function (turnamentName) {
   return `${SOFASCORE_URL}unique-tournament/${turnamentObj.id}/image/light`;
 };
 
+export const getTurnamentImgURLbyId = function (id) {
+
+  return `${SOFASCORE_URL}unique-tournament/${id}/image/light`;
+};
+export function ReturnTeamImage(teamId) {
+  const baseUrl = "https://api.sofascore.app/api/v1/team";
+  const url = `${baseUrl}/${teamId}/image`;
+  return url;
+}
 export const fetchAllMatchesLive = async () => {
   const response = await fetch(`${BASE_URL}sport/football/events/live`);
   if (response.status === 404) {

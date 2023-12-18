@@ -20,8 +20,8 @@ export default function Home() {
     return (
       <>
             <Navbar></Navbar>
-        <UserProfile></UserProfile> 
-        <Podium rankings={rankings}></Podium>
+        {/* <UserProfile></UserProfile>  */}
+        {/* <Podium rankings={rankings}></Podium> */}
         <TabsBar></TabsBar>
         
     

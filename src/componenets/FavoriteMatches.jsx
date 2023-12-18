@@ -4,12 +4,31 @@ import { FavoritesContext } from "./FavoritesContext";
 import RemoveButton from "./RemoveButton";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
-import './CustomTable3.css';
+import "./CustomTable3.css";
 
-
+import {
+    ReturnTeamImage, getTurnamentImgURLbyId
+    } from "../Services/apiService";
 export function FavoriteMatches() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredFavorites, setFilteredFavorites] = useState(favorites);
+  useEffect(() => {
+    // Filter matches whenever the searchQuery changes or favorites change
+    const lowercasedQuery = searchQuery.toLowerCase();
+    const filtered = favorites.filter((match) => {
+      return (
+        match.tournament.name.toLowerCase().includes(lowercasedQuery) ||
+        match.homeTeam.name.toLowerCase().includes(lowercasedQuery) ||
+        match.awayTeam.name.toLowerCase().includes(lowercasedQuery) ||
+        match.status.description.toLowerCase().includes(lowercasedQuery) ||
+        // Assuming startTimestamp is in a human-readable format or convert it accordingly
+        match.startTimestamp.toString().toLowerCase().includes(lowercasedQuery)
+      );
+    });
+    setFilteredFavorites(filtered);
+  }, [searchQuery, favorites]);
 
   const handleCheckboxChange = (matchId) => {
     setCheckedIds((prevCheckedIds) =>
@@ -18,6 +37,7 @@ export function FavoriteMatches() {
         : [...prevCheckedIds, matchId]
     );
   };
+
   const handleMasterCheckboxChange = (e) => {
     if (e.target.checked) {
       setCheckedIds(favorites.map((match) => match.id)); // Add all match IDs to checkedIds
@@ -26,10 +46,21 @@ export function FavoriteMatches() {
     }
   };
 
+  const convertDate = (timestamp) => {
+    let date = new Date(timestamp * 1000);
+    let day = date.getDate().toString().padStart(2, "0");
+    let month = (date.getMonth() + 1).toString().padStart(2, "0"); // January is 0!
+    let year = date.getFullYear();
+    let hours = date.getHours().toString().padStart(2, "0");
+    let minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  };
+
   const handleRemoveClick = () => {
     removeFavorite(checkedIds);
     setCheckedIds([]);
   };
+
   return (
     <div className="favorite-matches-container">
       {favorites.length === 0 ? (
@@ -37,12 +68,12 @@ export function FavoriteMatches() {
       ) : (
         <>
           <div className="users-table">
-                          <SearchBar></SearchBar>
-                          <div className="buttons-container">
-                          <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-            <FilterButton></FilterButton>
-                          </div>
-           
+            <SearchBar onSearch={setSearchQuery}></SearchBar>
+            <div className="buttons-container">
+              <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
+              <FilterButton></FilterButton>
+            </div>
+
             <div className="users-table-header">
               <div className="header-item select-column">
                 <input
@@ -61,7 +92,7 @@ export function FavoriteMatches() {
               <div className="header-item">Status</div>
             </div>
             <div className="users-table-body">
-              {favorites.map((user, index) => (
+              {filteredFavorites.map((user, index) => (
                 <div className="table-row " key={user.id}>
                   <div className="row-item select-column">
                     <input
@@ -70,16 +101,22 @@ export function FavoriteMatches() {
                       onChange={() => handleCheckboxChange(user.id)}
                     />
                   </div>
-                  <div className="row-item">{user.tournament.name}</div>
+                  <div className="row-item"><img src={getTurnamentImgURLbyId(user.tournament.uniqueTournament.id)} className="team-logo" alt={user.homeTeam.name}></img>{user.tournament.name}</div>
                   <div className="row-item">
-                    <div>{user.homeTeam.name}</div>
+                    <div>
+                      <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo" alt={user.homeTeam.name}></img>
+                      {user.homeTeam.name}
+                    </div>
+                    <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo" alt={user.awayTeam.name}></img>
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">
                     <div>{user.homeScore.display}</div>
                     {user.awayScore.display}
                   </div>
-                  <div className="row-item">{user.startTimestamp}</div>
+                  <div className="row-item">
+                    {convertDate(user.startTimestamp)}
+                  </div>
                   <div className="row-item">{user.status.description}</div>
                 </div>
               ))}

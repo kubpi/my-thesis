@@ -66,3 +66,25 @@
   gap: 10px; /* Adjust the gap to your preference */
   padding: 10px;
 }
+
+/* Add this to your CSS */
+.team-logo {
+  height: 30px; /* or any size that fits well in your table */
+  width: auto; /* maintains the aspect ratio */
+  object-fit: contain; /* ensures the image is scaled correctly */
+  margin-right: 8px; /* optional: adds some space between the image and text */
+}
+
+/* Update your .row-item to handle the flex layout with images */
+
+
+/* Update your .users-table-header and .table-row to better handle padding and alignment */
+.users-table-header, .table-row {
+  display: flex;
+  align-items: center;
+  background-color: #F5F5F7; /* Light grey background */
+  padding: 10px; /* Reduced padding */
+  border-bottom: 2px solid #E0E0E0; /* Light border for separation */
+}
+
+/* ... rest of your styles ... */

@@ -1,6 +1,10 @@
 import "./Matches.css";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+
+import {
+ReturnTeamImage
+} from "../Services/apiService";
 const convertDate = (timestamp) => {
   let date = new Date(timestamp * 1000); 
   let hours = date.getHours().toString().padStart(2, "0"); // Używaj getHours zamiast getUTCHours
@@ -9,11 +13,7 @@ const convertDate = (timestamp) => {
 };
 
 
-function ReturnTeamImage(teamId) {
-  const baseUrl = "https://api.sofascore.app/api/v1/team";
-  const url = `${baseUrl}/${teamId}/image`;
-  return url;
-}
+
 const calculateMatchTimeInMinutes = (startTimestamp, statusTime, time, matchStatus, changes) => {
   // const currentTime = Date.now() / 1000; // Aktualny czas w sekundach
   const currentTime = Date.now() / 1000; // Aktualny czas w sekundach

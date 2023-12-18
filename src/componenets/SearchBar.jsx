@@ -2,36 +2,35 @@ import React, { useState } from 'react';
 import './SearchBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
-const SearchBar = () => {
+// SearchBar.js
+
+const SearchBar = ({ onSearch }) => {
     const [searchQuery, setSearchQuery] = useState('');
-
+  
     const handleSearchChange = (event) => {
-        setSearchQuery(event.target.innerText);
+      setSearchQuery(event.target.value);
+      onSearch(event.target.value); // Call the onSearch callback passed by the parent
     };
-
-    const handleSearch = () => {
-        console.log('Search:', searchQuery);
-        // Here you can implement the function that will handle the search
+  
+    const clearSearch = () => {
+      setSearchQuery('');
+      onSearch(''); // Reset search
     };
-
+  
     return (
-        <div className="search-bar">
-           <div className="search-icon">
-                <FontAwesomeIcon icon={faSearch} />
-            </div>
-            <div
-                className="search-input"
-                contentEditable
-                onInput={handleSearchChange}
-                data-placeholder="Search..."
-                suppressContentEditableWarning={true}
-            >
-            </div>
-            <div className="search-clear">
-                <FontAwesomeIcon icon={faTimes} />
-            </div>
-        </div>
+      <div className="search-bar">
+        <FontAwesomeIcon icon={faSearch} className="search-icon" />
+        <input
+         
+          className="search-input"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search..."
+        />
+        <FontAwesomeIcon icon={faTimes} className="search-clear" onClick={clearSearch} />
+      </div>
     );
-};
-
-export default SearchBar;
+  };
+  
+  export default SearchBar;
+  
