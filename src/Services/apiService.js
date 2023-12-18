@@ -118,3 +118,75 @@ export const divideMatchesToLeagues = (lastOrNextMatches) =>
     const matches = await fetchMatchesPage(tournament, lastOrNextMatches);
     return { ...tournament, matches };
   });
+
+export  const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr, pushOrUnshift) {
+    Object.keys(arr).forEach((key) => {
+      if (tempAllMatchesData[key]) {
+        // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
+        arr[key].forEach((liveMatch) => {
+          if (
+            !tempAllMatchesData[key].some(
+              (match) => match.id === liveMatch.id
+            )
+          ) {
+            if(pushOrUnshift === "push")
+              tempAllMatchesData[key].push(liveMatch);
+            else
+            tempAllMatchesData[key].unshift(liveMatch);
+          }
+        });
+      } else {
+        tempAllMatchesData[key] = arr[key];
+      }
+    });
+    return tempAllMatchesData;
+  }
+  
+  export  const getAllMatchesDays = function (obj,arrayToSaveDates) {
+    obj.forEach((match) => {
+      const matchDate = new Date(match.startTimestamp * 1000);
+      const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+        matchDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(
+        2,
+        "0"
+      )}`;
+      arrayToSaveDates.push(apiFormatMatchDate);
+    });
+    console.log(arrayToSaveDates)
+    return arrayToSaveDates
+  }
+  
+  export  const getDaysWithoutMatches = function (allMatchesDates) {
+    const today = new Date();
+    const uniqueMatchDates = [...new Set(allMatchesDates)];
+    const daysWithoutMatches = Array.from({ length: 218+120 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - 30 - 90 + index);
+      const apiFormatDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      return uniqueMatchDates.includes(apiFormatDate)
+        ? null
+        : apiFormatDate;
+    }).filter(Boolean);
+    return daysWithoutMatches
+  }
+  
+  export const filterMatchesByDate = (allData, date) => {
+    const newMatchesData = {};
+  
+    Object.keys(allData).forEach((tournamentName) => {
+      newMatchesData[tournamentName] = allData[tournamentName].filter(
+        (match) => {
+          const matchDate = new Date(match.startTimestamp * 1000);
+          const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+            matchDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+          return apiFormatMatchDate === date;
+        }
+      );
+    });
+  
+    return newMatchesData;
+  };

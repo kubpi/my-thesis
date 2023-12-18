@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import Account from "./pages/Account";
 import { FavoritesProvider } from "./componenets/FavoritesContext";
+import { MatchesDataProvider } from "./componenets/MatchesDataProvider";
 
 
 
@@ -11,7 +12,7 @@ import { FavoritesProvider } from "./componenets/FavoritesContext";
 export default function App() {
   return (
     <>
-     
+      <MatchesDataProvider>
       <FavoritesProvider>
       <BrowserRouter>
         <Routes>
@@ -20,7 +21,7 @@ export default function App() {
         </Routes>
         </BrowserRouter>
         </FavoritesProvider>
-  
+        </MatchesDataProvider>
     </>
   );
 }

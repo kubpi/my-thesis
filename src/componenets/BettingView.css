@@ -81,3 +81,18 @@
     border-radius: 4px;
     font-size: 16px;
   }
+
+  .users-table-body {
+    max-height: 400px; /* Przykładowa maksymalna wysokość */
+    overflow-y: auto; /* Włącza pionowe przewijanie, gdy zawartość przekroczy max-height */
+}
+
+/* Styl paska przewijania (opcjonalnie) */
+.users-table-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.users-table-body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    border-radius: 10px;
+}
