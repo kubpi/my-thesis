@@ -39,7 +39,11 @@ export default function App() {
       </header>
 
       <section>
-        {user ? <> <MatchesDataProvider>
+        {user ? <><Matches />  <AddMatch/></> : <SignIn />}
+      </section>
+
+    </div>
+      {/* <MatchesDataProvider>
       <FavoritesProvider>
       <BrowserRouter>
         <Routes>
@@ -48,11 +52,7 @@ export default function App() {
         </Routes>
         </BrowserRouter>
         </FavoritesProvider>
-        </MatchesDataProvider>  </> : <SignIn />}
-      </section>
-
-    </div>
-      
+        </MatchesDataProvider> */}
     </>
   );
 }
@@ -85,7 +85,77 @@ function SignOut() {
   );
 }
 
+import React, { useEffect, useState } from 'react';
+import {  onSnapshot } from 'firebase/firestore';
 
+function Matches() {
+  const [matches, setMatches] = useState([]);
+  const auth = getAuth();
+  const firestore = getFirestore();
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      return;
+    }
+
+    const q = query(collection(firestore, 'matches'), where('userId', '==', auth.currentUser.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const matchList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMatches(matchList);
+    }, (error) => {
+      console.error(error);
+    });
+
+    return () => unsubscribe();
+  }, [auth.currentUser]);
+
+  if (!auth.currentUser) {
+    return null;
+  }
+
+  return (
+    <div>
+      <h2>Matches</h2>
+      {matches.map((match) => (
+        <div key={match.id}>
+          <p>Team: {match.team} - Score: {match.teamScore}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
+function AddMatch() {
+  const auth = getAuth();
+  const firestore = getFirestore();
+  const matchesRef = collection(firestore, 'matches');
+
+  const addNewMatch = async () => {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(matchesRef, {
+        userId: currentUser.uid, // Include the user ID
+        team: "Barrcelona",
+        teamScore: "1",
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
+  return (
+    <button onClick={addNewMatch}>Add New Match</button>
+  );
+}
 
 
 
