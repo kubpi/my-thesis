@@ -13,7 +13,7 @@ import SearchBar from "./SearchBar";
 import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
-const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
+const BettingMatches = ({ selectedMatches, onBetClick }) => {
   console.log(selectedMatches);
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
@@ -24,28 +24,12 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
     let minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
-
-  const handleSaveBet = () => {
-    // Call the onSaveBet function passed from TabsBar
-    onSaveBet();
+  const getDaysUntilMatch = (timestamp) => {
+    const matchDate = new Date(timestamp * 1000);
+    const today = new Date();
+    const timeDiff = matchDate - today;
+    return Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
   };
-const getTimeUntilMatch = (timestamp) => {
-  const matchDate = new Date(timestamp * 1000);
-  const today = new Date();
-  const timeDiff = matchDate - today;
-
-  if (matchDate.toDateString() === today.toDateString()) {
-    // Match is on the same day
-    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}h ${minutes}m do rozpoczęcia`;
-  } else {
-    // Match is on a different day
-    const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)-1);
-    return `${days} dni do meczu`;
-  }
-};
-
   return (
     <div className="favorite-matches-container">
       {selectedMatches.length === 0 ? (
@@ -106,34 +90,17 @@ const getTimeUntilMatch = (timestamp) => {
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {user.betPlaced &&
-                    !user.betHomeScore &&
-                    !user.betAwayScore ? (
-                      <>
-                        <div>Nieobstawiono</div>
-                      </>
+                    {!user.betHomeScore && !user.betAwayScore ? (
+                      <button
+                        className="bet-match-button1"
+                        onClick={() => onBetClick(user)}
+                      >
+                        Obstaw mecz
+                      </button>
                     ) : (
                       <>
-                        {user.betHomeScore !== null &&
-                        user.betAwayScore !== null ? (
-                          <>
-                            <div>{user.betHomeScore}</div>
-                            <div>{user.betAwayScore}</div>
-                            {!user.betPlaced ? (
-                              <button onClick={() => onBetClick(user)}>
-                                Edytuj
-                              </button>
-                            ) : (
-                              <div></div>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <button onClick={() => onBetClick(user)}>
-                              Obstaw mecz
-                            </button>
-                          </>
-                        )}
+                        <div>{user.betHomeScore}</div>
+                        {user.betAwayScore}
                       </>
                     )}
                   </div>
@@ -145,9 +112,9 @@ const getTimeUntilMatch = (timestamp) => {
                         {user.awayScore.display}
                       </>
                     ) : (
-                      <div>{getTimeUntilMatch(
+                      <div>{`${getDaysUntilMatch(
                         user.startTimestamp
-                      )}</div>
+                      )} dni do meczu`}</div>
                     )}
                   </div>
                   <div className="row-item">
@@ -156,11 +123,6 @@ const getTimeUntilMatch = (timestamp) => {
                   <div className="row-item">{user.status.description}</div>
                 </div>
               ))}
-            </div>
-            <div className="save-all-button-container">
-              <button onClick={handleSaveBet} className="save-all-button">
-                Zapisz wszystkie
-              </button>
             </div>
           </div>
         </>

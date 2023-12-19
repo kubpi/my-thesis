@@ -26,23 +26,7 @@ function TabsBar() {
     setSelectedMatchForBetting(match);
     setIsMatchInputOpen(true);
   };
-  const handleSaveAllBets = () => {
-    setTabs((prevTabs) =>
-      prevTabs.map((tab) => {
-        if (tab.id === activeTabId) {
-          return {
-            ...tab,
-            matches: tab.matches.map((match) => {
-              // Assume all matches have had bets placed by this point
-              return { ...match, betPlaced: true };
-            }),
-          };
-        }
-        return tab;
-      })
-    );
-  };
-  
+
   const handleAddTabWithMatches = (tabName) => {
     const updatedMatches = selectedMatches.map(match => {
       return {
@@ -66,7 +50,6 @@ function TabsBar() {
   };
   
   const onSubmitScore = (matchId, homeScore, awayScore) => {
-    
     setTabs(prevTabs => {
       return prevTabs.map(tab => {
         if (tab.id === activeTabId) {
@@ -97,33 +80,25 @@ function TabsBar() {
   };
 
   console.log(selectedMatches);
-  // Inside TabsBar component
-const renderActiveTabContent = () => {
-  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+  const renderActiveTabContent = () => {
+    const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
-  if (!activeTab) return null;
+    if (!activeTab) return null;
 
-  switch (activeTab.id) {
-    case 1:
-      return <FavoriteMatches />;
-    default:
-      // Assuming that any tab other than the first tab holds betting matches
-      if (activeTab.matches) {
-        // If the active tab has a 'matches' property, render BettingMatches with those matches
-        return (
-          <BettingMatches
-            selectedMatches={activeTab.matches}
-            onBetClick={handleBetClick}
-            onSaveBet={handleSaveAllBets} // Pass the new onSaveBet handler
-          />
-        );
-      } else {
-        // If there are no matches for this tab, render a default message or component
-        return <div>No matches for this tab.</div>;
-      }
-  }
-};
-
+    switch (activeTab.id) {
+      case 1:
+        return <FavoriteMatches />;
+      default:
+        // Assuming that any tab other than the first tab holds betting matches
+        if (activeTab.matches) {
+          // If the active tab has a 'matches' property, render BettingMatches with those matches
+          return <BettingMatches selectedMatches={activeTab.matches} onBetClick={handleBetClick} />;
+        } else {
+          // If there are no matches for this tab, render a default message or component
+          return <div>No matches for this tab.</div>;
+        }
+    }
+  };
 
   return (
     <>

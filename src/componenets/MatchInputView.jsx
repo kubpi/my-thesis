@@ -5,14 +5,13 @@ import "./MatchInputView.css";
 import { ReturnTeamImage } from "../Services/apiService";
 
 const MatchInputView = ({ isOpen, match, onClose, onSubmitScore }) => {
-  const [homeScore, setHomeScore] = useState(null);
-  const [awayScore, setAwayScore] = useState(null);
+  const [homeScore, setHomeScore] = useState("");
+  const [awayScore, setAwayScore] = useState("");
 
   if (!isOpen || !match) return null;
 
   const handleSubmit = () => {
-      if (onSubmitScore) {
-        
+    if (onSubmitScore) {
       onSubmitScore(match.id, homeScore, awayScore);
     }
     onClose();
@@ -20,12 +19,7 @@ const MatchInputView = ({ isOpen, match, onClose, onSubmitScore }) => {
 
   const renderGoalOptions = () => {
     const options = [];
-      for (let i = 0; i <= 10; i++) {
-          if (i === 0) {
-              options.push(<option>
-                Brak
-              </option>);
-        }
+    for (let i = 0; i <= 10; i++) {
       options.push(
         <option key={i} value={i}>
           {i}
