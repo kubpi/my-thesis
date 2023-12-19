@@ -2,7 +2,12 @@ import { useState } from "react";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
 import "./login.css";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getAuth } from 'firebase/auth';
+
 export function HeroSection() {
+  const auth = getAuth();
+const [user, loading, error] = useAuthState(auth);
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
   function handleRegisterLink() {
@@ -32,7 +37,7 @@ export function HeroSection() {
                 </div>
               </div>
               <div className="row">
-                <button
+                {!user ? <>  <button
                   type="button"
                   onClick={() => setLoginModalIsOpen(true)}
                   className="buttonik"
@@ -45,7 +50,8 @@ export function HeroSection() {
                   className="buttonik2"
                 >
                   zarejestruj się
-                </button>
+                </button> </> : <div> </div>}
+              
               </div>
             </div>
           </div>

@@ -1,11 +1,29 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,sendPasswordResetEmail } from 'firebase/auth';
+
+
 const LoginModal = ({ isOpen, onRequestClose, onRegisterClick, onForgotPasswordClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if (email) { // Check if email state is not empty
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert('Password reset email sent! Check your inbox.');
+        })
+        .catch((error) => {
+          console.error('Error sending password reset email:', error);
+        });
+    } else {
+      alert('Please enter your email address first.');
+    }
+  };
+  
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -73,7 +91,7 @@ const LoginModal = ({ isOpen, onRequestClose, onRegisterClick, onForgotPasswordC
       </form>
       <button onClick={signInWithGoogle}>Sign in with Google</button>
       <div className="login-help-links">
-        <a href="#" onClick={onForgotPasswordClick}>Zapomniałeś(aś) hasła?</a>
+        <a href="#" onClick={handleForgotPassword}>Zapomniałeś(aś) hasła?</a>
         <span> albo </span>
         <a href="#" onClick={onRegisterClick}>Nie posiadasz konta? Zarejestruj się</a>
       </div>

@@ -36,10 +36,7 @@ export default function App() {
   return (
     <>
         <div className="App">
-      <header>
-        <h1>⚛️🔥💬</h1>
-          <SignOut />
-      </header>
+      
 
       <section>
         <MatchesDataProvider>
@@ -60,15 +57,7 @@ export default function App() {
   );
 }
 
-import { signOut } from 'firebase/auth';
 
-function SignOut() {
-  const auth = getAuth();
-
-  return auth.currentUser && (
-    <button onClick={() => signOut(auth)}>Sign Out</button>
-  );
-}
 
 
 

@@ -1,4 +1,13 @@
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getAuth } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
+
+
+
 export function Navbar() {
+  const auth = getAuth();
+  const [user, loading, error] = useAuthState(auth);
+  
   return (
     <>
       <nav className="navbar navbar-expand-sm "data-bs-theme="dark">
@@ -41,6 +50,7 @@ export function Navbar() {
                   Witaj imie
                 </a>
               </li>
+              {user ?  <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
             </ul>
           </div>
         </div>
