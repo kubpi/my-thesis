@@ -1,0 +1,17 @@
+// Add CSS for the button
+.bet-match-button1 {
+  background-color: #28a745; /* Green background */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  /* Adjust the size and other properties as needed */
+}
+
+.bet-match-button1:hover {
+  background-color: #218838; /* Darker green on hover */
+}
