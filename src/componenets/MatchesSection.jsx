@@ -149,6 +149,7 @@ const isMatchFavorite = (matchId) => {
         <DateSlider
           onDateSelect={handleDateSelect}
           disabledDates={daysWithNoMatches}
+          timeBackNumber = {120}
         />
       </div>
       <div className="container">

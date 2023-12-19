@@ -1,7 +1,7 @@
 import "../css/DateSlider.css";
 import { useRef, useState, useEffect, useCallback } from "react";
 
-export function DateSlider({ onDateSelect, disabledDates }) {
+export function DateSlider({ onDateSelect, disabledDates, timeBackNumber }) {
   const sliderRef = useRef(null);
   const [dates, setDates] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -21,7 +21,7 @@ export function DateSlider({ onDateSelect, disabledDates }) {
   useEffect(() => {
     const today = new Date();
     const weekBefore = new Date(today); // Nowa data reprezentująca tydzień przed dzisiaj
-    weekBefore.setDate(today.getDate() - 120); // Odejmujemy 7 dni, aby uzyskać datę sprzed tygodnia
+    weekBefore.setDate(today.getDate() - timeBackNumber); // Odejmujemy 7 dni, aby uzyskać datę sprzed tygodnia
     const currentYear = today.getFullYear();
   
     const numberOfDates = 218 + 120; // Dodajemy 7 dni do istniejącej liczby dni

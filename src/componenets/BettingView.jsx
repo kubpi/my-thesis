@@ -5,12 +5,23 @@ import './BettingView.css';
 
 import { useMatchesData } from './MatchesDataProvider';
 import { ReturnTeamImage, getTurnamentImgURL, getTurnamentImgURLbyId } from '../Services/apiService';
+import { DateSlider } from './DateSlider';
 
 const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onAddTab }) => {
     const [tabName, setTabName] = React.useState('');
     const { allMatchesData } = useMatchesData();
-
-    
+    const { daysWithNoMatches } = useMatchesData()
+    const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const apiFormatDate = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const apiFormatNextDate = `${tomorrow.getFullYear()}-${String(
+    tomorrow.getMonth() + 1
+  ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+    const [selectedDate, setSelectedDate] = React.useState(apiFormatDate);
+    const [selectedNextDate, setSelectedNextDate] = React.useState(apiFormatNextDate);
 
     // Function to handle the checkbox change
     const handleCheckboxChange = (matchId) => {
@@ -43,7 +54,6 @@ const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onA
 
 
 
-    if (!isOpen) return null;
 
 
     const convertDate = (timestamp) => {
@@ -55,20 +65,35 @@ const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onA
         let minutes = date.getMinutes().toString().padStart(2, "0");
         return `${day}.${month}.${year} ${hours}:${minutes}`;
     };
-    const getUpcomingMatches = (allMatches) => {
-        // Assuming that allMatches is an object with tournament names as keys
-        // and arrays of match objects as values
-        const upcomingMatches = {};
+    const getUpcomingMatchesBySelectedDate = (allMatches, selectedDate) => {
+        const formattedSelectedDate = new Date(selectedDate).toISOString().slice(0, 10);
+        const filteredMatches = {};
+    
         Object.keys(allMatches).forEach((tournament) => {
-          upcomingMatches[tournament] = allMatches[tournament].filter(
-            (match) => match.status.type === 'notstarted'
-          );
+            filteredMatches[tournament] = allMatches[tournament].filter(match => {
+                const matchDate = new Date(match.startTimestamp * 1000).toISOString().slice(0, 10);
+                // Adjust the condition based on how your match status is structured
+                const isUpcoming = match.status.type === 'notstarted' || match.status.type === 'upcoming';
+                return matchDate === formattedSelectedDate && isUpcoming;
+            });
         });
-        return upcomingMatches;
+    
+        return filteredMatches;
+    };
+    
+    
+    
+  
+  
+   // Inside the BettingView component
+// Inside the BettingView component
+const filteredBettingViewData = getUpcomingMatchesBySelectedDate(allMatchesData, selectedDate);
+
+
+    const handleDateSelect = (date, nextDate) => {
+        setSelectedDate(date);
+        setSelectedNextDate(nextDate); // Ustawienie wybranej daty
       };
-    
-    const bettingViewData = getUpcomingMatches(allMatchesData);
-    
     return (
         <div className="modal-backdrop">
             <div className="modal-content">
@@ -84,7 +109,11 @@ const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onA
                 <button className="close-button" onClick={onClose}>
                     <FontAwesomeIcon icon={faTimes} />
                 </button>
-
+                <DateSlider
+          onDateSelect={handleDateSelect}
+                    disabledDates={daysWithNoMatches}
+                    timeBackNumber = {0}
+        />
                 <div className="users-table">
                     <div className="users-table-header">
                         <div className="header-item select-column">
@@ -99,8 +128,8 @@ const BettingView = ({ isOpen, onClose, selectedMatches, setSelectedMatches, onA
                         <div className="header-item">Status</div>
                     </div>
                     <div className="users-table-body">
-                        {Object.keys(bettingViewData).map((tournamentName) => {
-                            return bettingViewData[tournamentName].map((user) => (
+                        {Object.keys(filteredBettingViewData).map((tournamentName) => {
+                            return filteredBettingViewData[tournamentName].map((user) => (
                                 <div className="table-row" key={user.id}>
                                     <div className="row-item select-column">
                                     <input

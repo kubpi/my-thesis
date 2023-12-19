@@ -9,7 +9,7 @@ import SearchBar from './SearchBar';
 import RemoveButton from './RemoveButton';
 import FilterButton from './FilterButton';
 
-const BettingMatches = ({ selectedMatches}) => {
+const BettingMatches = ({selectedMatches}) => {
     
    console.log(selectedMatches)
     const convertDate = (timestamp) => {
@@ -22,6 +22,7 @@ const BettingMatches = ({ selectedMatches}) => {
         return `${day}.${month}.${year} ${hours}:${minutes}`;
       };
     return (
+        
         <div className="favorite-matches-container">
           {selectedMatches.length === 0 ? (
             <p>No favorite matches added.</p>
