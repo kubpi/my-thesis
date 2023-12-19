@@ -13,7 +13,7 @@ import SearchBar from "./SearchBar";
 import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
-const BettingMatches = ({ selectedMatches,onBetClick  }) => {
+const BettingMatches = ({ selectedMatches, onBetClick }) => {
   console.log(selectedMatches);
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
@@ -24,8 +24,12 @@ const BettingMatches = ({ selectedMatches,onBetClick  }) => {
     let minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
- 
-
+  const getDaysUntilMatch = (timestamp) => {
+    const matchDate = new Date(timestamp * 1000);
+    const today = new Date();
+    const timeDiff = matchDate - today;
+    return Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+  };
   return (
     <div className="favorite-matches-container">
       {selectedMatches.length === 0 ? (
@@ -86,9 +90,13 @@ const BettingMatches = ({ selectedMatches,onBetClick  }) => {
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {typeof user.betHomeScore === "undefined" &&
-                    typeof user.betAwayScore === "undefined" ? (
-                                  <button className="bet-match-button1" onClick={() => onBetClick(user)}>Obstaw mecz</button>
+                    {!user.betHomeScore && !user.betAwayScore ? (
+                      <button
+                        className="bet-match-button1"
+                        onClick={() => onBetClick(user)}
+                      >
+                        Obstaw mecz
+                      </button>
                     ) : (
                       <>
                         <div>{user.betHomeScore}</div>
@@ -98,8 +106,16 @@ const BettingMatches = ({ selectedMatches,onBetClick  }) => {
                   </div>
 
                   <div className="row-item">
-                    <div>{user.homeScore.display}</div>
-                    {user.awayScore.display}
+                    {user.homeScore.display && user.awayScore.display ? (
+                      <>
+                        <div>{user.homeScore.display}</div>
+                        {user.awayScore.display}
+                      </>
+                    ) : (
+                      <div>{`${getDaysUntilMatch(
+                        user.startTimestamp
+                      )} dni do meczu`}</div>
+                    )}
                   </div>
                   <div className="row-item">
                     {convertDate(user.startTimestamp)}
