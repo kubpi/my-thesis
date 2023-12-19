@@ -6,6 +6,9 @@ import Account from "./pages/Account";
 import { FavoritesProvider } from "./componenets/FavoritesContext";
 import { MatchesDataProvider } from "./componenets/MatchesDataProvider";
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { getAuth } from 'firebase/auth';
+
+
 
 
 // Import the functions you need from the SDKs you need
@@ -35,11 +38,11 @@ export default function App() {
         <div className="App">
       <header>
         <h1>⚛️🔥💬</h1>
-        <SignOut />
+          <SignOut />
       </header>
 
       <section>
-        {user ? <> <MatchesDataProvider>
+        <MatchesDataProvider>
       <FavoritesProvider>
       <BrowserRouter>
         <Routes>
@@ -48,7 +51,7 @@ export default function App() {
         </Routes>
         </BrowserRouter>
         </FavoritesProvider>
-        </MatchesDataProvider>  </> : <SignIn />}
+        </MatchesDataProvider>
       </section>
 
     </div>
@@ -56,24 +59,6 @@ export default function App() {
     </>
   );
 }
-
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore, collection, query, where, addDoc } from 'firebase/firestore';
-
-
-function SignIn() {
-  const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider);
-  };
-
-  return (
-    <button onClick={signInWithGoogle}>Sign in with Google</button>
-  );
-}
-
-
 
 import { signOut } from 'firebase/auth';
 

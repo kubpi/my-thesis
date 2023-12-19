@@ -2,7 +2,14 @@ import "./Matches.css";
 import { Teams } from "./Teams";
 import PropTypes from "prop-types";
 import React from "react";
+
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getAuth } from 'firebase/auth';
+
 export function CardBoxForMatches(props) {
+  const auth = getAuth();
+const [user, loading, error] = useAuthState(auth);
+
   const matches = props.matches;
   let img = props.img;
 
@@ -58,7 +65,8 @@ export function CardBoxForMatches(props) {
                       : "Add to favorites"
                   }
                 >
-                  {props.isFavorite(match.id) ? "❤️" : "🤍"}{" "}
+                  {user ?  (props.isFavorite(match.id) ? "❤️" : "🤍") : <div></div>}
+                 
                   {/* Filled heart if favorite, empty heart if not */}
                 </button>
                 <Teams
