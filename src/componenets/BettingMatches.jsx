@@ -29,22 +29,22 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
     // Call the onSaveBet function passed from TabsBar
     onSaveBet();
   };
-const getTimeUntilMatch = (timestamp) => {
-  const matchDate = new Date(timestamp * 1000);
-  const today = new Date();
-  const timeDiff = matchDate - today;
+  const getTimeUntilMatch = (timestamp) => {
+    const matchDate = new Date(timestamp * 1000);
+    const today = new Date();
+    const timeDiff = matchDate - today;
 
-  if (matchDate.toDateString() === today.toDateString()) {
-    // Match is on the same day
-    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}h ${minutes}m do rozpoczęcia`;
-  } else {
-    // Match is on a different day
-    const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)-1);
-    return `${days} dni do meczu`;
-  }
-};
+    if (matchDate.toDateString() === today.toDateString()) {
+      // Match is on the same day
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m do rozpoczęcia`;
+    } else {
+      // Match is on a different day
+      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
+      return `${days} dni do meczu`;
+    }
+  };
 
   return (
     <div className="favorite-matches-container">
@@ -145,9 +145,7 @@ const getTimeUntilMatch = (timestamp) => {
                         {user.awayScore.display}
                       </>
                     ) : (
-                      <div>{getTimeUntilMatch(
-                        user.startTimestamp
-                      )}</div>
+                      <div>{getTimeUntilMatch(user.startTimestamp)}</div>
                     )}
                   </div>
                   <div className="row-item">
