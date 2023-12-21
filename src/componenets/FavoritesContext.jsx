@@ -51,9 +51,20 @@ export const FavoritesProvider = ({ children }) => {
     }
   };
   
+  const removeFavoriteid = async (matchId) => {
+    const user = auth.currentUser;
+    if (user) {
+      const newFavorites = favorites.filter((match) => match.id !== matchId);
+      setFavorites(newFavorites);
+  
+      const docRef = doc(firestore, 'userFavorites', user.uid);
+      await updateDoc(docRef, { matches: newFavorites });
+    }
+  };
+  
 
   return (
-    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite }}>
+    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, removeFavoriteid }}>
       {children}
     </FavoritesContext.Provider>
   );
