@@ -8,15 +8,51 @@ import {
 import "./Matches.css";
 import { FavoritesContext } from "./FavoritesContext";
 import { useMatchesData } from "./MatchesDataProvider";
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+
 
 
 
 export function MatchesSection() {
-  const {  daysWithNoMatches } = useMatchesData()
+
   const { addFavorite, removeFavorite, favorites, removeFavoriteid } = useContext(FavoritesContext);
-  
   const [matchesData, setMatchesData] = useState({});
+  const localData = localStorage.getItem('daysWithNoMatches');
+  useEffect(() => {
+    const firestore = getFirestore();
+    const fetchDaysWithNoMatches = async () => {
+      // First, try to load the data from localStorage
+     
+      if (localData) {
+        // If data is found in localStorage, parse it and use it directly
+        const daysWithNoMatchesData = JSON.parse(localData);
+        console.log('Loaded from localStorage:', daysWithNoMatchesData);
+        // Here you can set state or perform other operations with daysWithNoMatchesData
+      } else {
+        // If not found in localStorage, fetch from Firestore
+        const daysWithNoMatchesRef = doc(firestore, "matchesData", "daysWithNoMatches");
+        try {
+          const docSnap = await getDoc(daysWithNoMatchesRef);
+          if (docSnap.exists()) {
+            // Save the data to localStorage for future access
+            localStorage.setItem('daysWithNoMatches', JSON.stringify(docSnap.data().dates));
+            console.log('Fetched from Firestore and saved to localStorage:', docSnap.data().dates);
+            // Here you can set state or perform other operations with docSnap.data().dates
+          } else {
+            console.log("No such document in Firestore!");
+          }
+        } catch (error) {
+          console.error("Error fetching days with no matches from Firestore:", error);
+        }
+      }
+    };
+  
+    fetchDaysWithNoMatches();
+  }, []); // The empty dependency array ensures this effect runs once when the component mounts
+  
+
+
+
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -86,7 +122,7 @@ const isMatchFavorite = (matchId) => {
       <div className="slider-margin-top">
         <DateSlider
           onDateSelect={handleDateSelect}
-          disabledDates={daysWithNoMatches}
+          disabledDates={localData}
           timeBackNumber = {120}
         />
       </div>

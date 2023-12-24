@@ -144,6 +144,7 @@ export const MatchesDataProvider = ({ children }) => {
  
         }, []);
 
+  console.log(daysWithNoMatches)
        
         const value = {
             allMatchesData,
