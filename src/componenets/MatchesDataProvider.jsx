@@ -1,16 +1,58 @@
 // MatchesDataProvider.js
 import { createContext, useState, useContext, useEffect } from 'react';
 import { fetchAllMatchesLive, tournamentIds, tournaments,addMatchesTotempAllMatchesData, divideMatchesToLeagues, getAllMatchesDays, filterMatchesByDate,getDaysWithoutMatches } from '../Services/apiService';
+// import { getFirestore, doc, setDoc, writeBatch } from "firebase/firestore";
+// import { query, collection, where, getDocs } from "firebase/firestore";
 
+// import { onSnapshot } from "firebase/firestore";
+// import { initializeApp } from "firebase/app";
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBkSEz109STYK02nQ-Kcij3eqpOMZ31R58",
+//   authDomain: "inzynierka-e7180.firebaseapp.com",
+//   projectId: "inzynierka-e7180",
+//   storageBucket: "inzynierka-e7180.appspot.com",
+//   messagingSenderId: "932466898301",
+//   appId: "1:932466898301:web:9700bdf9cae9ba07a00814",
+// };
+
+// Initialize Firebase
+// const app = initializeApp(firebaseConfig);
 const MatchesDataContext = createContext();
 
 export const useMatchesData = () => useContext(MatchesDataContext);
+
+
+
+
 
 export const MatchesDataProvider = ({ children }) => {
     const [allMatchesData, setAllMatchesData] = useState({});
     const [liveMatches, setLiveMatchesData] = useState({});
     const [daysWithNoMatches, setDaysWithNoMatches] = useState([]);
+  //   const [laLigaMetches, setlaLigaMetches] = useState([]);
  
+  //   useEffect(() => {
+  //     const firestore = getFirestore(app);
+  //     const matchesRef = collection(firestore, `matchesData/laLiga/matches`);
+
+  //     const unsubscribe = onSnapshot(matchesRef, (querySnapshot) => {
+  //         const matches = [];
+  //         querySnapshot.forEach((doc) => {
+  //             matches.push(doc.data());
+  //         });
+  //         // Aktualizacja stanu z nowymi danymi
+  //         setlaLigaMetches(matches);
+  //     });
+
+  //     // Funkcja czyszcząca, która zostanie wywołana przy odmontowywaniu komponentu
+  //     return () => {
+  //         unsubscribe();
+  //     };
+  // }, []); 
+  
+  // console.log(laLigaMetches)
+
 
     useEffect(() => {
         let updatedAllMatchesData = {}; // Deklaracja poza zakresem funkcji fetchAllMatchesLive
@@ -80,7 +122,7 @@ export const MatchesDataProvider = ({ children }) => {
                   );
       
                   tempAllMatchesData = addMatchesTotempAllMatchesData(tempAllMatchesData, tempLastAllMatchesData,"push");
-                  tempAllMatchesData = addMatchesTotempAllMatchesData(tempAllMatchesData, updatedAllMatchesData,"unshift");
+                 // tempAllMatchesData = addMatchesTotempAllMatchesData(tempAllMatchesData, updatedAllMatchesData,"unshift");
                   console.log(tempLastAllMatchesData);
                  
       
@@ -98,7 +140,8 @@ export const MatchesDataProvider = ({ children }) => {
               })
               .catch((error) => console.error("Error fetching matches data:", error));
           };
-          fetchMatches();
+      fetchMatches();
+ 
         }, []);
 
        
@@ -106,7 +149,8 @@ export const MatchesDataProvider = ({ children }) => {
             allMatchesData,
             setAllMatchesData,
             liveMatches,
-            daysWithNoMatches,
+          daysWithNoMatches
+            
         
         };
   

@@ -95,5 +95,5 @@ const [user, loading, error] = useAuthState(auth);
 
 CardBoxForMatches.propTypes = {
   matches: PropTypes.arrayOf(PropTypes.object).isRequired,
-  img: PropTypes.string.isRequired,
+
 };

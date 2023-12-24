@@ -1,7 +1,7 @@
 const BASE_URL = "https://66rlxf-3000.csb.app/api/v1/";
 const SOFASCORE_URL = "https://api.sofascore.app/api/v1/";
 
-// export const tournaments2 = [
+// export const tournaments = [
 //     { id: 202, name: "Ekstraklasa", season: 52176 },
 //     { id: 8, name: "LaLiga", season: 52376 },
 //     { id: 7, name: "ChampionsLeague", season: 52162 },
@@ -22,24 +22,29 @@ const SOFASCORE_URL = "https://api.sofascore.app/api/v1/";
 //     { id: 955, name: "SaudiProfessionalLeague", season: 53241 },
 //     { id: 281, name: "PucharPolski", season: 52567 },
 //     { id: 329, name: "CopadelRey", season: 55373 },
-//   ];
-
+// ];
+  
 export const tournaments = [
-  { id: 202, name: "Ekstraklasa", season: 52176 },
-  { id: 8, name: "LaLiga", season: 52376 },
-  { id: 7, name: "ChampionsLeague", season: 52162 },
-  { id: 17, name: "PremierLeague", season: 52186 },
-  { id: 35, name: "Bundesliga", season: 52608 },
-  { id: 23, name: "SerieA", season: 52760 },
-  { id: 679, name: "UEFAEuropaLeague", season: 53654 },
-  { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
-  { id: 34, name: "Ligue1", season: 52571 },
-  { id: 37, name: "Eredivisie", season: 52554 },
-  { id: 281, name: "PucharPolski", season: 52567 },
-  { id: 281, name: "PucharPolski", season: 52567 },
-  { id: 27, name: "EuropeanChampionshipQualification", season: 46599 },
-  { id: 54, name: "LaLiga2", season: 52563 },
+  { id: 8, name: "laLiga", season: 52376 },
+  { id: 17, name: "premierLeague", season: 52186 },
 ];
+
+// export const tournaments = [
+//   { id: 202, name: "Ekstraklasa", season: 52176 },
+//   { id: 8, name: "LaLiga", season: 52376 },
+//   { id: 7, name: "ChampionsLeague", season: 52162 },
+//   { id: 17, name: "PremierLeague", season: 52186 },
+//   { id: 35, name: "Bundesliga", season: 52608 },
+//   { id: 23, name: "SerieA", season: 52760 },
+//   { id: 679, name: "UEFAEuropaLeague", season: 53654 },
+//   { id: 17015, name: "UEFAEuropaConferenceLeague", season: 52327 },
+//   { id: 34, name: "Ligue1", season: 52571 },
+//   { id: 37, name: "Eredivisie", season: 52554 },
+//   { id: 281, name: "PucharPolski", season: 52567 },
+//   { id: 281, name: "PucharPolski", season: 52567 },
+//   { id: 27, name: "EuropeanChampionshipQualification", season: 46599 },
+//   { id: 54, name: "LaLiga2", season: 52563 },
+// ];
 
 export const tournamentIds = tournaments.map((t) => t.id);
 
@@ -189,4 +194,24 @@ export  const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr
     });
   
     return newMatchesData;
-  };
+};
+  
+
+
+export const filterMatchesByDate2 = (allData, date) => {
+  const newMatchesData = {};
+  console.log("matchesdata2........." )
+  console.log(allData)
+  Object.keys(allData).forEach(
+      (match) => {
+        const matchDate = new Date(match.startTimestamp * 1000);
+        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+          matchDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+        return apiFormatMatchDate === date;
+      }
+    );
+  
+
+  return newMatchesData;
+};

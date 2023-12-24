@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import {
 ReturnTeamImage
 } from "../Services/apiService";
+
+
 const convertDate = (timestamp) => {
   let date = new Date(timestamp * 1000); 
   let hours = date.getHours().toString().padStart(2, "0"); // Używaj getHours zamiast getUTCHours
@@ -14,32 +16,13 @@ const convertDate = (timestamp) => {
 
 
 
-const calculateMatchTimeInMinutes = (startTimestamp, statusTime, time, matchStatus, changes) => {
+const calculateMatchTimeInMinutes = (time) => {
   // const currentTime = Date.now() / 1000; // Aktualny czas w sekundach
   const currentTime = Date.now() / 1000; // Aktualny czas w sekundach
 
 const timik = currentTime - time.currentPeriodStartTimestamp + time?.initial
   const elapsed_minutes = Math.floor(timik / 60)
   return elapsed_minutes+1; // Pierwsza połowa
-
-  // Sprawdzanie czy mecz się zakończył
-//   if (time.currentPeriodStartTimestamp === time.max) {
-//     return 90; // Mecz zakończył się po pełnych 90 minutach
-//   }
-//   if (matchStatus?.description === "Halftime") {
-//     return "Przerwa"; // Mecz zakończył się po pełnych 90 minutach
-// }
-//   const elapsedTime = currentTime - time.currentPeriodStartTimestamp // Czas, który upłynął od początku meczu
-
-//   return Math.floor(elapsedTime / 60); // Pierwsza połowa
-  
-  // if (elapsedTime <= 45 * 60) {
-  //     return Math.floor(elapsedTime / 60); // Pierwsza połowa
-  // } else {
-  //     // Dodajemy przerwę między połówkami (na przykład 15 minut)
-  //     //const halftimeBreak = 15; 
-  //     return 45  + Math.floor((elapsedTime - 45 * 60) / 60); // Druga połowa
-  // }
 
 };
 
@@ -117,7 +100,7 @@ export function Teams(props) {
         
       </div>}
       {typeof statusTime !== 'undefined' && <div className="match-time">
-        <span className="clock-icon"></span> {calculateMatchTimeInMinutes(startTimestamp, statusTime, time,matchStatus,changes)}'
+        <span className="clock-icon"></span> {calculateMatchTimeInMinutes(time)}'
         
       </div>}
       {matchStatus === "Halftime" && <div className="match-time">
