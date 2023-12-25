@@ -215,3 +215,26 @@ export const filterMatchesByDate2 = (allData, date) => {
 
   return newMatchesData;
 };
+
+export const sendMatches = async (matches, endpoint) => {
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ matches }), // Zserializuj tablicę meczów do formatu JSON
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Odpowiedź z serwera:', data);
+    return data;
+  } catch (error) {
+    console.error('Błąd podczas wysyłania meczów:', error);
+    throw error;
+  }
+};

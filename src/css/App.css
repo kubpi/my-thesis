@@ -75,6 +75,17 @@ body {
   font-family: "Outfit", sans-serif;
 }
 
+.navbar-brand2 {
+  color: #fff;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-transform: uppercase;
+  font-family: "Nova Square", cursive;
+  font-family: "Outfit", sans-serif;
+}
+
 .nav-link {
   background-color: transparent;
   color: white;

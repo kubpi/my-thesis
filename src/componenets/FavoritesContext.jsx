@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, updateDoc,onSnapshot } from 'firebase/firestore';
 
 export const FavoritesContext = createContext();
 
@@ -10,20 +10,39 @@ export const FavoritesProvider = ({ children }) => {
   const auth = getAuth();
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const docRef = doc(firestore, 'userFavorites', user.uid);
-        const docSnap = await getDoc(docRef);
+    const user = auth.currentUser;
+    if (user) {
+      const docRef = doc(firestore, 'userFavorites', user.uid);
 
-        if (docSnap.exists()) {
-          setFavorites(docSnap.data().matches);
+      // Nasłuchiwacz snapshotów dla ulubionych meczów
+      const unsubscribe = onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          setFavorites(doc.data().matches);
+        } else {
+          setFavorites([]);
         }
-      }
-    };
+      });
 
-    fetchFavorites();
+      // Oczyszczenie subskrypcji
+      return () => unsubscribe();
+    }
   }, [auth.currentUser]);
+  
+  // useEffect(() => {
+  //   const fetchFavorites = async () => {
+  //     const user = auth.currentUser;
+  //     if (user) {
+  //       const docRef = doc(firestore, 'userFavorites', user.uid);
+  //       const docSnap = await getDoc(docRef);
+
+  //       if (docSnap.exists()) {
+  //         setFavorites(docSnap.data().matches);
+  //       }
+  //     }
+  //   };
+
+  //   fetchFavorites();
+  // }, [auth.currentUser]);
 
   const addFavorite = async (match) => {
     const user = auth.currentUser;

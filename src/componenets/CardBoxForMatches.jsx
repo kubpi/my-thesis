@@ -93,7 +93,7 @@ const [user, loading, error] = useAuthState(auth);
   );
 }
 
-CardBoxForMatches.propTypes = {
-  matches: PropTypes.arrayOf(PropTypes.object).isRequired,
+// CardBoxForMatches.propTypes = {
+//   matches: PropTypes.arrayOf(PropTypes.object).isRequired,
 
-};
+// };
