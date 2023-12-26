@@ -27,6 +27,7 @@ const SOFASCORE_URL = "https://api.sofascore.app/api/v1/";
 export const tournaments = [
   { id: 8, name: "laLiga", season: 52376 },
   { id: 17, name: "premierLeague", season: 52186 },
+  { id: 23, name: "serieA", season: 52760 },
 ];
 
 // export const tournaments = [
