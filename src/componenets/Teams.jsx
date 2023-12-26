@@ -101,7 +101,7 @@ export function Teams(props) {
         <span className="clock-icon">⏰</span> {convertDate(startTimestamp)}
         
       </div>}
-      {Object.keys(time).length !== 0 && <div className="match-time">
+      {(Object.keys(time).length !== 0 && matchStatus !== "Halftime" && matchStatus !=="Ended") && <div className="match-time">
         <span className="clock-icon"></span> {calculateMatchTimeInMinutes(time)}'
         
       </div>}
