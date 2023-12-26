@@ -121,15 +121,11 @@ export function MatchesSection() {
 
   useEffect(() => {
     const today = new Date();
-    const offset = today.getTimezoneOffset() * 60000; // Offset w milisekundach
-    const polandTime = new Date(today.getTime() - offset + (3600000 * 2)); // Dodaj 2 godziny dla CET
-    const formattedToday = polandTime.toISOString().split('T')[0];
-    
-    console.log(formattedToday);
-    
-  
    
- 
+    const formattedToday = today.toISOString().split('T')[0];
+    
+    //console.log(formattedToday);
+    
     // Sprawdź, czy selectedDate jest dzisiejszą datą i wyślij mecze, jeśli tak
     if (selectedDate === formattedToday) {
       console.log(matchesData);

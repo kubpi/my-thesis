@@ -1,26 +1,26 @@
-import React from "react";
+import {useState,useEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./BettingView.css";
-
+import { getFirestore, collection, query, where,onSnapshot } from 'firebase/firestore';
 import { useMatchesData } from "./MatchesDataProvider";
 import {
   ReturnTeamImage,
-  getTurnamentImgURL,
   getTurnamentImgURLbyId,
+  tournaments,
 } from "../Services/apiService";
 import { DateSlider } from "./DateSlider";
 
-const BettingView = ({
+export function BettingView ({
   isOpen,
   onClose,
   selectedMatches,
   setSelectedMatches,
   onAddTab,
-}) => {
-  const [tabName, setTabName] = React.useState("");
-  const { allMatchesData } = useMatchesData();
+}) {
+  const [tabName, setTabName] = useState("");
   const { daysWithNoMatches } = useMatchesData();
+
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -30,10 +30,11 @@ const BettingView = ({
   const apiFormatNextDate = `${tomorrow.getFullYear()}-${String(
     tomorrow.getMonth() + 1
   ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
-  const [selectedDate, setSelectedDate] = React.useState(apiFormatDate);
-  const [selectedNextDate, setSelectedNextDate] =
-    React.useState(apiFormatNextDate);
 
+  const [selectedDate, setSelectedDate] = useState(apiFormatDate);
+  const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
+
+  const [matchesData,setMatchesData] = useState()
   // Function to handle the checkbox change
   const handleCheckboxChange = (matchId) => {
     setSelectedMatches((prevSelectedMatches) => {
@@ -71,39 +72,64 @@ const BettingView = ({
     let minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
-  const getUpcomingMatchesBySelectedDate = (allMatches, selectedDate) => {
-    const formattedSelectedDate = new Date(selectedDate)
-      .toISOString()
-      .slice(0, 10);
-    const filteredMatches = {};
-
-    Object.keys(allMatches).forEach((tournament) => {
-      filteredMatches[tournament] = allMatches[tournament].filter((match) => {
-        const matchDate = new Date(match.startTimestamp * 1000)
-          .toISOString()
-          .slice(0, 10);
-        // Adjust the condition based on how your match status is structured
-        const isUpcoming =
-          match.status.type === "notstarted" ||
-          match.status.type === "upcoming";
-        return matchDate === formattedSelectedDate && isUpcoming;
-      });
-    });
-
-    return filteredMatches;
-  };
-
-  // Inside the BettingView component
-  // Inside the BettingView component
-  const filteredBettingViewData = getUpcomingMatchesBySelectedDate(
-    allMatchesData,
-    selectedDate
-  );
-
+ 
+ 
   const handleDateSelect = (date, nextDate) => {
     setSelectedDate(date);
     setSelectedNextDate(nextDate); // Ustawienie wybranej daty
   };
+
+
+    
+   useEffect(() => {
+    const firestore = getFirestore();
+    const leagues = [];
+    const allMatches = {};
+
+    tournaments.forEach(tournament => {
+      leagues.push(tournament.name);
+    });
+
+    const fetchData = () => {
+      const unsubscribeFromSnapshots = leagues.map((league) => {
+        const matchesRef = collection(firestore, `matchesData/${league}/matches`);
+        const selectedDateObj = new Date(selectedDate);
+        const endDate = new Date(selectedDate);
+        endDate.setHours(23, 59, 59, 999);
+
+        const q = query(
+          matchesRef,
+          where("startTimestamp", ">=", selectedDateObj.getTime() / 1000),
+          where("startTimestamp", "<=", endDate.getTime() / 1000)
+        );
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const matches = [];
+          querySnapshot.forEach((doc) => {
+            matches.push(doc.data());
+          });
+          allMatches[league] = matches;
+          setMatchesData({ ...allMatches });
+        });
+
+        return unsubscribe;
+      });
+
+      // Czyszczenie subskrypcji
+      return () => {
+        unsubscribeFromSnapshots.forEach(unsubscribe => unsubscribe());
+      };
+    };
+
+    // Wywołaj fetchData na starcie oraz gdy selectedDate się zmienia
+    const unsubscribe = fetchData();
+  
+    return () => {
+      unsubscribe();
+    };
+   }, [selectedDate]);
+  console.log(matchesData)
+  
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
@@ -136,8 +162,9 @@ const BettingView = ({
             <div className="header-item">Status</div>
           </div>
           <div className="users-table-body">
-            {Object.keys(filteredBettingViewData).map((tournamentName) => {
-              return filteredBettingViewData[tournamentName].map((user) => (
+            {matchesData && (Object.keys(matchesData).map((tournamentName) => {
+          
+              return matchesData[tournamentName].map((user) => (
                 <div className="table-row" key={user.id}>
                   <div className="row-item select-column">
                     <input
@@ -178,7 +205,7 @@ const BettingView = ({
                   <div className="row-item">{user.status.description}</div>
                 </div>
               ));
-            })}
+            }))}
           </div>
         </div>
         <button onClick={handleSave}>Zapisz</button>
