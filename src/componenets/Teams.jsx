@@ -41,7 +41,9 @@ export function Teams(props) {
   const [key, setKey] = useState(Math.random()); // początkowy klucz
   const [isLive, setIsLive] = useState(false);
 
-
+  function isEmptyObject(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+  }
   useEffect(() => {
     // Aktualizuj klucz za każdym razem, gdy komponent się renderuje
     const redColor = '#CD4439'
@@ -99,7 +101,7 @@ export function Teams(props) {
         <span className="clock-icon">⏰</span> {convertDate(startTimestamp)}
         
       </div>}
-      {typeof statusTime !== 'undefined' && <div className="match-time">
+      {Object.keys(time).length !== 0 && <div className="match-time">
         <span className="clock-icon"></span> {calculateMatchTimeInMinutes(time)}'
         
       </div>}
