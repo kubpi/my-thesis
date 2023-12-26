@@ -100,7 +100,8 @@ export function BettingView ({
         const q = query(
           matchesRef,
           where("startTimestamp", ">=", selectedDateObj.getTime() / 1000),
-          where("startTimestamp", "<=", endDate.getTime() / 1000)
+          where("startTimestamp", "<=", endDate.getTime() / 1000),
+          where("status.type", "==", "notstarted")
         );
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
