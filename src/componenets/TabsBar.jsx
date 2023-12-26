@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import "./TabsBar.css";
 
 import FavoriteMatches from "./FavoriteMatches";
@@ -10,8 +10,11 @@ import BettingMatches from "./BettingMatches";
 import MatchInputView from "./MatchInputView";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { FavoritesContext } from "./FavoritesContext";
 function TabsBar() {
-  const [tabs, setTabs] = useState([{ id: 1, name: "Ulubione", count: 4 }]);
+  const { favorites, removeFavorite } = useContext(FavoritesContext);
+  console.log(favorites.length)
+  const [tabs, setTabs] = useState([{ id: 1, name: "Ulubione", count: favorites.length }]);
   const [activeTabId, setActiveTabId] = useState(tabs[0].id);
   const [isBettingOpen, setIsBettingOpen] = useState(false);
   const [isGameModeOpen, setIsGameModeOpen] = useState(false); // Added state for GameModeView
@@ -22,6 +25,18 @@ function TabsBar() {
   const auth = getAuth();
   const firestore = getFirestore();
   const user = auth.currentUser;
+
+  useEffect(() => {
+    // Aktualizacja liczby ulubionych meczy w zakładce "Ulubione"
+    setTabs((currentTabs) => {
+      return currentTabs.map((tab) => {
+        if (tab.id === 1) { // Zakładamy, że id zakładki "Ulubione" to 1
+          return { ...tab, count: favorites.length };
+        }
+        return tab;
+      });
+    });
+  }, [favorites.length]); // Efekt uruchamia się przy zmianie liczby ulubionych meczy
 
   useEffect(() => {
     // Load betting tabs when the component mounts and when the user changes
