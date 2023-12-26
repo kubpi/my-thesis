@@ -150,7 +150,7 @@ export function MatchesSection() {
  
 
 const isMatchFavorite = (matchId) => {
-  return favorites.some((m) => m.id === matchId);
+  return favorites.some((m) => m === matchId);
 };
 
  

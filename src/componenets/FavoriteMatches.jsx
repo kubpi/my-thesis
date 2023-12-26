@@ -5,19 +5,51 @@ import RemoveButton from "./RemoveButton";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import "./CustomTable3.css";
-
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection,onSnapshot, where, query  } from 'firebase/firestore';
 import {
-    ReturnTeamImage, getTurnamentImgURLbyId
+    ReturnTeamImage, getTurnamentImgURLbyId, tournaments
     } from "../Services/apiService";
 export function FavoriteMatches() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredFavorites, setFilteredFavorites] = useState(favorites);
+  const [favoritesMatches, setFavoritesMatches] = useState([]);
+  const [filteredFavorites, setFilteredFavorites] = useState(favoritesMatches);
+
+  console.log(favoritesMatches)
+  
+  useEffect(() => {
+    const firestore = getFirestore();
+    const unsubscribeFromSnapshots = [];
+    const matches = {};
+
+    favorites.forEach((favoriteId) => {
+      tournaments.forEach((tournament) => {
+        const matchesRef = collection(firestore, `matchesData/${tournament.name}/matches`);
+        const q = query(matchesRef, where("id", "==", favoriteId));
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const matchData = doc.data();
+            matches[matchData.id] = matchData;
+          });
+
+          setFavoritesMatches(Object.values(matches));
+        });
+
+        unsubscribeFromSnapshots.push(unsubscribe);
+      });
+    });
+
+    return () => {
+      unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [favorites]);
+  
   useEffect(() => {
     // Filter matches whenever the searchQuery changes or favorites change
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = favorites.filter((match) => {
+    const filtered = favoritesMatches.filter((match) => {
       return (
         match.tournament.name.toLowerCase().includes(lowercasedQuery) ||
         match.homeTeam.name.toLowerCase().includes(lowercasedQuery) ||
@@ -28,7 +60,7 @@ export function FavoriteMatches() {
       );
     });
     setFilteredFavorites(filtered);
-  }, [searchQuery, favorites]);
+  }, [searchQuery, favoritesMatches]);
 
   const handleCheckboxChange = (matchId) => {
     setCheckedIds((prevCheckedIds) =>
@@ -40,7 +72,7 @@ export function FavoriteMatches() {
 
   const handleMasterCheckboxChange = (e) => {
     if (e.target.checked) {
-      setCheckedIds(favorites.map((match) => match.id)); // Add all match IDs to checkedIds
+      setCheckedIds(favoritesMatches.map((match) => match.id)); // Add all match IDs to checkedIds
     } else {
       setCheckedIds([]); // Clear all selections
     }
@@ -57,13 +89,14 @@ export function FavoriteMatches() {
   };
 
   const handleRemoveClick = () => {
+    console.log(checkedIds)
     removeFavorite(checkedIds);
     setCheckedIds([]);
   };
 
   return (
     <div className="favorite-matches-container">
-      {favorites.length === 0 ? (
+      {favoritesMatches.length === 0 ? (
         <p>No favorite matches added.</p>
       ) : (
         <>
@@ -79,7 +112,7 @@ export function FavoriteMatches() {
                 <input
                   type="checkbox"
                   onChange={handleMasterCheckboxChange}
-                  checked={checkedIds.length === favorites.length}
+                  checked={checkedIds.length === favoritesMatches.length}
                 />
               </div>
 
