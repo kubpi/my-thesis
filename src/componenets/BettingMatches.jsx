@@ -1,20 +1,24 @@
-import React from "react";
+import {useEffect,useState} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./BettingMatches.css";
-
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, onSnapshot, where, query, } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 import { useMatchesData } from "./MatchesDataProvider";
 import {
   ReturnTeamImage,
   getTurnamentImgURL,
   getTurnamentImgURLbyId,
+  tournaments,
 } from "../Services/apiService";
 import SearchBar from "./SearchBar";
 import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
-const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
-  console.log(selectedMatches);
+
+const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
+  console.log(selectedMatchesId);
+  const [matchesBetting, setMatchesBetting] = useState([])
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
@@ -46,9 +50,49 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
     }
   };
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+  useEffect(() => {
+    const firestore = getFirestore();
+    const unsubscribeFromSnapshots = [];
+    const matches = {};
+
+    selectedMatchesId.forEach((match) => {
+      console.log(match)
+      tournaments.forEach((tournament) => {
+        const matchesRef = collection(firestore, `matchesData/${tournament.name}/matches`);
+        const q = query(matchesRef, where("id", "==", match.id));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          let newMatches = {}
+          let matchess = []
+          querySnapshot.forEach((doc) => {
+            const matchData = doc.data();
+            newMatches = { match: matchData, ...match }
+            matches[matchData.id] = newMatches;
+         
+           
+        
+           
+          });
+         
+       
+          setMatchesBetting(Object.values(matches));
+        });
+
+        unsubscribeFromSnapshots.push(unsubscribe);
+      });
+    });
+
+    return () => {
+      unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [selectedMatchesId]);
+
+  
+  console.log(matchesBetting)
   return (
     <div className="favorite-matches-container">
-      {selectedMatches.length === 0 ? (
+      {matchesBetting && matchesBetting.length === 0 ? (
         <p>No favorite matches added.</p>
       ) : (
         <>
@@ -74,39 +118,39 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
               <div className="header-item">Status</div>
             </div>
             <div className="users-table-body">
-              {selectedMatches.map((user, index) => (
-                <div className="table-row " key={user.id}>
+            {matchesBetting.map((user, index) => (
+                <div className="table-row " key={user.match.id}>
                   <div className="row-item select-column">
                     <input type="checkbox" />
                   </div>
                   <div className="row-item">
                     <img
                       src={getTurnamentImgURLbyId(
-                        user.tournament.uniqueTournament.id
+                        user.match.tournament.uniqueTournament.id
                       )}
                       className="team-logo2"
-                      alt={user.homeTeam.name}
+                      alt={user.match.homeTeam.name}
                     ></img>
-                    {user.tournament.name}
+                    {user.match.tournament.name}
                   </div>
                   <div className="row-item">
                     <div>
                       <img
-                        src={ReturnTeamImage(user.homeTeam.id)}
+                        src={ReturnTeamImage(user.match.homeTeam.id)}
                         className="team-logo2"
-                        alt={user.homeTeam.name}
+                        alt={user.match.homeTeam.name}
                       ></img>
-                      {user.homeTeam.name}
+                      {user.match.homeTeam.name}
                     </div>
                     <img
-                      src={ReturnTeamImage(user.awayTeam.id)}
+                      src={ReturnTeamImage(user.match.awayTeam.id)}
                       className="team-logo2"
-                      alt={user.awayTeam.name}
+                      alt={user.match.awayTeam.name}
                     ></img>
-                    {user.awayTeam.name}
+                    {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {user.betPlaced &&
+                    {user.match.betPlaced &&
                     !user.betHomeScore &&
                     !user.betAwayScore ? (
                       <>
@@ -119,8 +163,8 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
                           <>
                             <div>{user.betHomeScore}</div>
                             <div>{user.betAwayScore}</div>
-                            {!user.betPlaced ? (
-                              <button onClick={() => onBetClick(user)}>
+                            {!user.match.betPlaced ? (
+                              <button onClick={() => onBetClick(user.match)}>
                                 Edytuj
                               </button>
                             ) : (
@@ -129,7 +173,7 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
                           </>
                         ) : (
                           <>
-                            <button onClick={() => onBetClick(user)}>
+                            <button onClick={() => onBetClick(user.match)}>
                               Obstaw mecz
                             </button>
                           </>
@@ -139,19 +183,19 @@ const BettingMatches = ({ selectedMatches, onBetClick, onSaveBet }) => {
                   </div>
 
                   <div className="row-item">
-                    {user.homeScore.display && user.awayScore.display ? (
+                    {user.match.homeScore.display && user.match.awayScore.display ? (
                       <>
-                        <div>{user.homeScore.display}</div>
-                        {user.awayScore.display}
+                        <div>{user.match.homeScore.display}</div>
+                        {user.match.awayScore.display}
                       </>
                     ) : (
-                      <div>{getTimeUntilMatch(user.startTimestamp)}</div>
+                      <div>{getTimeUntilMatch(user.match.startTimestamp)}</div>
                     )}
                   </div>
                   <div className="row-item">
-                    {convertDate(user.startTimestamp)}
+                    {convertDate(user.match.startTimestamp)}
                   </div>
-                  <div className="row-item">{user.status.description}</div>
+                  <div className="row-item">{user.match.status.description}</div>
                 </div>
               ))}
             </div>

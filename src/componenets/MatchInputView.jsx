@@ -8,6 +8,7 @@ const MatchInputView = ({ isOpen, match, onClose, onSubmitScore }) => {
   const [homeScore, setHomeScore] = useState(null);
   const [awayScore, setAwayScore] = useState(null);
 
+  console.log(match)
   if (!isOpen || !match) return null;
 
   const handleSubmit = () => {

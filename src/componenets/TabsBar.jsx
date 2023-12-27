@@ -96,13 +96,14 @@ function TabsBar() {
 
   const handleAddTabWithMatches = (tabName) => {
     const updatedMatches = selectedMatches.map((match) => {
+      //console.log(match)
       return {
-        ...match,
+        id: match.id,
         betHomeScore: null, // Initialize with null or any default value
         betAwayScore: null, // Initialize with null or any default value
       };
     });
-
+console.log(updatedMatches)
     const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
     const newTab = {
       id: newTabId,
@@ -131,7 +132,7 @@ function TabsBar() {
             matches: tab.matches.map((match) => {
               if (match.id === matchId) {
                 return {
-                  ...match,
+                  id: match.id,
                   betHomeScore: homeScore,
                   betAwayScore: awayScore,
                 };
@@ -143,6 +144,7 @@ function TabsBar() {
         return tab;
       });
     });
+    console.log(tabs)
     saveBettingTabs();
   };
 
@@ -172,7 +174,7 @@ function TabsBar() {
           // If the active tab has a 'matches' property, render BettingMatches with those matches
           return (
             <BettingMatches
-              selectedMatches={activeTab.matches}
+              selectedMatchesId={activeTab.matches}
               onBetClick={handleBetClick}
               onSaveBet={handleSaveAllBets} // Pass the new onSaveBet handler
             />
