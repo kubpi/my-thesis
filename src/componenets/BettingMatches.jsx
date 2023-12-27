@@ -16,12 +16,72 @@ import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
 
-const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
+const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([])
 
 
   const [currentTime, setCurrentTime] = useState(new Date());
+
+
+
+  const [nextMatchTime, setNextMatchTime] = useState(null);
+  const [timeUntilNextMatch, setTimeUntilNextMatch] = useState('');
+
+
+
+  // Aktualizacja czasu do rozpoczęcia najbliższego meczu
+  useEffect(() => {
+    const calculateNextMatchTime = () => {
+      const upcomingMatches = matchesBetting.filter(match => 
+        new Date(match.match.startTimestamp * 1000) > new Date()
+      );
+      if (upcomingMatches.length > 0) {
+        const closestMatch = upcomingMatches.reduce((a, b) => 
+          a.match.startTimestamp < b.match.startTimestamp ? a : b
+        );
+        setNextMatchTime(new Date(closestMatch.match.startTimestamp * 1000));
+      }
+    };
+
+    calculateNextMatchTime();
+
+    const interval = setInterval(() => {
+      calculateNextMatchTime();
+    }, 60000); // aktualizacja co 1 minutę
+
+    return () => clearInterval(interval); // Czyszczenie interwału
+  }, [matchesBetting]);
+
+  useEffect(() => {
+    if (nextMatchTime) {
+      const updateTimer = () => {
+        const now = new Date();
+        const timeDiff = nextMatchTime - now;
+  
+        if (timeDiff <= 0) {
+          onSaveBet();
+          setTimeUntilNextMatch('Zakład zamknięty');
+        } else {
+          const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+  
+          if (days > 0) {
+            setTimeUntilNextMatch(`${days} dni do zamknięcia zakłądu`);
+          } else {
+            setTimeUntilNextMatch(`${hours}h ${minutes}m do zamknięcia zakładu`);
+          }
+        }
+      };
+  
+      updateTimer();
+      const interval = setInterval(updateTimer, 60000); // aktualizacja co 1 minutę
+  
+      return () => clearInterval(interval);
+    }
+  }, [nextMatchTime]);
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,6 +119,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
   const handleSaveBet = () => {
     // Call the onSaveBet function passed from TabsBar
     onSaveBet();
+   
   };
  
 
@@ -211,10 +272,12 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
                 </div>
               ))}
             </div>
-            <div className="save-all-button-container">
-              <button onClick={handleSaveBet} className="save-all-button">
-                Zamknij
-              </button>
+              <div className="save-all-button-container">
+                {!isBetClosed  && 
+                  <button onClick={handleSaveBet} className="save-all-button">
+                Zamknij zakład
+                </button>}            
+                <div>{timeUntilNextMatch}</div>
             </div>
           </div>
         </>

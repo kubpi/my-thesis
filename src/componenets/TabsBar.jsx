@@ -78,21 +78,35 @@ function TabsBar() {
     setIsMatchInputOpen(true);
   };
   const handleSaveAllBets = () => {
-    setTabs((prevTabs) =>
-      prevTabs.map((tab) => {
+    setTabs((prevTabs) => {
+      const updatedTabs = prevTabs.map((tab) => {
         if (tab.id === activeTabId) {
-          return {
-            ...tab,
-            matches: tab.matches.map((match) => {
-              // Assume all matches have had bets placed by this point
-              return { ...match, betPlaced: true };
-            }),
-          };
+          // Zaktualizuj zakładki z flagą betClosed na true dla aktywnego zakładu
+          const updatedMatches = tab.matches.map((match) => ({
+            ...match, 
+            betPlaced: true
+          }));
+          return { ...tab, matches: updatedMatches, betClosed: true };
         }
         return tab;
-      })
-    );
+      });
+  
+      // Asynchronicznie zapisz zakładki do Firebase po zaktualizowaniu stanu
+      const docRef = doc(firestore, "userBettingTabs", user.uid);
+      setDoc(docRef, { tabs: updatedTabs }, { merge: true })
+        .then(() => {
+          console.log("Betting tabs saved successfully.");
+        })
+        .catch((error) => {
+          console.error("Error saving betting tabs:", error);
+        });
+  
+      return updatedTabs;
+    });
   };
+  
+  
+  
 
   const handleAddTabWithMatches = (tabName) => {
     const updatedMatches = selectedMatches.map((match) => {
@@ -101,6 +115,7 @@ function TabsBar() {
         id: match.id,
         betHomeScore: null, // Initialize with null or any default value
         betAwayScore: null, // Initialize with null or any default value
+        betClosed: false, // Zakład domyślnie otwarty
       };
     });
 console.log(updatedMatches)
@@ -110,6 +125,7 @@ console.log(updatedMatches)
       name: tabName,
       count: updatedMatches.length,
       matches: updatedMatches,
+      betClosed: false, // domyślnie zakład jest otwarty
     };
 
     // Update the local state with the new tab
@@ -177,6 +193,7 @@ console.log(updatedMatches)
               selectedMatchesId={activeTab.matches}
               onBetClick={handleBetClick}
               onSaveBet={handleSaveAllBets} // Pass the new onSaveBet handler
+              isBetClosed={activeTab.betClosed} // Dodaj tę linię
             />
           );
         } else {
