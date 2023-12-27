@@ -19,6 +19,33 @@ import FilterButton from "./FilterButton";
 const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([])
+
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // aktualizacja co 1 minutę
+
+    return () => clearInterval(interval); // Czyszczenie interwału
+  }, []);
+
+  const getTimeUntilMatch = (timestamp) => {
+    const matchDate = new Date(timestamp * 1000);
+    const timeDiff = matchDate - currentTime;
+
+    if (matchDate.toDateString() === currentTime.toDateString()) {
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m do rozpoczęcia`;
+    } else {
+      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
+      return `${days} dni do meczu`;
+    }
+  };
+
+
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
@@ -33,22 +60,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
     // Call the onSaveBet function passed from TabsBar
     onSaveBet();
   };
-  const getTimeUntilMatch = (timestamp) => {
-    const matchDate = new Date(timestamp * 1000);
-    const today = new Date();
-    const timeDiff = matchDate - today;
-
-    if (matchDate.toDateString() === today.toDateString()) {
-      // Match is on the same day
-      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      return `${hours}h ${minutes}m do rozpoczęcia`;
-    } else {
-      // Match is on a different day
-      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
-      return `${days} dni do meczu`;
-    }
-  };
+ 
 
   const auth = getAuth();
   const user = auth.currentUser;
