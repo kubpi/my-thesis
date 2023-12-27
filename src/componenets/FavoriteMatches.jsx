@@ -18,6 +18,31 @@ export function FavoriteMatches() {
 
   console.log(favoritesMatches)
   
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // aktualizacja co 1 minutę
+
+    return () => clearInterval(interval); // Czyszczenie interwału
+  }, []);
+
+  const getTimeUntilMatch = (timestamp) => {
+    const matchDate = new Date(timestamp * 1000);
+    const timeDiff = matchDate - currentTime;
+
+    if (matchDate.toDateString() === currentTime.toDateString()) {
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m do rozpoczęcia`;
+    } else {
+      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
+      return `${days} dni do meczu`;
+    }
+  };
+
+
   useEffect(() => {
     const firestore = getFirestore();
     const unsubscribeFromSnapshots = [];
@@ -144,8 +169,14 @@ export function FavoriteMatches() {
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    <div>{user.homeScore.display}</div>
-                    {user.awayScore.display}
+                    {user.status.type !== "notstarted"  ? (
+                      <>
+                        <div>{user.homeScore.display}</div>
+                        {user.awayScore.display}
+                      </>
+                    ) : (
+                      <div>{getTimeUntilMatch(user.startTimestamp)} </div>
+                    )}
                   </div>
                   <div className="row-item">
                     {convertDate(user.startTimestamp)}

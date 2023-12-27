@@ -195,13 +195,13 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
                   </div>
 
                   <div className="row-item">
-                    {user.match.homeScore.display && user.match.awayScore.display ? (
+                    {user.match.status.type !== "notstarted"  ? (
                       <>
                         <div>{user.match.homeScore.display}</div>
                         {user.match.awayScore.display}
                       </>
                     ) : (
-                      <div>{getTimeUntilMatch(user.match.startTimestamp)}</div>
+                      <div>{getTimeUntilMatch(user.match.startTimestamp)} </div>
                     )}
                   </div>
                   <div className="row-item">
@@ -213,7 +213,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
             </div>
             <div className="save-all-button-container">
               <button onClick={handleSaveBet} className="save-all-button">
-                Zamknij zakład
+                Zamknij
               </button>
             </div>
           </div>
