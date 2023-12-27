@@ -162,7 +162,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
                     {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {user.match.betPlaced &&
+                    {user.betPlaced &&
                     !user.betHomeScore &&
                     !user.betAwayScore ? (
                       <>
@@ -175,7 +175,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
                           <>
                             <div>{user.betHomeScore}</div>
                             <div>{user.betAwayScore}</div>
-                            {!user.match.betPlaced ? (
+                            {!user.betPlaced ? (
                               <button onClick={() => onBetClick(user.match)}>
                                 Edytuj
                               </button>
@@ -213,7 +213,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet }) => {
             </div>
             <div className="save-all-button-container">
               <button onClick={handleSaveBet} className="save-all-button">
-                Zapisz wszystkie
+                Zamknij zakład
               </button>
             </div>
           </div>

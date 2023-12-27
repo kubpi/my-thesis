@@ -18,7 +18,7 @@ export function BettingView ({
   setSelectedMatches,
   onAddTab,
 }) {
-  const [tabName, setTabName] = useState("");
+  const [tabName, setTabName] = useState("Zakład");
   const { daysWithNoMatches } = useMatchesData();
 
   const today = new Date();
