@@ -128,3 +128,15 @@
 }
 
 /* Rest of your styles */
+.close-tab-button {
+  margin-left: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.close-tab-button:hover {
+  background-color: #f2f2f2;
+}

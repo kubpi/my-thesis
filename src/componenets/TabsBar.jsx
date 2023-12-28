@@ -11,6 +11,9 @@ import MatchInputView from "./MatchInputView";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FavoritesContext } from "./FavoritesContext";
+
+
+import {  faTimes } from "@fortawesome/free-solid-svg-icons";
 function TabsBar() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   console.log(favorites.length)
@@ -21,22 +24,74 @@ function TabsBar() {
   const [selectedMatches, setSelectedMatches] = useState([]); // State to hold selected matches
   const [selectedMatchForBetting, setSelectedMatchForBetting] = useState(null);
   const [isMatchInputOpen, setIsMatchInputOpen] = useState(false);
+  const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
+
+
+  const handleOpenAddTabModal = () => {
+    setIsAddTabModalOpen(true);
+  };
+  
+  const handleCloseAddTabModal = () => {
+    setIsAddTabModalOpen(false);
+  };
+  
+  const handleCloseTab = (tabId) => {
+    if (tabId === 1) return; // Prevent closing "Favorites" tab
+  
+    setTabs((prevTabs) => {
+      const newTabs = prevTabs.map(tab => {
+        if (tab.id === tabId) {
+          return { ...tab, isActive: false };
+        }
+        return tab;
+      });
+  
+      // If the closed tab is active, find and activate an adjacent tab
+      if (tabId === activeTabId) {
+        const activeTabs = newTabs.filter(tab => tab.isActive);
+        const newActiveIdx = Math.max(1, activeTabs.findIndex(tab => tab.id === tabId) - 1);
+        setActiveTabId(activeTabs[newActiveIdx]?.id || 1); // Fallback to "Favorites" if no other tabs
+      }
+  
+      return newTabs;
+    });
+  };
+  
+
+  
+// Funkcja do wyświetlania opcji dodania nowej zakładki
+
+const handleOpenTab = (tabId) => {
+  setActiveTabId(tabId);
+  setTabs((prevTabs) =>
+    prevTabs.map((tab) =>
+      tab.id === tabId ? { ...tab, isActive: true } : tab // Set the tab as active
+    )
+  );
+};
 
   const auth = getAuth();
   const firestore = getFirestore();
   const user = auth.currentUser;
 
+
+  // Modify the effect hook that initializes the tabs state to include the "Favorites" tab
   useEffect(() => {
-    // Aktualizacja liczby ulubionych meczy w zakładce "Ulubione"
     setTabs((currentTabs) => {
-      return currentTabs.map((tab) => {
-        if (tab.id === 1) { // Zakładamy, że id zakładki "Ulubione" to 1
-          return { ...tab, count: favorites.length };
+      const hasFavorites = currentTabs.some((tab) => tab.id === 1);
+      // Ensure "Favorites" tab is always at the start and active
+      const updatedTabs = hasFavorites
+        ? currentTabs
+        : [{ id: 1, name: "Ulubione", count: favorites.length, isActive: true }, ...currentTabs];
+      // Update the count for the "Favorites" tab
+      return updatedTabs.map((tab) => {
+        if (tab.id === 1) {
+          return { ...tab, count: favorites.length, isActive: true }; // Keep "Favorites" always active
         }
         return tab;
       });
     });
-  }, [favorites.length]); // Efekt uruchamia się przy zmianie liczby ulubionych meczy
+  }, [favorites.length]); // Dep
 
   useEffect(() => {
     // Load betting tabs when the component mounts and when the user changes
@@ -110,34 +165,36 @@ function TabsBar() {
 
   const handleAddTabWithMatches = (tabName) => {
     const updatedMatches = selectedMatches.map((match) => {
-      //console.log(match)
       return {
         id: match.id,
-        betHomeScore: null, // Initialize with null or any default value
-        betAwayScore: null, // Initialize with null or any default value
-        betClosed: false, // Zakład domyślnie otwarty
+        betHomeScore: null,
+        betAwayScore: null,
+        betClosed: false,
       };
     });
-console.log(updatedMatches)
+  
     const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
     const newTab = {
       id: newTabId,
       name: tabName,
       count: updatedMatches.length,
       matches: updatedMatches,
-      betClosed: false, // domyślnie zakład jest otwarty
+      betClosed: false,
+      isActive: true, // Ensure the new tab is active
     };
-
-    // Update the local state with the new tab
+  
+    // Update the local state with the new tab and set it as active
     setTabs((prevTabs) => [...prevTabs, newTab]);
-
+    setActiveTabId(newTabId); // Set the new tab as the active tab
+  
     // Clear the selected matches for betting
     setSelectedMatches([]);
     setIsBettingOpen(false);
-
+  
     // Save the new tabs array to Firestore
     saveBettingTabs();
   };
+  
 
   const onSubmitScore = (matchId, homeScore, awayScore) => {
     setTabs((prevTabs) => {
@@ -177,7 +234,7 @@ console.log(updatedMatches)
   console.log(selectedMatches);
   // Inside TabsBar component
   const renderActiveTabContent = () => {
-    const activeTab = tabs.find((tab) => tab.id === activeTabId);
+    const activeTab = tabs.find((tab) => tab.id === activeTabId && tab.isActive);
 
     if (!activeTab) return null;
 
@@ -208,26 +265,59 @@ console.log(updatedMatches)
       <div className="container">
         <div className="row tabs-container col-12">
           <div className="tabs-bar">
-            {tabs.map((tab) => (
-              <div
-                key={tab.id}
-                className={`tab ${activeTabId === tab.id ? "active" : ""}`}
-                onClick={() => setActiveTabId(tab.id)}
-              >
-                {tab.name} <span className="tab-count">{tab.count}</span>
-                <div
-                  className={`progress-bar ${
-                    activeTabId === tab.id ? "" : "deactivated"
-                  }`}
-                ></div>
-              </div>
-            ))}
-            <div className="add-tab-button" onClick={handleOpenGameMode}>
+          {tabs.filter(tab => tab.isActive).map((tab) => (
+            <div key={tab.id} className={`tab ${activeTabId === tab.id ? "active" : ""}`}>
+              <span onClick={() => setActiveTabId(tab.id)}>{tab.name}</span>
+              <span className="tab-count">{tab.count}</span>
+              
+              {/* Only show the close button if it's not the "Favorites" tab */}
+              {tab.id !== 1 && (
+                <button className="close-tab-button" onClick={() => handleCloseTab(tab.id)}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              )}
+              
+              <div className={`progress-bar ${activeTabId === tab.id ? "" : "deactivated"}`}></div>
+            </div>
+          ))}
+            
+            <div className="add-tab-button" onClick={handleOpenAddTabModal}>
               <FontAwesomeIcon icon={faPlus} /> {/* Render the plus icon */}
             </div>
           </div>
           <div className="row tab-content r">{renderActiveTabContent()}</div>
         </div>
+          {/* Modal do dodawania nowej zakładki */}
+          {isAddTabModalOpen && (
+        <div className="modal-backdrop">
+          <div className="game-mode-content">
+            <h2>Wybierz zakładkę</h2>
+            <div className="game-mode-buttons">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  className="game-mode-button"
+                  onClick={() => handleOpenTab(tab.id)}
+                >
+                  {tab.name}
+                </button>
+              ))}
+              <button 
+                className="game-mode-button solo" 
+                onClick={() => {
+                  setIsBettingOpen(true); 
+                  handleCloseAddTabModal();
+                }}
+              >
+                Stwórz nowy zakład
+              </button>
+            </div>
+            <button className="close-button" onClick={handleCloseAddTabModal}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+        </div>
+      )}
         {isGameModeOpen && (
           <GameModeView
             isOpen={isGameModeOpen}
