@@ -23,11 +23,13 @@ const SOFASCORE_URL = "https://api.sofascore.app/api/v1/";
 //     { id: 281, name: "PucharPolski", season: 52567 },
 //     { id: 329, name: "CopadelRey", season: 55373 },
 // ];
-  
+
 export const tournaments = [
   { id: 8, name: "laLiga", season: 52376 },
   { id: 17, name: "premierLeague", season: 52186 },
   { id: 23, name: "serieA", season: 52760 },
+  { id: 14688, name: "superCup", season: 56932 },
+  { id: 915, name: "persianGulfProLeague", season: 52957 },
 ];
 
 // export const tournaments = [
@@ -97,7 +99,6 @@ export const getTurnamentImgURL = function (turnamentName) {
 };
 
 export const getTurnamentImgURLbyId = function (id) {
-
   return `${SOFASCORE_URL}unique-tournament/${id}/image/light`;
 };
 export function ReturnTeamImage(teamId) {
@@ -125,94 +126,82 @@ export const divideMatchesToLeagues = (lastOrNextMatches) =>
     return { ...tournament, matches };
   });
 
-export  const addMatchesTotempAllMatchesData = function (tempAllMatchesData, arr, pushOrUnshift) {
-    Object.keys(arr).forEach((key) => {
-      if (tempAllMatchesData[key]) {
-        // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
-        arr[key].forEach((liveMatch) => {
-          if (
-            !tempAllMatchesData[key].some(
-              (match) => match.id === liveMatch.id
-            )
-          ) {
-            if(pushOrUnshift === "push")
-              tempAllMatchesData[key].push(liveMatch);
-            else
-            tempAllMatchesData[key].unshift(liveMatch);
-          }
-        });
-      } else {
-        tempAllMatchesData[key] = arr[key];
-      }
-    });
-    return tempAllMatchesData;
-  }
-  
-  export  const getAllMatchesDays = function (obj,arrayToSaveDates) {
-    obj.forEach((match) => {
+export const addMatchesTotempAllMatchesData = function (
+  tempAllMatchesData,
+  arr,
+  pushOrUnshift
+) {
+  Object.keys(arr).forEach((key) => {
+    if (tempAllMatchesData[key]) {
+      // Dodawanie tylko tych meczów, które jeszcze nie istnieją w tempAllMatchesData
+      arr[key].forEach((liveMatch) => {
+        if (
+          !tempAllMatchesData[key].some((match) => match.id === liveMatch.id)
+        ) {
+          if (pushOrUnshift === "push") tempAllMatchesData[key].push(liveMatch);
+          else tempAllMatchesData[key].unshift(liveMatch);
+        }
+      });
+    } else {
+      tempAllMatchesData[key] = arr[key];
+    }
+  });
+  return tempAllMatchesData;
+};
+
+export const getAllMatchesDays = function (obj, arrayToSaveDates) {
+  obj.forEach((match) => {
+    const matchDate = new Date(match.startTimestamp * 1000);
+    const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+      matchDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+    arrayToSaveDates.push(apiFormatMatchDate);
+  });
+  console.log(arrayToSaveDates);
+  return arrayToSaveDates;
+};
+
+export const getDaysWithoutMatches = function (allMatchesDates) {
+  const today = new Date();
+  const uniqueMatchDates = [...new Set(allMatchesDates)];
+  const daysWithoutMatches = Array.from({ length: 218 + 120 }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - 30 - 90 + index);
+    const apiFormatDate = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    return uniqueMatchDates.includes(apiFormatDate) ? null : apiFormatDate;
+  }).filter(Boolean);
+  return daysWithoutMatches;
+};
+
+export const filterMatchesByDate = (allData, date) => {
+  const newMatchesData = {};
+
+  Object.keys(allData).forEach((tournamentName) => {
+    newMatchesData[tournamentName] = allData[tournamentName].filter((match) => {
       const matchDate = new Date(match.startTimestamp * 1000);
       const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
         matchDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(
-        2,
-        "0"
-      )}`;
-      arrayToSaveDates.push(apiFormatMatchDate);
+      ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+      return apiFormatMatchDate === date;
     });
-    console.log(arrayToSaveDates)
-    return arrayToSaveDates
-  }
-  
-  export  const getDaysWithoutMatches = function (allMatchesDates) {
-    const today = new Date();
-    const uniqueMatchDates = [...new Set(allMatchesDates)];
-    const daysWithoutMatches = Array.from({ length: 218+120 }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() - 30 - 90 + index);
-      const apiFormatDate = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      return uniqueMatchDates.includes(apiFormatDate)
-        ? null
-        : apiFormatDate;
-    }).filter(Boolean);
-    return daysWithoutMatches
-  }
-  
-  export const filterMatchesByDate = (allData, date) => {
-    const newMatchesData = {};
-  
-    Object.keys(allData).forEach((tournamentName) => {
-      newMatchesData[tournamentName] = allData[tournamentName].filter(
-        (match) => {
-          const matchDate = new Date(match.startTimestamp * 1000);
-          const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-            matchDate.getMonth() + 1
-          ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
-          return apiFormatMatchDate === date;
-        }
-      );
-    });
-  
-    return newMatchesData;
-};
-  
+  });
 
+  return newMatchesData;
+};
 
 export const filterMatchesByDate2 = (allData, date) => {
   const newMatchesData = {};
-  console.log("matchesdata2........." )
-  console.log(allData)
-  Object.keys(allData).forEach(
-      (match) => {
-        const matchDate = new Date(match.startTimestamp * 1000);
-        const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
-          matchDate.getMonth() + 1
-        ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
-        return apiFormatMatchDate === date;
-      }
-    );
-  
+  console.log("matchesdata2.........");
+  console.log(allData);
+  Object.keys(allData).forEach((match) => {
+    const matchDate = new Date(match.startTimestamp * 1000);
+    const apiFormatMatchDate = `${matchDate.getFullYear()}-${String(
+      matchDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(matchDate.getDate()).padStart(2, "0")}`;
+    return apiFormatMatchDate === date;
+  });
 
   return newMatchesData;
 };
@@ -220,9 +209,9 @@ export const filterMatchesByDate2 = (allData, date) => {
 export const sendMatches = async (matches, endpoint) => {
   try {
     const response = await fetch(endpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ matches }), // Zserializuj tablicę meczów do formatu JSON
     });
@@ -232,10 +221,10 @@ export const sendMatches = async (matches, endpoint) => {
     }
 
     const data = await response.json();
-    console.log('Odpowiedź z serwera:', data);
+    console.log("Odpowiedź z serwera:", data);
     return data;
   } catch (error) {
-    console.error('Błąd podczas wysyłania meczów:', error);
+    console.error("Błąd podczas wysyłania meczów:", error);
     throw error;
   }
 };

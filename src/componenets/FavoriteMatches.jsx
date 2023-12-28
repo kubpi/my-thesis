@@ -5,10 +5,22 @@ import RemoveButton from "./RemoveButton";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import "./CustomTable3.css";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection,onSnapshot, where, query  } from 'firebase/firestore';
 import {
-    ReturnTeamImage, getTurnamentImgURLbyId, tournaments
-    } from "../Services/apiService";
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  onSnapshot,
+  where,
+  query,
+} from "firebase/firestore";
+import {
+  ReturnTeamImage,
+  getTurnamentImgURLbyId,
+  tournaments,
+} from "../Services/apiService";
 export function FavoriteMatches() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
@@ -16,8 +28,8 @@ export function FavoriteMatches() {
   const [favoritesMatches, setFavoritesMatches] = useState([]);
   const [filteredFavorites, setFilteredFavorites] = useState(favoritesMatches);
 
-  console.log(favoritesMatches)
-  
+  console.log(favoritesMatches);
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -35,13 +47,14 @@ export function FavoriteMatches() {
     if (matchDate.toDateString() === currentTime.toDateString()) {
       const hours = Math.floor(timeDiff / (1000 * 60 * 60));
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      return `${hours}h ${minutes}m do rozpoczęcia`;
+      if (minutes > 0) {
+        return `${hours}h ${minutes}m do rozpoczęcia`;
+      }
     } else {
       const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
       return `${days} dni do meczu`;
     }
   };
-
 
   useEffect(() => {
     const firestore = getFirestore();
@@ -50,7 +63,10 @@ export function FavoriteMatches() {
 
     favorites.forEach((favoriteId) => {
       tournaments.forEach((tournament) => {
-        const matchesRef = collection(firestore, `matchesData/${tournament.name}/matches`);
+        const matchesRef = collection(
+          firestore,
+          `matchesData/${tournament.name}/matches`
+        );
         const q = query(matchesRef, where("id", "==", favoriteId));
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -70,7 +86,7 @@ export function FavoriteMatches() {
       unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
     };
   }, [favorites]);
-  
+
   useEffect(() => {
     // Filter matches whenever the searchQuery changes or favorites change
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -114,7 +130,7 @@ export function FavoriteMatches() {
   };
 
   const handleRemoveClick = () => {
-    console.log(checkedIds)
+    console.log(checkedIds);
     removeFavorite(checkedIds);
     setCheckedIds([]);
   };
@@ -159,17 +175,34 @@ export function FavoriteMatches() {
                       onChange={() => handleCheckboxChange(user.id)}
                     />
                   </div>
-                  <div className="row-item"><img src={getTurnamentImgURLbyId(user.tournament.uniqueTournament.id)} className="team-logo2" alt={user.homeTeam.name}></img>{user.tournament.name}</div>
+                  <div className="row-item">
+                    <img
+                      src={getTurnamentImgURLbyId(
+                        user.tournament.uniqueTournament.id
+                      )}
+                      className="team-logo2"
+                      alt={user.homeTeam.name}
+                    ></img>
+                    {user.tournament.name}
+                  </div>
                   <div className="row-item">
                     <div>
-                      <img src={ReturnTeamImage(user.homeTeam.id)} className="team-logo2" alt={user.homeTeam.name}></img>
+                      <img
+                        src={ReturnTeamImage(user.homeTeam.id)}
+                        className="team-logo2"
+                        alt={user.homeTeam.name}
+                      ></img>
                       {user.homeTeam.name}
                     </div>
-                    <img src={ReturnTeamImage(user.awayTeam.id)} className="team-logo2" alt={user.awayTeam.name}></img>
+                    <img
+                      src={ReturnTeamImage(user.awayTeam.id)}
+                      className="team-logo2"
+                      alt={user.awayTeam.name}
+                    ></img>
                     {user.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {user.status.type !== "notstarted"  ? (
+                    {user.status.type !== "notstarted" ? (
                       <>
                         <div>{user.homeScore.display}</div>
                         {user.awayScore.display}

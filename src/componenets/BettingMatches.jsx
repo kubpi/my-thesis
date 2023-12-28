@@ -1,8 +1,18 @@
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./BettingMatches.css";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, onSnapshot, where, query, } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  onSnapshot,
+  where,
+  query,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useMatchesData } from "./MatchesDataProvider";
 import {
@@ -15,73 +25,129 @@ import SearchBar from "./SearchBar";
 import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
-
-const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}) => {
+const BettingMatches = ({
+  selectedMatchesId,
+  onBetClick,
+  onSaveBet,
+  isBetClosed,
+}) => {
   console.log(selectedMatchesId);
-  const [matchesBetting, setMatchesBetting] = useState([])
-
+  const [matchesBetting, setMatchesBetting] = useState([]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
-
-
   const [nextMatchTime, setNextMatchTime] = useState(null);
-  const [timeUntilNextMatch, setTimeUntilNextMatch] = useState('');
+  const [timeUntilNextMatch, setTimeUntilNextMatch] = useState("");
+  const [betClosed, setBetClosed] = useState(false);
 
+  // Function to calculate points for a single match
+  const calculateMatchPoints = (match) => {
+    // Define points for different outcomes
+    const pointsForCorrectHomeScore = 1;
+    const pointsForCorrectAwayScore = 1;
+    const pointsForCorrectOutcome = 3;
 
+    let points = 0;
+
+    // Check if the match has been bet on and the result is available
+    if (
+      isBetClosed &&
+      match.match.status.type === "finished" &&
+      match.betHomeScore &&
+      match.betAwayScore
+    ) {
+      // Add points for correctly predicted home score
+      if (match.betHomeScore === match.match.homeScore.current) {
+        points += pointsForCorrectHomeScore;
+      }
+
+      // Add points for correctly predicted away score
+      if (match.betAwayScore === match.match.awayScore.current) {
+        points += pointsForCorrectAwayScore;
+      }
+
+      // Add points for correctly predicted outcome (win, draw, loss)
+      const betOutcome =
+        match.betHomeScore > match.betAwayScore
+          ? "win"
+          : match.betHomeScore < match.betAwayScore
+          ? "loss"
+          : "draw";
+      const matchOutcome =
+        match.match.homeScore.current > match.match.awayScore.current
+          ? "win"
+          : match.match.homeScore.current < match.match.awayScore.current
+          ? "loss"
+          : "draw";
+
+      if (betOutcome === matchOutcome) {
+        points += pointsForCorrectOutcome;
+      }
+    }
+
+    return points;
+  };
 
   // Aktualizacja czasu do rozpoczęcia najbliższego meczu
   useEffect(() => {
-    const calculateNextMatchTime = () => {
-      const upcomingMatches = matchesBetting.filter(match => 
-        new Date(match.match.startTimestamp * 1000) > new Date()
-      );
-      if (upcomingMatches.length > 0) {
-        const closestMatch = upcomingMatches.reduce((a, b) => 
-          a.match.startTimestamp < b.match.startTimestamp ? a : b
+    if (!betClosed) {
+      const calculateNextMatchTime = () => {
+        const upcomingMatches = matchesBetting.filter(
+          (match) => new Date(match.match.startTimestamp * 1000) > new Date()
         );
-        setNextMatchTime(new Date(closestMatch.match.startTimestamp * 1000));
-      }
-    };
+        if (upcomingMatches.length > 0) {
+          const closestMatch = upcomingMatches.reduce((a, b) =>
+            a.match.startTimestamp < b.match.startTimestamp ? a : b
+          );
+          setNextMatchTime(new Date(closestMatch.match.startTimestamp * 1000));
+        }
+      };
 
-    calculateNextMatchTime();
-
-    const interval = setInterval(() => {
       calculateNextMatchTime();
-    }, 60000); // aktualizacja co 1 minutę
 
-    return () => clearInterval(interval); // Czyszczenie interwału
-  }, [matchesBetting]);
+      const interval = setInterval(() => {
+        calculateNextMatchTime();
+      }, 60000); // aktualizacja co 1 minutę
+
+      return () => clearInterval(interval); // Czyszczenie interwału
+    }
+  }, [matchesBetting, betClosed]);
 
   useEffect(() => {
     if (nextMatchTime) {
       const updateTimer = () => {
         const now = new Date();
         const timeDiff = nextMatchTime - now;
-  
+
+        console.log(timeDiff);
         if (timeDiff <= 0) {
           onSaveBet();
-          setTimeUntilNextMatch('Zakład zamknięty');
+          setTimeUntilNextMatch("Zakład zamknięty");
         } else {
           const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-  
+          const hours = Math.floor(
+            (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const minutes = Math.floor(
+            (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+          );
+
           if (days > 0) {
             setTimeUntilNextMatch(`${days} dni do zamknięcia zakłądu`);
           } else {
-            setTimeUntilNextMatch(`${hours}h ${minutes}m do zamknięcia zakładu`);
+            setTimeUntilNextMatch(
+              `${hours}h ${minutes}m do zamknięcia zakładu`
+            );
           }
         }
       };
-  
+
       updateTimer();
       const interval = setInterval(updateTimer, 60000); // aktualizacja co 1 minutę
-  
+
       return () => clearInterval(interval);
     }
   }, [nextMatchTime]);
-  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -98,13 +164,14 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
     if (matchDate.toDateString() === currentTime.toDateString()) {
       const hours = Math.floor(timeDiff / (1000 * 60 * 60));
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      return `${hours}h ${minutes}m do rozpoczęcia`;
+      if (minutes > 0) {
+        return `${hours}h ${minutes}m do rozpoczęcia`;
+      }
     } else {
       const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24) - 1);
       return `${days} dni do meczu`;
     }
   };
-
 
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
@@ -119,9 +186,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
   const handleSaveBet = () => {
     // Call the onSaveBet function passed from TabsBar
     onSaveBet();
-   
   };
- 
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -131,38 +196,43 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
     const matches = {};
 
     selectedMatchesId.forEach((match) => {
-      console.log(match)
+      console.log(match);
       tournaments.forEach((tournament) => {
-        const matchesRef = collection(firestore, `matchesData/${tournament.name}/matches`);
+        const matchesRef = collection(
+          firestore,
+          `matchesData/${tournament.name}/matches`
+        );
         const q = query(matchesRef, where("id", "==", match.id));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          let newMatches = {}
-          let matchess = []
+          let newMatches = {};
+          let matchess = [];
           querySnapshot.forEach((doc) => {
             const matchData = doc.data();
-            newMatches = { match: matchData, ...match }
+            newMatches = { match: matchData, ...match };
             matches[matchData.id] = newMatches;
-         
-           
-        
-           
           });
-         
-       
+
           setMatchesBetting(Object.values(matches));
         });
 
         unsubscribeFromSnapshots.push(unsubscribe);
       });
     });
+    // Update your mapping logic to include points calculation
+    const mappedMatches = matchesBetting.map((match) => {
+      return {
+        ...match,
+        points: calculateMatchPoints(match), // Calculate and assign points
+      };
+    });
 
+    setMatchesBetting(mappedMatches);
     return () => {
       unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
     };
   }, [selectedMatchesId]);
 
-  
-  console.log(matchesBetting)
+  console.log(matchesBetting);
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
@@ -189,9 +259,10 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
               <div className="header-item">Status</div>
+              <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body">
-            {matchesBetting.map((user, index) => (
+              {matchesBetting.map((user, index) => (
                 <div className="table-row " key={user.match.id}>
                   <div className="row-item select-column">
                     <input type="checkbox" />
@@ -256,7 +327,7 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
                   </div>
 
                   <div className="row-item">
-                    {user.match.status.type !== "notstarted"  ? (
+                    {user.match.status.type !== "notstarted" ? (
                       <>
                         <div>{user.match.homeScore.display}</div>
                         {user.match.awayScore.display}
@@ -268,16 +339,23 @@ const BettingMatches = ({ selectedMatchesId, onBetClick, onSaveBet, isBetClosed}
                   <div className="row-item">
                     {convertDate(user.match.startTimestamp)}
                   </div>
-                  <div className="row-item">{user.match.status.description}</div>
+                  <div className="row-item">
+                    {user.match.status.description}
+                  </div>
+                  <div className="row-item">{user.points}</div>
                 </div>
               ))}
             </div>
-              <div className="save-all-button-container">
-                {!isBetClosed  && 
+            <div className="save-all-button-container">
+              {!isBetClosed && (
+                <>
                   <button onClick={handleSaveBet} className="save-all-button">
-                Zamknij zakład
-                </button>}            
-                <div>{timeUntilNextMatch}</div>
+                    Zamknij zakład
+                  </button>
+
+                  <div>{timeUntilNextMatch}</div>
+                </>
+              )}
             </div>
           </div>
         </>

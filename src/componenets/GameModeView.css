@@ -1,78 +1,79 @@
 .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-  }
-  
-  .game-mode-content {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .game-mode-content h2 {
-    margin-bottom: 30px;
-  }
-  
-  .game-mode-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 30px;
-  }
-  
-  .game-mode-button {
-    padding: 20px 40px;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex: 1; /* Equal width for buttons */
-    margin: 0 10px; /* Spacing between buttons */
-  }
-  
-  .game-mode-button.solo {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .game-mode-button.solo:hover {
-    background-color: #45a049;
-  }
-  
-  .game-mode-button.team {
-    background-color: #3498db;
-    color: white;
-  }
-  
-  .game-mode-button.team:hover {
-    background-color: #2980b9;
-  }
-  
-  .game-mode-button .icon {
-    margin-right: 8px;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 24px;
-  }
-  
-  .close-button:hover {
-    color: #ccc;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.game-mode-content {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.game-mode-content h2 {
+  margin-bottom: 30px;
+}
+
+.game-mode-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+
+.game-mode-button {
+  padding: 20px 40px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1;
+  /* Equal width for buttons */
+  margin: 0 10px;
+  /* Spacing between buttons */
+}
+
+.game-mode-button.solo {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.game-mode-button.solo:hover {
+  background-color: #45a049;
+}
+
+.game-mode-button.team {
+  background-color: #3498db;
+  color: white;
+}
+
+.game-mode-button.team:hover {
+  background-color: #2980b9;
+}
+
+.game-mode-button .icon {
+  margin-right: 8px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.close-button:hover {
+  color: #ccc;
+}
