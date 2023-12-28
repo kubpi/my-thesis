@@ -1,9 +1,12 @@
 .tabs-container {
   margin-top: 40px;
-  background-color: #f2f2f2; /* Szary kolor tła */
+  background-color: #f2f2f2;
+  /* Szary kolor tła */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lekkie cieniowanie dla głębi */
-  overflow: hidden; /* Zapobiega wystawaniu dzieci poza zaokrąglone rogi */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Lekkie cieniowanie dla głębi */
+  overflow: hidden;
+  /* Zapobiega wystawaniu dzieci poza zaokrąglone rogi */
 }
 
 .tabs-bar {
@@ -11,15 +14,50 @@
   justify-content: start;
   background: #ffffff;
   padding: 10px;
-  border-bottom: 1px solid #e0e0e0; /* Subtelny separator między zakładkami a zawartością */
+  border-bottom: 1px solid #e0e0e0;
+  /* Subtelny separator między zakładkami a zawartością */
+  overflow-x: auto;
+  /* Dodaje poziome przewijanie */
+  white-space: nowrap;
+  /* Zapobiega przenoszeniu zakładek do nowej linii */
+  scrollbar-width: thin;
+  /* 'auto' lub 'thin' */
+  scrollbar-color: #888 #f1f1f1;
+  /* kolor paska i ścieżki */
+  flex-grow: 1;
+
 }
 
 .tab {
-  margin-right: 20px;
+
   padding: 10px 20px;
   cursor: pointer;
   position: relative;
   transition: color 0.3s ease;
+  flex-shrink: 0;
+  /* Zapobiega zmniejszaniu zakładek */
+  margin-right: 10px;
+  /* Dostosuj odstęp między zakładkami */
+}
+
+.tabs-bar::-webkit-scrollbar {
+  height: 8px;
+  /* Wysokość paska przewijania */
+}
+
+.tabs-bar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* Kolor tła ścieżki paska przewijania */
+}
+
+.tabs-bar::-webkit-scrollbar-thumb {
+  background: #888;
+  /* Kolor paska przewijania */
+}
+
+.tabs-bar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  /* Kolor paska przewijania podczas najechania */
 }
 
 .tab.active {
@@ -60,31 +98,31 @@
 /* Reszta stylów... */
 .buttons-container {
   display: flex;
-  gap: 10px; /* Adjust the gap to your preference */
+  gap: 10px;
+  /* Adjust the gap to your preference */
   padding: 10px;
 }
+
 .searchBar-container {
- margin-top: 15px;
+  margin-top: 15px;
 }
 
 .tabs-container {
   display: flex;
   align-items: center;
   margin-top: 40px;
-  background-color: #f2f2f2; /* Grey background color */
+  background-color: #f2f2f2;
+  /* Grey background color */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-  overflow: hidden; /* Prevents children from overflowing rounded corners */
-  padding: 10px; /* Added padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Light shadow for depth */
+  overflow: hidden;
+  /* Prevents children from overflowing rounded corners */
+  padding: 10px;
+  /* Added padding */
 }
 
-.tabs-bar {
-  display: flex;
-  flex: 1; /* Allows tabs bar to grow and fill space */
-  align-items: center; /* Centers items vertically */
-  background: #ffffff;
-  padding-right: 10px; /* Adjusted padding for spacing */
-}
+
 
 /* Update your .tab styles if necessary */
 .tab {
@@ -93,38 +131,47 @@
   cursor: pointer;
   position: relative;
   transition: color 0.3s ease;
+
 }
 
 /* Rest of your .tab styles */
 
 /* Style for the add tab button */
 .add-tab-button {
-  margin-left: auto; /* Pushes the button to the end of the container */
+  margin-left: auto;
+  /* Pushes the button to the end of the container */
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* Adjust width as necessary */
-  height: 40px; /* Adjust height as necessary */
+  width: 40px;
+  /* Adjust width as necessary */
+  height: 40px;
+  /* Adjust height as necessary */
   background-color: #466551;
   color: white;
   border-radius: 50%;
-  font-size: 20px; /* Adjust font size as necessary */
+  font-size: 20px;
+  /* Adjust font size as necessary */
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow to the button */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Optional: Adds shadow to the button */
 }
 
 .add-tab-button:hover {
-  background-color: #0056b3; /* Color change on hover */
+  background-color: #0056b3;
+  /* Color change on hover */
 }
 
 /* Style adjustments for the search bar container */
 .searchBar-container {
-  margin-top: 0; /* Removes additional top margin */
+  margin-top: 0;
+  /* Removes additional top margin */
 }
 
 /* Responsive table container */
 .users-table {
-  overflow-x: auto; /* Allows horizontal scrolling on smaller screens */
+  overflow-x: auto;
+  /* Allows horizontal scrolling on smaller screens */
 }
 
 /* Rest of your styles */
