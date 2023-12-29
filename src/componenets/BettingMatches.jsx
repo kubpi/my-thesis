@@ -50,19 +50,28 @@ const BettingMatches = ({
     let points = 0;
 
     // Check if the match has been bet on and the result is available
+    console.log(match.match.status.type);
+    console.log(match.betHomeScore);
+    console.log(match.betAwayScore);
     if (
-      isBetClosed &&
       match.match.status.type === "finished" &&
       match.betHomeScore &&
       match.betAwayScore
     ) {
       // Add points for correctly predicted home score
-      if (match.betHomeScore === match.match.homeScore.current) {
+      console.log("match.betHomeScore " + match.betHomeScore);
+      console.log(
+        "match.match.homeScore.display " + match.match.homeScore.display
+      );
+
+      console.log(match.betHomeScore === match.match.homeScore.display);
+      if (match.betHomeScore === match.match.homeScore.display) {
         points += pointsForCorrectHomeScore;
+        console.log("points " + points);
       }
 
       // Add points for correctly predicted away score
-      if (match.betAwayScore === match.match.awayScore.current) {
+      if (match.betAwayScore === match.match.awayScore.display) {
         points += pointsForCorrectAwayScore;
       }
 
@@ -74,9 +83,9 @@ const BettingMatches = ({
           ? "loss"
           : "draw";
       const matchOutcome =
-        match.match.homeScore.current > match.match.awayScore.current
+        match.match.homeScore.display > match.match.awayScore.display
           ? "win"
-          : match.match.homeScore.current < match.match.awayScore.current
+          : match.match.homeScore.display < match.match.awayScore.display
           ? "loss"
           : "draw";
 
@@ -209,6 +218,17 @@ const BettingMatches = ({
           querySnapshot.forEach((doc) => {
             const matchData = doc.data();
             newMatches = { match: matchData, ...match };
+            console.log(newMatches.match.status.type);
+            console.log(newMatches.betHomeScore);
+            console.log(newMatches.betAwayScore);
+            if (
+              isBetClosed &&
+              newMatches.match.status.type === "finished" &&
+              newMatches.betHomeScore &&
+              newMatches.betAwayScore
+            ) {
+              newMatches.points = calculateMatchPoints(newMatches);
+            }
             matches[matchData.id] = newMatches;
           });
 
@@ -218,15 +238,7 @@ const BettingMatches = ({
         unsubscribeFromSnapshots.push(unsubscribe);
       });
     });
-    // Update your mapping logic to include points calculation
-    const mappedMatches = matchesBetting.map((match) => {
-      return {
-        ...match,
-        points: calculateMatchPoints(match), // Calculate and assign points
-      };
-    });
 
-    setMatchesBetting(mappedMatches);
     return () => {
       unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
     };
@@ -342,6 +354,7 @@ const BettingMatches = ({
                   <div className="row-item">
                     {user.match.status.description}
                   </div>
+
                   <div className="row-item">{user.points}</div>
                 </div>
               ))}

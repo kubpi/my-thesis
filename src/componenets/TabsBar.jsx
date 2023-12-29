@@ -175,6 +175,7 @@ function TabsBar() {
         betHomeScore: null,
         betAwayScore: null,
         betClosed: false,
+        points: null,
       };
     });
 
@@ -212,6 +213,7 @@ function TabsBar() {
                   id: match.id,
                   betHomeScore: homeScore,
                   betAwayScore: awayScore,
+                  points: null,
                 };
               }
               return match;
