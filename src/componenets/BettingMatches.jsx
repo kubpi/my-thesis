@@ -98,29 +98,44 @@ const BettingMatches = ({
   };
 
   // Aktualizacja czasu do rozpoczęcia najbliższego meczu
+  let closestMatch;
+  if (matchesBetting.length > 0) {
+    closestMatch = matchesBetting.reduce((a, b) =>
+      a.match.startTimestamp < b.match.startTimestamp ? a : b
+    );
+  }
   useEffect(() => {
-    if (!betClosed) {
-      const calculateNextMatchTime = () => {
-        const upcomingMatches = matchesBetting.filter(
-          (match) => new Date(match.match.startTimestamp * 1000) > new Date()
+    let intervalId;
+
+    const calculateNextMatchTime = () => {
+      if (matchesBetting.length > 0) {
+        // Assuming you have logic to find the closest match
+
+        const nextMatchDate = new Date(
+          closestMatch.match.startTimestamp * 1000
         );
-        if (upcomingMatches.length > 0) {
-          const closestMatch = upcomingMatches.reduce((a, b) =>
-            a.match.startTimestamp < b.match.startTimestamp ? a : b
-          );
-          setNextMatchTime(new Date(closestMatch.match.startTimestamp * 1000));
+        const now = new Date();
+
+        if (now < nextMatchDate) {
+          setNextMatchTime(nextMatchDate);
+        } else {
+          // Time for next match has passed, call onSaveBet and stop the countdown
+          onSaveBet();
+          setNextMatchTime(null); // Resetting nextMatchTime
+          clearInterval(intervalId); // Stop the interval
         }
-      };
+      }
+    };
 
+    if (!betClosed) {
       calculateNextMatchTime();
-
-      const interval = setInterval(() => {
-        calculateNextMatchTime();
-      }, 60000); // aktualizacja co 1 minutę
-
-      return () => clearInterval(interval); // Czyszczenie interwału
+      intervalId = setInterval(calculateNextMatchTime, 60000); // Set up the interval
     }
-  }, [matchesBetting, betClosed]);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId); // Clear the interval when the component unmounts or dependencies change
+    };
+  }, [betClosed, matchesBetting, onSaveBet]); // Dependencies
 
   useEffect(() => {
     if (nextMatchTime) {
@@ -228,6 +243,8 @@ const BettingMatches = ({
               newMatches.betAwayScore
             ) {
               newMatches.points = calculateMatchPoints(newMatches);
+            } else if (!newMatches.betHomeScore || !newMatches.betAwayScore) {
+              newMatches.points = null;
             }
             matches[matchData.id] = newMatches;
           });
@@ -271,6 +288,7 @@ const BettingMatches = ({
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
               <div className="header-item">Status</div>
+
               <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body">
