@@ -104,6 +104,15 @@ const BettingMatches = ({
       a.match.startTimestamp < b.match.startTimestamp ? a : b
     );
   }
+
+  // Separate useEffect to handle changes in 'betClosed'
+  useEffect(() => {
+    if (closestMatch && closestMatch.match.status.type === "inprogress") {
+      // Perform any actions needed when betting is closed
+      onSaveBet();
+    }
+  }, [matchesBetting]);
+
   useEffect(() => {
     let intervalId;
 
@@ -119,8 +128,6 @@ const BettingMatches = ({
         if (now < nextMatchDate) {
           setNextMatchTime(nextMatchDate);
         } else {
-          // Time for next match has passed, call onSaveBet and stop the countdown
-          onSaveBet();
           setNextMatchTime(null); // Resetting nextMatchTime
           clearInterval(intervalId); // Stop the interval
         }
@@ -135,7 +142,7 @@ const BettingMatches = ({
     return () => {
       if (intervalId) clearInterval(intervalId); // Clear the interval when the component unmounts or dependencies change
     };
-  }, [betClosed, matchesBetting, onSaveBet]); // Dependencies
+  }, [betClosed, matchesBetting]); // Dependencies
 
   useEffect(() => {
     if (nextMatchTime) {
