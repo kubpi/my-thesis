@@ -75,23 +75,12 @@ const BettingMatches = ({
         points += pointsForCorrectAwayScore;
       }
 
-      // Add points for correctly predicted outcome (win, draw, loss)
-      const betOutcome =
-        match.betHomeScore > match.betAwayScore
-          ? "win"
-          : match.betHomeScore < match.betAwayScore
-          ? "loss"
-          : "draw";
-      const matchOutcome =
-        match.match.homeScore.display > match.match.awayScore.display
-          ? "win"
-          : match.match.homeScore.display < match.match.awayScore.display
-          ? "loss"
-          : "draw";
-
-      if (betOutcome === matchOutcome) {
+      if (match.betHomeScore === match.match.homeScore.display && match.betAwayScore === match.match.awayScore.display) {
         points += pointsForCorrectOutcome;
+        console.log("points " + points);
       }
+
+  
     }
 
     return points;
@@ -107,11 +96,11 @@ const BettingMatches = ({
 
   // Separate useEffect to handle changes in 'betClosed'
   useEffect(() => {
-    if (closestMatch && closestMatch.match.status.type === "inprogress") {
+    if (closestMatch && (closestMatch.match.status.type === "inprogress" || closestMatch.match.status.type === "finished")) {
       // Perform any actions needed when betting is closed
       onSaveBet();
     }
-  }, [matchesBetting]);
+  }, []);
 
   useEffect(() => {
     let intervalId;
@@ -142,7 +131,7 @@ const BettingMatches = ({
     return () => {
       if (intervalId) clearInterval(intervalId); // Clear the interval when the component unmounts or dependencies change
     };
-  }, [betClosed, matchesBetting]); // Dependencies
+  }, [matchesBetting]); // Dependencies
 
   useEffect(() => {
     if (nextMatchTime) {

@@ -18,6 +18,8 @@ export function BettingView ({
   setSelectedMatches,
   onAddTab,
 }) {
+
+  const [tabCount, setTabCount] = useState(1); // Stan do śledzenia liczby zakładek
   const [tabName, setTabName] = useState("Zakład");
   const { daysWithNoMatches } = useMatchesData();
 
@@ -34,7 +36,15 @@ export function BettingView ({
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
-  const [matchesData,setMatchesData] = useState()
+  const [matchesData, setMatchesData] = useState()
+  
+  useEffect(() => {
+    // Ustawienie domyślnej nazwy zakładki
+    const today = new Date();
+    const formattedDate = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
+    setTabName(`${formattedDate} Zakład ${tabCount}`);
+  }, [tabCount]); // Ustawienie zależności od tabCount, aby aktualizować nazwę przy zmianie liczby zakładek
+
   // Function to handle the checkbox change
   const handleCheckboxChange = (matchId) => {
     setSelectedMatches((prevSelectedMatches) => {
@@ -51,18 +61,17 @@ export function BettingView ({
   // Function to handle the Save button click
   const handleSave = () => {
     if (tabName.trim() && selectedMatches.length > 0) {
-      // Call the onAddTab function with the new tab name and the selected matches
       onAddTab(tabName.trim(), selectedMatches);
-      // Reset the state
+      console.log(tabCount)
+      setTabCount(tabCount + 1); // Aktualizacja tabCount
       setTabName("");
       setSelectedMatches([]);
-
-      onClose(); // Close the modal
+      onClose();
     } else {
       alert("Please enter a tab name and select at least one match.");
     }
   };
-
+  
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
