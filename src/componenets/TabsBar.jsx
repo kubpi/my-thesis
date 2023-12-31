@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback  } from "react";
 import "./TabsBar.css";
 
 import FavoriteMatches from "./FavoriteMatches";
@@ -26,6 +26,10 @@ function TabsBar() {
   const [selectedMatchForBetting, setSelectedMatchForBetting] = useState(null);
   const [isMatchInputOpen, setIsMatchInputOpen] = useState(false);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
+
+  
+
+  console.log(tabs)
 
   const handleOpenAddTabModal = () => {
     setIsAddTabModalOpen(true);
@@ -170,6 +174,7 @@ function TabsBar() {
 
   const handleAddTabWithMatches = (tabName) => {
     const updatedMatches = selectedMatches.map((match) => {
+    
       return {
         id: match.id,
         betHomeScore: null,
@@ -213,7 +218,7 @@ function TabsBar() {
                   id: match.id,
                   betHomeScore: homeScore,
                   betAwayScore: awayScore,
-                  points: null,
+                  
                 };
               }
               return match;
@@ -255,10 +260,12 @@ function TabsBar() {
           // If the active tab has a 'matches' property, render BettingMatches with those matches
           return (
             <BettingMatches
+              activeTab={activeTab}
               selectedMatchesId={activeTab.matches}
               onBetClick={handleBetClick}
               onSaveBet={handleSaveAllBets} // Pass the new onSaveBet handler
               isBetClosed={activeTab.betClosed} // Dodaj tę linię
+              //updateMatchPoints={updateMatchPoints}
             />
           );
         } else {
@@ -267,6 +274,7 @@ function TabsBar() {
         }
     }
   };
+
 
   return (
     <>

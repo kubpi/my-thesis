@@ -25,11 +25,14 @@ import SearchBar from "./SearchBar";
 import RemoveButton from "./RemoveButton";
 import FilterButton from "./FilterButton";
 
+
 const BettingMatches = ({
   selectedMatchesId,
   onBetClick,
   onSaveBet,
   isBetClosed,
+  updateMatchPoints,
+  activeTab
 }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
@@ -40,6 +43,9 @@ const BettingMatches = ({
   const [timeUntilNextMatch, setTimeUntilNextMatch] = useState("");
   const [betClosed, setBetClosed] = useState(false);
 
+
+ // Oblicz sumę punktów
+ const totalPoints = matchesBetting.reduce((sum, match) => sum + (match.points || 0), 0);
   // Function to calculate points for a single match
   const calculateMatchPoints = (match) => {
     // Define points for different outcomes
@@ -49,10 +55,13 @@ const BettingMatches = ({
 
     let points = 0;
 
-    // Check if the match has been bet on and the result is available
-    console.log(match.match.status.type);
-    console.log(match.betHomeScore);
-    console.log(match.betAwayScore);
+    console.log(match)
+    // // Check if the match has been bet on and the result is available
+    // console.log(match.match.status.type);
+    // console.log(match.betHomeScore);
+    // console.log(match.betAwayScore);
+
+    
     if (
       match.match.status.type === "finished" &&
       match.betHomeScore &&
@@ -64,18 +73,18 @@ const BettingMatches = ({
         "match.match.homeScore.display " + match.match.homeScore.display
       );
 
-      console.log(match.betHomeScore === match.match.homeScore.display);
-      if (match.betHomeScore === match.match.homeScore.display) {
+      console.log(match.betHomeScore == match.match.homeScore.display);
+      if (match.betHomeScore == match.match.homeScore.display) {
         points += pointsForCorrectHomeScore;
         console.log("points " + points);
       }
 
       // Add points for correctly predicted away score
-      if (match.betAwayScore === match.match.awayScore.display) {
+      if (match.betAwayScore == match.match.awayScore.display) {
         points += pointsForCorrectAwayScore;
       }
 
-      if (match.betHomeScore === match.match.homeScore.display && match.betAwayScore === match.match.awayScore.display) {
+      if (match.betHomeScore == match.match.homeScore.display && match.betAwayScore == match.match.awayScore.display) {
         points += pointsForCorrectOutcome;
         console.log("points " + points);
       }
@@ -93,6 +102,7 @@ const BettingMatches = ({
       a.match.startTimestamp < b.match.startTimestamp ? a : b
     );
   }
+  
 
   // Separate useEffect to handle changes in 'betClosed'
   useEffect(() => {
@@ -123,6 +133,7 @@ const BettingMatches = ({
       }
     };
 
+    
     if (!betClosed) {
       calculateNextMatchTime();
       intervalId = setInterval(calculateNextMatchTime, 60000); // Set up the interval
@@ -229,19 +240,23 @@ const BettingMatches = ({
           querySnapshot.forEach((doc) => {
             const matchData = doc.data();
             newMatches = { match: matchData, ...match };
-            console.log(newMatches.match.status.type);
-            console.log(newMatches.betHomeScore);
-            console.log(newMatches.betAwayScore);
-            if (
-              isBetClosed &&
-              newMatches.match.status.type === "finished" &&
-              newMatches.betHomeScore &&
-              newMatches.betAwayScore
-            ) {
-              newMatches.points = calculateMatchPoints(newMatches);
-            } else if (!newMatches.betHomeScore || !newMatches.betAwayScore) {
-              newMatches.points = null;
-            }
+            // console.log(newMatches.match.status.type);
+            // console.log(newMatches.betHomeScore);
+            // console.log(newMatches.betAwayScore);
+            // if (
+            //   isBetClosed &&
+            //   newMatches.match.status.type === "finished" &&
+            //   newMatches.betHomeScore &&
+            //   newMatches.betAwayScore
+            // ) {
+             
+              
+            //   newMatches.points = calculateMatchPoints(newMatches);
+            //   // Call the updateMatchPoints function after calculating the points
+           
+            // } else if (!newMatches.betHomeScore || !newMatches.betAwayScore) {
+            //   newMatches.points = null;
+            // }
             matches[matchData.id] = newMatches;
           });
 
@@ -258,6 +273,49 @@ const BettingMatches = ({
   }, [selectedMatchesId]);
 
   console.log(matchesBetting);
+
+  useEffect(() => {
+    const firestore = getFirestore();
+    const user = auth.currentUser;
+    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+    let isMatcheEnded = [];
+  
+      getDoc(userBettingTabRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+       
+          const tabs = data.tabs; // Assuming tabs is an array of tabs
+          const tab = tabs.find((t) => t.id === activeTab.id); // find the active tab
+          console.log(tab.matches)
+          if (tab) {
+            // const matchIndex = tab.matches.findIndex((m) => m.id === match.id);
+            // const newPoints = calculateMatchPoints(match);
+            
+            for (let i = 0; i < tab.matches.length; i++){
+              const changedMatch = matchesBetting.filter(match => match.id === tab.matches[i].id)
+              //console.log(changedMatch)
+              changedMatch[0].match.status.type === "finished" ?  isMatcheEnded.push(true): isMatcheEnded.push(false) 
+              if (tab.matches[i].points === null) {
+                tab.matches[i].points = calculateMatchPoints(changedMatch[0]);
+              }
+            }
+         
+            //console.log(isMatcheEnded.filter(match => match === true).length)
+            //console.log((tab.matches.filter(match => match.points === null && match.betAwayScore && match.betHomeScore) ))
+            if ((tab.matches.filter(match => match.points === null && match.betAwayScore !== null && match.betHomeScore !== null).length !== 0) && (isMatcheEnded.filter(match => match === true).length) > 0) {
+              updateDoc(userBettingTabRef, { tabs }).catch((error) => {
+                console.error("Error updating points:", error);
+              });
+              console.log("Liczba punktów została zaakutalizowana")
+            }
+               
+          }
+        }
+      });
+
+
+   
+  }, [matchesBetting]);
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
@@ -384,7 +442,11 @@ const BettingMatches = ({
                 </>
               )}
             </div>
-          </div>
+            </div>
+             {/* Pole sumy punktów */}
+      <div className="total-points-container">
+        Łączna suma punktów: {totalPoints}
+      </div>
         </>
       )}
     </div>

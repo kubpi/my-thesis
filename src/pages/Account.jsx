@@ -22,6 +22,7 @@ export default function Home() {
             <Navbar></Navbar>
         {/* <UserProfile></UserProfile>  */}
         {/* <Podium rankings={rankings}></Podium> */}
+        
         <TabsBar></TabsBar>
         
     

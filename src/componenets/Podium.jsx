@@ -1,7 +1,27 @@
-import React from 'react';
-import './Podium.css';
+import {useEffect} from 'react';import './Podium.css';
+import { useState, useContext, useCallback  } from "react";
+import "./Podium.css";
 
-const Podium = ({ rankings }) => {
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
+const Podium = () => {
+  const rankings = [
+    { name: 'Alice', points: 150 },
+    { name: 'Bob', points: 120 },
+    { name: 'Charlie', points: 110 },
+    // Additional rankings
+    { name: 'Dave', points: 100 },
+    { name: 'Eve', points: 90 },
+    { name: 'Frank', points: 85 },
+    // ... more rankings if needed
+  ];
+  const auth = getAuth();
+  const firestore = getFirestore();
+  const user = auth.currentUser;
+  const [tabs ,setTabs] = useState()
+  
+console.log(tabs)
   return (
     <>
       <div className="podium">

@@ -19,6 +19,7 @@ import { query, where, getDocs } from "firebase/firestore";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import Podium from "./componenets/Podium";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -107,6 +108,7 @@ export default function App() {
                     /
                   </Route>
                   <Route path="/account" element={<Account />} />
+                  <Route path="/ranking" element={<Podium />} />
                 </Routes>
               </BrowserRouter>
             </FavoritesProvider>
