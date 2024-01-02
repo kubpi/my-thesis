@@ -16,12 +16,54 @@ const Podium = () => {
     { name: 'Frank', points: 85 },
     // ... more rankings if needed
   ];
+  const [tabs, setTabs] = useState([]);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [totalBets, setTotalBets] = useState(0);
   const auth = getAuth();
   const firestore = getFirestore();
   const user = auth.currentUser;
-  const [tabs ,setTabs] = useState()
+
+  useEffect(() => {
+    if (user) {
+      const docRef = doc(firestore, "userBettingTabs", user.uid);
+      getDoc(docRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const fetchedTabs = docSnap.data().tabs;
+            setTabs(fetchedTabs);
+            calculateTotal(fetchedTabs);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading betting tabs:", error);
+        });
+    }
+  }, [user]);
+
+  const calculateTotal = (tabs) => {
+    let totalPoints = 0;
+    let totalBets = 0;
   
-console.log(tabs)
+    tabs.forEach(tab => {
+      // Safely iterate over matches if it exists
+      tab.matches?.forEach(match => {
+        if (match.betPlaced && match.isItFinished === true) {
+          console.log(match)
+          totalPoints += match.points || 0; // Add points if available
+          totalBets++; // Count every bet match
+        }
+      });
+    });
+  
+    setTotalPoints(totalPoints);
+    setTotalBets(totalBets);
+  };
+  
+
+
+
+  console.log(tabs)
+  console.log(totalPoints)
   return (
     <>
       <div className="podium">
@@ -49,6 +91,10 @@ console.log(tabs)
             <span className="additional-points">{ranking.points} pts</span>
           </div>
         ))}
+      </div>
+      <div className="betting-summary">
+        <p>Total Points from Bets: {totalPoints}</p>
+        <p>Total Number of Bet Matches: {totalBets}</p>
       </div>
     </>
   );

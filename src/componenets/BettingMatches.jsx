@@ -103,7 +103,15 @@ const BettingMatches = ({
     );
   }
   
+// State to track whether betting time has expired
+const [bettingTimeExpired, setBettingTimeExpired] = useState(false);
 
+useEffect(() => {
+  if (timeUntilNextMatch === "Zakład zamknięty") {
+    setBettingTimeExpired(true);
+  }
+}, [timeUntilNextMatch]);
+  
   // Separate useEffect to handle changes in 'betClosed'
   useEffect(() => {
     if (closestMatch && (closestMatch.match.status.type === "inprogress" || closestMatch.match.status.type === "finished")) {
@@ -276,46 +284,39 @@ const BettingMatches = ({
 
   useEffect(() => {
     const firestore = getFirestore();
-    const user = auth.currentUser;
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-    let isMatcheEnded = [];
   
-      getDoc(userBettingTabRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-       
-          const tabs = data.tabs; // Assuming tabs is an array of tabs
-          const tab = tabs.find((t) => t.id === activeTab.id); // find the active tab
-          console.log(tab.matches)
-          if (tab) {
-            // const matchIndex = tab.matches.findIndex((m) => m.id === match.id);
-            // const newPoints = calculateMatchPoints(match);
-            
-            for (let i = 0; i < tab.matches.length; i++){
-              const changedMatch = matchesBetting.filter(match => match.id === tab.matches[i].id)
-              //console.log(changedMatch)
-              changedMatch[0].match.status.type === "finished" ?  isMatcheEnded.push(true): isMatcheEnded.push(false) 
-              if (tab.matches[i].points === null) {
-                tab.matches[i].points = calculateMatchPoints(changedMatch[0]);
+    getDoc(userBettingTabRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const tabs = data.tabs; // Assuming tabs is an array of tabs
+        let pointsUpdated = false;
+  
+        tabs.forEach(tab => {
+          if (tab.id === activeTab.id) {
+            tab.matches.forEach(match => {
+              const changedMatch = matchesBetting.find(m => m.id === match.id);
+  
+              if (changedMatch && changedMatch.match.status.type === "finished" && !match.pointsUpdated) {
+                match.points = calculateMatchPoints(changedMatch);
+                match.pointsUpdated = true;
+                pointsUpdated = true;
               }
-            }
-         
-            //console.log(isMatcheEnded.filter(match => match === true).length)
-            //console.log((tab.matches.filter(match => match.points === null && match.betAwayScore && match.betHomeScore) ))
-            if ((tab.matches.filter(match => match.points === null && match.betAwayScore !== null && match.betHomeScore !== null).length !== 0) && (isMatcheEnded.filter(match => match === true).length) > 0) {
-              updateDoc(userBettingTabRef, { tabs }).catch((error) => {
-                console.error("Error updating points:", error);
-              });
-              console.log("Liczba punktów została zaakutalizowana")
-            }
-               
+            });
           }
+        });
+  
+        if (pointsUpdated) {
+          updateDoc(userBettingTabRef, { tabs }).then(() => {
+            console.log("Points updated for finished matches.");
+          }).catch(error => {
+            console.error("Error updating points:", error);
+          });
         }
-      });
-
-
-   
-  }, [matchesBetting]);
+      }
+    });
+  }, [matchesBetting, activeTab, user.uid]);
+  
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
@@ -378,37 +379,46 @@ const BettingMatches = ({
                     {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {user.betPlaced &&
-                    !user.betHomeScore &&
-                    !user.betAwayScore ? (
+            {bettingTimeExpired ? (
+              <>
+                {user.betHomeScore !== null && user.betAwayScore !== null ? (
+                  <>
+                    <div>{user.betHomeScore}</div>
+                    <div>{user.betAwayScore}</div>
+                  </>
+                ) : (
+                  <div>Nieobstawiono</div>
+                )}
+              </>
+            ) : (
+              <>
+                {user.betPlaced &&
+                !user.betHomeScore &&
+                !user.betAwayScore ? (
+                  <div>Nieobstawiono</div>
+                ) : (
+                  <>
+                    {user.betHomeScore !== null &&
+                    user.betAwayScore !== null ? (
                       <>
-                        <div>Nieobstawiono</div>
-                      </>
-                    ) : (
-                      <>
-                        {user.betHomeScore !== null &&
-                        user.betAwayScore !== null ? (
-                          <>
-                            <div>{user.betHomeScore}</div>
-                            <div>{user.betAwayScore}</div>
-                            {!user.betPlaced ? (
-                              <button onClick={() => onBetClick(user.match)}>
-                                Edytuj
-                              </button>
-                            ) : (
-                              <div></div>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <button onClick={() => onBetClick(user.match)}>
-                              Obstaw mecz
-                            </button>
-                          </>
+                        <div>{user.betHomeScore}</div>
+                        <div>{user.betAwayScore}</div>
+                        {!user.betPlaced && (
+                          <button onClick={() => onBetClick(user.match)}>
+                            Edytuj
+                          </button>
                         )}
                       </>
+                    ) : (
+                      <button onClick={() => onBetClick(user.match)}>
+                        Obstaw mecz
+                      </button>
                     )}
-                  </div>
+                  </>
+                )}
+              </>
+            )}
+          </div>
 
                   <div className="row-item">
                     {user.match.status.type !== "notstarted" ? (

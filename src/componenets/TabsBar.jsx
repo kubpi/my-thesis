@@ -27,7 +27,6 @@ function TabsBar() {
   const [isMatchInputOpen, setIsMatchInputOpen] = useState(false);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
 
-  
 
   console.log(tabs)
 
@@ -181,6 +180,7 @@ function TabsBar() {
         betAwayScore: null,
         betClosed: false,
         points: null,
+        isItFinished: false
       };
     });
 
@@ -218,7 +218,8 @@ function TabsBar() {
                   id: match.id,
                   betHomeScore: homeScore,
                   betAwayScore: awayScore,
-                  
+                  points: null,
+                  isItFinished: false
                 };
               }
               return match;
