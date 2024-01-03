@@ -43,6 +43,9 @@ const BettingMatches = ({
   const [timeUntilNextMatch, setTimeUntilNextMatch] = useState("");
   const [betClosed, setBetClosed] = useState(false);
 
+  const [showInvitationModal, setShowInvitationModal] = useState(false);
+  
+ 
 
  // Oblicz sumę punktów
  const totalPoints = matchesBetting.reduce((sum, match) => sum + (match.points || 0), 0);
@@ -229,6 +232,71 @@ useEffect(() => {
 
   const auth = getAuth();
   const user = auth.currentUser;
+console.log(user.uid)
+console.log(activeTab)
+ // Check if there's a received invitation
+ useEffect(() => {
+  if (activeTab.invitations && activeTab?.invitations[user?.uid] && activeTab?.invitations[user.uid]?.status === 'received') {
+    setShowInvitationModal(true);
+  }
+}, [activeTab, user.uid]);
+
+
+// Handle Accept
+const handleAccept = () => {
+// Update Firestore and local state
+setShowInvitationModal(false);
+// ... Firestore update logic ...
+};
+
+// Inside BettingMatches component
+
+// Handle Reject
+const handleReject = () => {
+  const firestore = getFirestore();
+  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+
+  // Remove the tab from the current user's tabs
+  getDoc(userBettingTabRef).then((docSnap) => {
+    if (docSnap.exists()) {
+      let tabs = docSnap.data().tabs;
+      tabs = tabs.filter(tab => tab.id !== activeTab.id);
+      updateDoc(userBettingTabRef, { tabs }).then(() => {
+        console.log("Tab removed after rejection.");
+        setShowInvitationModal(false);
+      }).catch(error => console.error("Error removing tab: ", error));
+    }
+  });
+
+  // Update the status in other participants' tabs
+  activeTab.participants.forEach((participantId) => {
+    if (participantId !== user.uid) {
+      const participantTabRef = doc(firestore, "userBettingTabs", participantId);
+
+      getDoc(participantTabRef).then((participantDocSnap) => {
+        if (participantDocSnap.exists()) {
+          let participantTabs = participantDocSnap.data().tabs;
+          let tabToUpdate = participantTabs.find(tab => tab.id === activeTab.id);
+
+          if (tabToUpdate) {
+            tabToUpdate.invitations[user.uid].status = 'rejected';
+            // Optionally, remove the rejecting user from the participants list
+            tabToUpdate.participants = tabToUpdate.participants.filter(id => id !== user.uid);
+
+            updateDoc(participantTabRef, { tabs: participantTabs }).then(() => {
+              console.log("Participant's tab updated after rejection.");
+            }).catch(error => console.error("Error updating participant's tab: ", error));
+          }
+        }
+      });
+    }
+  });
+};
+
+
+
+
+
   useEffect(() => {
     const firestore = getFirestore();
     const unsubscribeFromSnapshots = [];
@@ -461,6 +529,15 @@ useEffect(() => {
         Łączna suma punktów: {totalPoints}
       </div>
         </>
+      )}
+      {showInvitationModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h2>Invitation to Bet</h2>
+            <button onClick={handleAccept} className="save-button">Accept</button>
+            <button onClick={handleReject}>Reject</button>
+          </div>
+        </div>
       )}
     </div>
   );

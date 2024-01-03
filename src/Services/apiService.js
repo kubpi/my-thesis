@@ -29,6 +29,7 @@ export const tournaments = [
   { id: 17, name: "premierLeague", season: 52186 },
   { id: 23, name: "serieA", season: 52760 },
   { id: 915, name: "persianGulfProLeague", season: 52957 },
+  { id: 202, name: "ekstraklasa", season: 52176 },
 ];
 
 // export const tournaments = [

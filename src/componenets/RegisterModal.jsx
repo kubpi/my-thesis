@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 
 const RegisterModal = ({ isOpen, onRequestClose }) => {
   const [email, setEmail] = useState('');
@@ -8,8 +9,9 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailError, setEmailError] = useState(''); // State to hold the email error message
   // Function to validate the email
-
   const auth = getAuth();
+  const firestore = getFirestore();
+
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -17,6 +19,30 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
           alert("Udało się zarejestrować");
+           // This would be triggered after a user registers/logs in and we have their user UID
+           const createUserProfile = async (userAuth) => {
+            const userRef = doc(firestore, "users", userAuth.uid);
+
+            const userProfile = {
+              displayName: userAuth.displayName || userAuth.email.split("@")[0], // Default to part of the email if no displayName
+              email: userAuth.email,
+              createdAt: new Date(), // Store the timestamp of when the user was created
+              // ... any other fields you'd like to include
+            };
+
+            await setDoc(userRef, userProfile);
+          };
+
+          // This function would need to be called after user registration/login
+          if (auth.currentUser) {
+            createUserProfile(auth.currentUser)
+              .then(() => {
+                console.log("User profile created/updated in Firestore.");
+              })
+              .catch((error) => {
+                console.error("Error creating user profile: ", error);
+              });
+          }
           onRequestClose(); // Close the modal on successful registration
           resetForm();
         })

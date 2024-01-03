@@ -41,14 +41,14 @@ export function Navbar() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/account">
                   obstawianie
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/account">
-                  Witaj imie
-                </a>
+                {/* <a className="nav-link" href="/friends">
+                  znajomi
+                </a> */}
               </li>
               {user ?  <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
             </ul>

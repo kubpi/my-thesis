@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback  } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import "./TabsBar.css";
 
 import FavoriteMatches from "./FavoriteMatches";
@@ -8,11 +8,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GameModeView from "./GameModeView";
 import BettingMatches from "./BettingMatches";
 import MatchInputView from "./MatchInputView";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FavoritesContext } from "./FavoritesContext";
 
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import CreateTeamModal from "./CreateTeamModal";
 function TabsBar() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   console.log(favorites.length);
@@ -26,9 +27,18 @@ function TabsBar() {
   const [selectedMatchForBetting, setSelectedMatchForBetting] = useState(null);
   const [isMatchInputOpen, setIsMatchInputOpen] = useState(false);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
+  const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
+  const [teamUsers, setTeamUsers] = useState([]);
+
+  console.log(tabs);
+  const handleUsersSelectedForTeam = (selectedUsers) => {
+    setTeamUsers(selectedUsers); // Sets the selected team users
+    setIsCreateTeamModalOpen(false); // This should close the CreateTeamModal
+    setIsBettingOpen(true); // This should open the BettingView
+  };
+  
 
 
-  console.log(tabs)
 
   const handleOpenAddTabModal = () => {
     setIsAddTabModalOpen(true);
@@ -78,6 +88,26 @@ function TabsBar() {
   const firestore = getFirestore();
   const user = auth.currentUser;
 
+  useEffect(() => {
+    // Ensure that user object is not null before proceeding
+    if (user) {
+      const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+    
+      // Subscribe to Firestore changes
+      const unsubscribe = onSnapshot(userBettingTabRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setTabs(docSnap.data().tabs);
+        }
+      });
+    
+      return () => {
+        unsubscribe(); // Clean up the listener on unmount
+      };
+    }
+  }, [user]);  // Dependency array includes 'user' to re-run effect when 'user' changes
+
+
+  //console.log(auth.currentUser.uid)
   // Modify the effect hook that initializes the tabs state to include the "Favorites" tab
   useEffect(() => {
     setTabs((currentTabs) => {
@@ -171,28 +201,45 @@ function TabsBar() {
     });
   };
 
-  const handleAddTabWithMatches = (tabName) => {
+  
+  const handleAddTabWithMatches = (tabName, selectedMatches, selectedUserIds) => {
     const updatedMatches = selectedMatches.map((match) => {
-    
       return {
         id: match.id,
         betHomeScore: null,
         betAwayScore: null,
         betClosed: false,
         points: null,
-        isItFinished: false
+        isItFinished: false,
       };
     });
+// Przykładowa funkcja generująca UUID
+const generateUniqueId = () => {
+  return 'xxxx-xxxx-4xxx-yxxx-xxxx'.replace(/[xy]/g, function(c) {
+    const r = (Math.random() * 16) | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
-    const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
+const newTabId = generateUniqueId();
+
+    //const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
+    console.log()
     const newTab = {
-      id: newTabId,
+      id: newTabId, // wspólny identyfikator dla wszystkich uczestników
       name: tabName,
       count: updatedMatches.length,
       matches: updatedMatches,
       betClosed: false,
-      isActive: true, // Ensure the new tab is active
+      isActive: true,
+      isGameWithFriends:  selectedUserIds.length !== 0 ? true : false, // nowy atrybut
+      participants: selectedUserIds, // nowy atrybut
+      invitations: selectedUserIds ? selectedUserIds.reduce((acc, userId) => {
+        acc[userId] = { status: 'received' }; // początkowy status dla każdego zaproszonego użytkownika
+        return acc;
+      }, {}) : null,
     };
+    
 
     // Update the local state with the new tab and set it as active
     setTabs((prevTabs) => [...prevTabs, newTab]);
@@ -202,9 +249,32 @@ function TabsBar() {
     setSelectedMatches([]);
     setIsBettingOpen(false);
 
-    // Save the new tabs array to Firestore
-    saveBettingTabs();
+   // Save the new tabs array to Firestore for the current user
+  saveBettingTabs();
+
+  if (selectedUserIds) {
+    // Save the new tab for the selected user as wel
+    console.log(selectedUserIds)
+  // Zapisz nową zakładkę dla każdego wybranego użytkownika
+  selectedUserIds.forEach(userId => {
+    saveBettingTabsForUser(userId, newTab);
+  });
+  }
   };
+// This function saves the new tab to another user's Firestore document
+const saveBettingTabsForUser = (userId, newTab) => {
+  const docRef = doc(firestore, "userBettingTabs", userId);
+  
+  getDoc(docRef).then((docSnap) => {
+    let updatedUserTabs = docSnap.exists() ? docSnap.data().tabs : [];
+    updatedUserTabs = updatedUserTabs.filter(tab => tab.id !== newTab.id); // Usuń starą zakładkę, jeśli istnieje
+    updatedUserTabs.push(newTab); // Dodaj nową zakładkę
+
+    setDoc(docRef, { tabs: updatedUserTabs }, { merge: true });
+  }).catch((error) => {
+    console.error("Error saving betting tabs for the user:", error);
+  });
+};
 
   const onSubmitScore = (matchId, homeScore, awayScore) => {
     setTabs((prevTabs) => {
@@ -219,7 +289,7 @@ function TabsBar() {
                   betHomeScore: homeScore,
                   betAwayScore: awayScore,
                   points: null,
-                  isItFinished: false
+                  isItFinished: false,
                 };
               }
               return match;
@@ -276,7 +346,15 @@ function TabsBar() {
     }
   };
 
-
+  const onSelectTeam = () => {
+    setIsCreateTeamModalOpen(true); // Otwiera modal
+    setIsGameModeOpen(false); // Zamknie obecny modal
+  };
+  useEffect(() => {
+    if (teamUsers.length > 0) {
+      setIsBettingOpen(true);
+    }
+  }, [teamUsers]);
   return (
     <>
       <div className="container">
@@ -335,8 +413,9 @@ function TabsBar() {
                 <button
                   className="game-mode-button solo"
                   onClick={() => {
-                    setIsBettingOpen(true);
-                    handleCloseAddTabModal();
+                    setIsGameModeOpen(true); // Dodaj to, aby otworzyć GameModeView
+                    setIsBettingOpen(false); // Upewnij się, że BettingView jest zamknięte
+                    handleCloseAddTabModal(); // Zamknij modal
                   }}
                 >
                   Stwórz nowy zakład
@@ -353,6 +432,7 @@ function TabsBar() {
             isOpen={isGameModeOpen}
             onClose={() => setIsGameModeOpen(false)}
             onSelectSolo={handleSelectSolo}
+            onSelectTeam={onSelectTeam}
           />
         )}
         {isBettingOpen && (
@@ -363,6 +443,7 @@ function TabsBar() {
             setSelectedMatches={setSelectedMatches}
             onAddTab={handleAddTabWithMatches}
             onBetClick={handleBetClick}
+            teamUsers={teamUsers} // Pass the selected team users to BettingView
           />
         )}
         {isMatchInputOpen && (
@@ -372,6 +453,14 @@ function TabsBar() {
             onClose={() => setIsMatchInputOpen(false)}
             onSubmitScore={onSubmitScore}
             // ... Other props as needed ...
+          />
+        )}
+        {isCreateTeamModalOpen && (
+          <CreateTeamModal
+             isOpen={isCreateTeamModalOpen}
+    onClose={() => setIsCreateTeamModalOpen(false)}
+    onCreateTab={handleAddTabWithMatches}
+    onUsersSelected={handleUsersSelectedForTeam} // Pass the function here
           />
         )}
       </div>

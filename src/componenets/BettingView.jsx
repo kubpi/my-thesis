@@ -17,6 +17,7 @@ export function BettingView ({
   selectedMatches,
   setSelectedMatches,
   onAddTab,
+  teamUsers
 }) {
 
   const [tabCount, setTabCount] = useState(1); // Stan do śledzenia liczby zakładek
@@ -37,6 +38,7 @@ export function BettingView ({
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
   const [matchesData, setMatchesData] = useState()
+
   
   useEffect(() => {
     // Ustawienie domyślnej nazwy zakładki
@@ -61,16 +63,18 @@ export function BettingView ({
   // Function to handle the Save button click
   const handleSave = () => {
     if (tabName.trim() && selectedMatches.length > 0) {
-      onAddTab(tabName.trim(), selectedMatches);
-      console.log(tabCount)
-      setTabCount(tabCount + 1); // Aktualizacja tabCount
-      setTabName("");
-      setSelectedMatches([]);
-      onClose();
+      // Call onAddTab with the selected matches and the ID(s) of the other user(s)
+      const selectedUserIds = teamUsers.map(user => user.uid);
+      onAddTab(tabName.trim(), selectedMatches, selectedUserIds);
+      setTabCount(tabCount + 1); // Update the tab count state
+      setTabName(""); // Reset the tab name state
+      setSelectedMatches([]); // Clear the selected matches state
+      onClose(); // Close the BettingView modal
     } else {
       alert("Please enter a tab name and select at least one match.");
     }
   };
+  
   
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
@@ -139,7 +143,9 @@ export function BettingView ({
     };
    }, [selectedDate]);
   console.log(matchesData)
-  
+  if (!isOpen) {
+    return null; // This should prevent BettingView from rendering if isOpen is false
+  }
   return (
     <div className="modal-backdrop">
       <div className="modal-content">

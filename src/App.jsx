@@ -20,6 +20,7 @@ import { query, where, getDocs } from "firebase/firestore";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import Podium from "./componenets/Podium";
+import FriendsList from "./componenets/FriendsList";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -35,21 +36,27 @@ import Podium from "./componenets/Podium";
 
 // Your web app's Firebase configuration
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBkSEz109STYK02nQ-Kcij3eqpOMZ31R58",
-  authDomain: "inzynierka-e7180.firebaseapp.com",
-  databaseURL:
-    "https://inzynierka-e7180-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "inzynierka-e7180",
-  storageBucket: "inzynierka-e7180.appspot.com",
-  messagingSenderId: "932466898301",
-  appId: "1:932466898301:web:9700bdf9cae9ba07a00814",
-};
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
 export default function App() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBkSEz109STYK02nQ-Kcij3eqpOMZ31R58",
+    authDomain: "inzynierka-e7180.firebaseapp.com",
+    databaseURL:
+      "https://inzynierka-e7180-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "inzynierka-e7180",
+    storageBucket: "inzynierka-e7180.appspot.com",
+    messagingSenderId: "932466898301",
+    appId: "1:932466898301:web:9700bdf9cae9ba07a00814",
+  };
+  
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  // Get the current user's auth information
+  const auth = getAuth();
+
+
+
   const [laLigaMatches, setLaLigaMatches] = useState([]);
 
   useEffect(() => {
@@ -93,7 +100,7 @@ export default function App() {
   // console.log(laLigaMetches)
   console.log(laLigaMatches);
 
-  const auth = getAuth();
+ 
   const [user, loading, error] = useAuthState(auth);
   return (
     <>
@@ -109,6 +116,7 @@ export default function App() {
                   </Route>
                   <Route path="/account" element={<Account />} />
                   <Route path="/ranking" element={<Podium />} />
+                  <Route path="/friends" element={<FriendsList />} />
                 </Routes>
               </BrowserRouter>
             </FavoritesProvider>
