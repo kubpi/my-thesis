@@ -1,93 +1,102 @@
+.podium-container {
+  background-color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  max-width: 500px;
+  margin: auto;
+}
+
+.podium-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #FFD700; /* Gold color for the title */
+}
+
 .podium {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 16px;
-    margin-top: 50px;
-    background: #4e5d50; /* Adjusted background color for better visibility */
-    padding: 20px; /* Padding around the podium */
-    border-radius: 12px; /* Rounded corners for podium background */
-  }
-  
-  .place {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-  }
-  
-  .place:hover {
-    transform: translateY(-10px); /* Lift the place up slightly on hover */
-  }
-  
-  .first-place {
-    height: 200px;
-    width: 120px; /* Adjusted width for better appearance */
-    background-color: gold;
-    order: 2; /* To position in the center */
-  }
-  
-  .second-place {
-    height: 160px;
-    width: 100px; /* Adjusted width for better appearance */
-    background-color: silver;
-    order: 1; /* To position on the left */
-  }
-  
-  .third-place {
-    height: 120px;
-    width: 100px; /* Adjusted width for better appearance */
-    background-color: #cd7f32;
-    order: 3; /* To position on the right */
-  }
-  
-  .rank {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333; /* Adjusted for better contrast */
-    margin-bottom: 5px;
-  }
-  
-  .competitor {
-    font-size: 18px;
-    color: #333; /* Adjusted for better contrast */
-    margin-bottom: 5px;
-  }
-  
-  .points {
-    font-size: 16px;
-    color: #333; /* Adjusted for better contrast */
-  }
-  
-  .additional-rankings {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .additional-place {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 50%; /* Adjusted to take half of the container width */
-    padding: 10px 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin: 8px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-  }
-  
-  .additional-place:hover {
-    transform: translateX(10px); /* Slide the place to the right slightly on hover */
-  }
-  
-  /* ... Rest of the styles ... */
-  
+  list-style: none;
+  padding: 0;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  margin-bottom: 5px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background-color: #FFD700; /* Gold color for the first place */
+  color: black;
+}
+
+.second-place {
+  background-color: #C0C0C0; /* Silver color for the second place */
+}
+
+.third-place {
+  background-color: #CD7F32; /* Bronze color for the third place */
+}
+
+.rank-icon {
+  font-size: 24px;
+}
+
+.rank-name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Styling for additional places beyond top 3, using darker shades */
+.place:nth-child(n+4) {
+  background-color: #AAA; /* Darker shade for places below third */
+}
+
+/* Pagination styles */
+.podium-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.podium-pagination button {
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.podium-pagination button:hover {
+  background-color: #555;
+}
+
+.podium-pagination button.active {
+  background-color: #FFD700;
+}
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination-controls button.active {
+  background-color: #4e5d50;
+  color: white;
+}
+
+.pagination-controls button:hover {
+  background-color: #ddd;
+}
