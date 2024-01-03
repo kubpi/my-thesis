@@ -291,14 +291,17 @@ useEffect(() => {
         const data = docSnap.data();
         const tabs = data.tabs; // Assuming tabs is an array of tabs
         let pointsUpdated = false;
-  
+  console.log(tabs)
         tabs.forEach(tab => {
           if (tab.id === activeTab.id) {
             tab.matches.forEach(match => {
               const changedMatch = matchesBetting.find(m => m.id === match.id);
-  
+              console.log(changedMatch)
+              console.log(calculateMatchPoints(changedMatch))
               if (changedMatch && changedMatch.match.status.type === "finished" && !match.pointsUpdated) {
+                console.log(changedMatch)
                 match.points = calculateMatchPoints(changedMatch);
+                console.log(match.points)
                 match.pointsUpdated = true;
                 pointsUpdated = true;
               }
