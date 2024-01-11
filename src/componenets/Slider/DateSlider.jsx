@@ -1,4 +1,4 @@
-import "../css/DateSlider.css";
+import "../../css/DateSlider.css";
 import { useRef, useState, useEffect, useCallback } from "react";
 
 export function DateSlider({ onDateSelect, disabledDates, timeBackNumber }) {

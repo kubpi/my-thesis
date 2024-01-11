@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { collection, query, where, getDocs, getFirestore } from "firebase/firestore";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import './CreateTeamModal.css'; // Make sure this path is correct
+import  { useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  getFirestore,
+} from "firebase/firestore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import "../../css/CreateTeamModal.css"; // Make sure this path is correct
 
 const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
-  const [tabName, setTabName] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
-  const handleTabNameChange = (e) => {
-    setTabName(e.target.value);
-  };
+ 
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
@@ -20,14 +23,14 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   const firestore = getFirestore();
   const handleSearch = async () => {
     const usersRef = collection(firestore, "users");
-    const field = searchTerm.includes('@') ? "email" : "displayName";
+    const field = searchTerm.includes("@") ? "email" : "displayName";
     const searchQuery = query(usersRef, where(field, "==", searchTerm));
 
     try {
       const querySnapshot = await getDocs(searchQuery);
-      const users = querySnapshot.docs.map(doc => ({
+      const users = querySnapshot.docs.map((doc) => ({
         uid: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setSearchResults(users);
     } catch (error) {
@@ -36,8 +39,8 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   };
 
   const handleAddUserToTab = (user) => {
-    setSelectedUsers(prevUsers => {
-      if (prevUsers.find(u => u.uid === user.uid)) {
+    setSelectedUsers((prevUsers) => {
+      if (prevUsers.find((u) => u.uid === user.uid)) {
         return prevUsers; // User is already selected
       }
       return [...prevUsers, user]; // Add new user to the list
@@ -45,19 +48,15 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   };
 
   const handleCreateTab = () => {
-    if (!tabName.trim()) {
-      alert("Please enter a name for the tab.");
-      return;
-    }
     if (selectedUsers.length === 0) {
       alert("Please select at least one friend to create a tab.");
       return;
-      }
-      if (selectedUsers.length > 0) {
-        // Pass the selected users back to the parent component
-        onUsersSelected(selectedUsers);
-      }
-      onUsersSelected(selectedUsers); // This now handles everything
+    }
+    if (selectedUsers.length > 0) {
+      // Pass the selected users back to the parent component
+      onUsersSelected(selectedUsers);
+    }
+    onUsersSelected(selectedUsers); // This now handles everything
   };
 
   if (!isOpen) return null;
@@ -65,13 +64,7 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   return (
     <div className="modal-backdrop">
       <div className="create-team-content">
-        <h2>Create a Team Tab</h2>
-        <input
-          type="text"
-          placeholder="Tab Name"
-          value={tabName}
-          onChange={handleTabNameChange}
-        />
+        <h2>Wyszukaj znajomych</h2>
         <input
           type="text"
           placeholder="Search for friends..."

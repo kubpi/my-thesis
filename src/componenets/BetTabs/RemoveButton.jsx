@@ -1,7 +1,6 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import './RemoveButton.css'; // We will create this CSS file
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import "../../css/RemoveButton.css"; // We will create this CSS file
 
 const RemoveButton = ({ onClick }) => {
   return (

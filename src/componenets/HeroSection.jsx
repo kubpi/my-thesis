@@ -1,13 +1,13 @@
 import { useState } from "react";
-import LoginModal from "./LoginModal";
-import RegisterModal from "./RegisterModal";
-import "./login.css";
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { getAuth } from 'firebase/auth';
+import LoginModal from "./Accounts/LoginModal";
+import RegisterModal from "./Accounts/RegisterModal";
+import "../css/login.css";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth } from "firebase/auth";
 
 export function HeroSection() {
   const auth = getAuth();
-const [user, loading, error] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
   function handleRegisterLink() {
@@ -37,21 +37,27 @@ const [user, loading, error] = useAuthState(auth);
                 </div>
               </div>
               <div className="row">
-                {!user ? <>  <button
-                  type="button"
-                  onClick={() => setLoginModalIsOpen(true)}
-                  className="buttonik"
-                >
-                  zaloguj się
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRegisterModalIsOpen(true)}
-                  className="buttonik2"
-                >
-                  zarejestruj się
-                </button> </> : <div> </div>}
-              
+                {!user ? (
+                  <>
+                    {" "}
+                    <button
+                      type="button"
+                      onClick={() => setLoginModalIsOpen(true)}
+                      className="buttonik"
+                    >
+                      zaloguj się
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRegisterModalIsOpen(true)}
+                      className="buttonik2"
+                    >
+                      zarejestruj się
+                    </button>{" "}
+                  </>
+                ) : (
+                  <div> </div>
+                )}
               </div>
             </div>
           </div>

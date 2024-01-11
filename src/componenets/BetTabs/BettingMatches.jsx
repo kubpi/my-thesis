@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import "./BettingMatches.css";
+import "../../css//BettingMatches.css";
 import {
   getFirestore,
   doc,
@@ -14,17 +12,11 @@ import {
   query,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { useMatchesData } from "./MatchesDataProvider";
 import {
   ReturnTeamImage,
-  getTurnamentImgURL,
   getTurnamentImgURLbyId,
   tournaments,
-} from "../Services/apiService";
-import SearchBar from "./SearchBar";
-import RemoveButton from "./RemoveButton";
-import FilterButton from "./FilterButton";
-
+} from "../../Services/apiService";
 
 const BettingMatches = ({
   selectedMatchesId,
@@ -32,7 +24,7 @@ const BettingMatches = ({
   onSaveBet,
   isBetClosed,
   updateMatchPoints,
-  activeTab
+  activeTab,
 }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
@@ -44,11 +36,12 @@ const BettingMatches = ({
   const [betClosed, setBetClosed] = useState(false);
 
   const [showInvitationModal, setShowInvitationModal] = useState(false);
-  
- 
 
- // Oblicz sumę punktów
- const totalPoints = matchesBetting.reduce((sum, match) => sum + (match.points || 0), 0);
+  // Oblicz sumę punktów
+  const totalPoints = matchesBetting.reduce(
+    (sum, match) => sum + (match.points || 0),
+    0
+  );
   // Function to calculate points for a single match
   const calculateMatchPoints = (match) => {
     // Define points for different outcomes
@@ -58,13 +51,12 @@ const BettingMatches = ({
 
     let points = 0;
 
-    console.log(match)
+    console.log(match);
     // // Check if the match has been bet on and the result is available
     // console.log(match.match.status.type);
     // console.log(match.betHomeScore);
     // console.log(match.betAwayScore);
 
-    
     if (
       match.match.status.type === "finished" &&
       match.betHomeScore &&
@@ -87,12 +79,13 @@ const BettingMatches = ({
         points += pointsForCorrectAwayScore;
       }
 
-      if (match.betHomeScore == match.match.homeScore.display && match.betAwayScore == match.match.awayScore.display) {
+      if (
+        match.betHomeScore == match.match.homeScore.display &&
+        match.betAwayScore == match.match.awayScore.display
+      ) {
         points += pointsForCorrectOutcome;
         console.log("points " + points);
       }
-
-  
     }
 
     return points;
@@ -105,19 +98,23 @@ const BettingMatches = ({
       a.match.startTimestamp < b.match.startTimestamp ? a : b
     );
   }
-  
-// State to track whether betting time has expired
-const [bettingTimeExpired, setBettingTimeExpired] = useState(false);
 
-useEffect(() => {
-  if (timeUntilNextMatch === "Zakład zamknięty") {
-    setBettingTimeExpired(true);
-  }
-}, [timeUntilNextMatch]);
-  
+  // State to track whether betting time has expired
+  const [bettingTimeExpired, setBettingTimeExpired] = useState(false);
+
+  useEffect(() => {
+    if (timeUntilNextMatch === "Zakład zamknięty") {
+      setBettingTimeExpired(true);
+    }
+  }, [timeUntilNextMatch]);
+
   // Separate useEffect to handle changes in 'betClosed'
   useEffect(() => {
-    if (closestMatch && (closestMatch.match.status.type === "inprogress" || closestMatch.match.status.type === "finished")) {
+    if (
+      closestMatch &&
+      (closestMatch.match.status.type === "inprogress" ||
+        closestMatch.match.status.type === "finished")
+    ) {
       // Perform any actions needed when betting is closed
       onSaveBet();
     }
@@ -144,7 +141,6 @@ useEffect(() => {
       }
     };
 
-    
     if (!betClosed) {
       calculateNextMatchTime();
       intervalId = setInterval(calculateNextMatchTime, 60000); // Set up the interval
@@ -232,70 +228,107 @@ useEffect(() => {
 
   const auth = getAuth();
   const user = auth.currentUser;
-console.log(user.uid)
-console.log(activeTab)
- // Check if there's a received invitation
- useEffect(() => {
-  if (activeTab.invitations && activeTab?.invitations[user?.uid] && activeTab?.invitations[user.uid]?.status === 'received') {
-    setShowInvitationModal(true);
-  }
-}, [activeTab, user.uid]);
-
-
-// Handle Accept
-const handleAccept = () => {
-// Update Firestore and local state
-setShowInvitationModal(false);
-// ... Firestore update logic ...
-};
-
-// Inside BettingMatches component
-
-// Handle Reject
-const handleReject = () => {
-  const firestore = getFirestore();
-  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-
-  // Remove the tab from the current user's tabs
-  getDoc(userBettingTabRef).then((docSnap) => {
-    if (docSnap.exists()) {
-      let tabs = docSnap.data().tabs;
-      tabs = tabs.filter(tab => tab.id !== activeTab.id);
-      updateDoc(userBettingTabRef, { tabs }).then(() => {
-        console.log("Tab removed after rejection.");
-        setShowInvitationModal(false);
-      }).catch(error => console.error("Error removing tab: ", error));
+  console.log(user.uid);
+  console.log(activeTab);
+  // Check if there's a received invitation
+  useEffect(() => {
+    if (
+      activeTab.invitations &&
+      activeTab?.invitations[user?.uid] &&
+      activeTab?.invitations[user.uid]?.status === "received"
+    ) {
+      setShowInvitationModal(true);
     }
-  });
+  }, [activeTab, user.uid]);
 
-  // Update the status in other participants' tabs
-  activeTab.participants.forEach((participantId) => {
-    if (participantId !== user.uid) {
-      const participantTabRef = doc(firestore, "userBettingTabs", participantId);
+  // Handle Accept
+  const handleAccept = () => {
+    const firestore = getFirestore();
+    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
-      getDoc(participantTabRef).then((participantDocSnap) => {
-        if (participantDocSnap.exists()) {
-          let participantTabs = participantDocSnap.data().tabs;
-          let tabToUpdate = participantTabs.find(tab => tab.id === activeTab.id);
+    // Fetch the current user's betting tabs
+    getDoc(userBettingTabRef)
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          let tabs = docSnap.data().tabs;
+          let tabToUpdate = tabs.find((tab) => tab.id === activeTab.id);
 
           if (tabToUpdate) {
-            tabToUpdate.invitations[user.uid].status = 'rejected';
-            // Optionally, remove the rejecting user from the participants list
-            tabToUpdate.participants = tabToUpdate.participants.filter(id => id !== user.uid);
+            // Update the invitation status to 'accepted' for the current user
+            tabToUpdate.invitations[user.uid].status = "accepted";
 
-            updateDoc(participantTabRef, { tabs: participantTabs }).then(() => {
-              console.log("Participant's tab updated after rejection.");
-            }).catch(error => console.error("Error updating participant's tab: ", error));
+            // Save the updated tabs back to Firestore
+            updateDoc(userBettingTabRef, { tabs })
+              .then(() => {
+                console.log("Invitation accepted and tabs updated.");
+                setShowInvitationModal(false);
+              })
+              .catch((error) => console.error("Error updating tabs: ", error));
           }
         }
+      })
+      .catch((error) => {
+        console.error("Error fetching user betting tabs: ", error);
       });
-    }
-  });
-};
+  };
 
+  // Inside BettingMatches component
 
+  // Handle Reject
+  const handleReject = () => {
+    const firestore = getFirestore();
+    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
+    // Remove the tab from the current user's tabs
+    getDoc(userBettingTabRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        let tabs = docSnap.data().tabs;
+        tabs = tabs.filter((tab) => tab.id !== activeTab.id);
+        updateDoc(userBettingTabRef, { tabs })
+          .then(() => {
+            console.log("Tab removed after rejection.");
+            setShowInvitationModal(false);
+          })
+          .catch((error) => console.error("Error removing tab: ", error));
+      }
+    });
 
+    // Update the status in other participants' tabs
+    activeTab.participants.forEach((participantId) => {
+      if (participantId !== user.uid) {
+        const participantTabRef = doc(
+          firestore,
+          "userBettingTabs",
+          participantId
+        );
+
+        getDoc(participantTabRef).then((participantDocSnap) => {
+          if (participantDocSnap.exists()) {
+            let participantTabs = participantDocSnap.data().tabs;
+            let tabToUpdate = participantTabs.find(
+              (tab) => tab.id === activeTab.id
+            );
+
+            if (tabToUpdate) {
+              tabToUpdate.invitations[user.uid].status = "rejected";
+              // Optionally, remove the rejecting user from the participants list
+              tabToUpdate.participants = tabToUpdate.participants.filter(
+                (id) => id !== user.uid
+              );
+
+              updateDoc(participantTabRef, { tabs: participantTabs })
+                .then(() => {
+                  console.log("Participant's tab updated after rejection.");
+                })
+                .catch((error) =>
+                  console.error("Error updating participant's tab: ", error)
+                );
+            }
+          }
+        });
+      }
+    });
+  };
 
   useEffect(() => {
     const firestore = getFirestore();
@@ -316,22 +349,21 @@ const handleReject = () => {
           querySnapshot.forEach((doc) => {
             const matchData = doc.data();
             newMatches = { match: matchData, ...match };
-            // console.log(newMatches.match.status.type);
-            // console.log(newMatches.betHomeScore);
-            // console.log(newMatches.betAwayScore);
+            console.log(newMatches.match.status.type);
+            console.log(newMatches.betHomeScore);
+            console.log(newMatches.betAwayScore);
             // if (
             //   isBetClosed &&
             //   newMatches.match.status.type === "finished" &&
             //   newMatches.betHomeScore &&
             //   newMatches.betAwayScore
             // ) {
-             
-              
+
             //   newMatches.points = calculateMatchPoints(newMatches);
             //   // Call the updateMatchPoints function after calculating the points
-           
+
             // } else if (!newMatches.betHomeScore || !newMatches.betAwayScore) {
-            //   newMatches.points = null;
+            //   newMatches.points = 0;
             // }
             matches[matchData.id] = newMatches;
           });
@@ -350,44 +382,44 @@ const handleReject = () => {
 
   console.log(matchesBetting);
 
-  useEffect(() => {
-    const firestore = getFirestore();
-    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-  
-    getDoc(userBettingTabRef).then((docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const tabs = data.tabs; // Assuming tabs is an array of tabs
-        let pointsUpdated = false;
-  console.log(tabs)
-        tabs.forEach(tab => {
-          if (tab.id === activeTab.id) {
-            tab.matches.forEach(match => {
-              const changedMatch = matchesBetting.find(m => m.id === match.id);
-              console.log(changedMatch)
-              console.log(calculateMatchPoints(changedMatch))
-              if (changedMatch && changedMatch.match.status.type === "finished" && !match.pointsUpdated) {
-                console.log(changedMatch)
-                match.points = calculateMatchPoints(changedMatch);
-                console.log(match.points)
-                match.pointsUpdated = true;
-                pointsUpdated = true;
-              }
-            });
-          }
-        });
-  
-        if (pointsUpdated) {
-          updateDoc(userBettingTabRef, { tabs }).then(() => {
-            console.log("Points updated for finished matches.");
-          }).catch(error => {
-            console.error("Error updating points:", error);
-          });
-        }
-      }
-    });
-  }, [matchesBetting, activeTab, user.uid]);
-  
+  // useEffect(() => {
+  //   const firestore = getFirestore();
+  //   const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+
+  //   getDoc(userBettingTabRef).then((docSnap) => {
+  //     if (docSnap.exists()) {
+  //       const data = docSnap.data();
+  //       const tabs = data.tabs; // Assuming tabs is an array of tabs
+  //       let pointsUpdated = false;
+  // console.log(tabs)
+  //       tabs.forEach(tab => {
+  //         if (tab.id === activeTab.id) {
+  //           tab.matches.forEach(match => {
+  //             const changedMatch = matchesBetting.find(m => m.id === match.id);
+  //             console.log(changedMatch)
+  //             console.log(calculateMatchPoints(changedMatch))
+  //             if (changedMatch && changedMatch.match.status.type === "finished" && !match.pointsUpdated) {
+  //               console.log(changedMatch)
+  //               match.points = calculateMatchPoints(changedMatch);
+  //               console.log(match.points)
+  //               match.pointsUpdated = true;
+  //               pointsUpdated = true;
+  //             }
+  //           });
+  //         }
+  //       });
+
+  //       if (pointsUpdated) {
+  //         updateDoc(userBettingTabRef, { tabs }).then(() => {
+  //           console.log("Points updated for finished matches.");
+  //         }).catch(error => {
+  //           console.error("Error updating points:", error);
+  //         });
+  //       }
+  //     }
+  //   });
+  // }, [matchesBetting, activeTab, user.uid]);
+
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
@@ -450,46 +482,49 @@ const handleReject = () => {
                     {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-            {bettingTimeExpired ? (
-              <>
-                {user.betHomeScore !== null && user.betAwayScore !== null ? (
-                  <>
-                    <div>{user.betHomeScore}</div>
-                    <div>{user.betAwayScore}</div>
-                  </>
-                ) : (
-                  <div>Nieobstawiono</div>
-                )}
-              </>
-            ) : (
-              <>
-                {user.betPlaced &&
-                !user.betHomeScore &&
-                !user.betAwayScore ? (
-                  <div>Nieobstawiono</div>
-                ) : (
-                  <>
-                    {user.betHomeScore !== null &&
-                    user.betAwayScore !== null ? (
+                    {bettingTimeExpired ? (
                       <>
-                        <div>{user.betHomeScore}</div>
-                        <div>{user.betAwayScore}</div>
-                        {!user.betPlaced && (
-                          <button onClick={() => onBetClick(user.match)}>
-                            Edytuj
-                          </button>
+                        {user.betHomeScore !== null &&
+                        user.betAwayScore !== null ? (
+                          <>
+                            <div>{user.betHomeScore}</div>
+                            <div>{user.betAwayScore}</div>
+                          </>
+                        ) : (
+                          <div>Nieobstawiono</div>
                         )}
                       </>
                     ) : (
-                      <button onClick={() => onBetClick(user.match)}>
-                        Obstaw mecz
-                      </button>
+                      <>
+                        {user.betPlaced &&
+                        !user.betHomeScore &&
+                        !user.betAwayScore ? (
+                          <div>Nieobstawiono</div>
+                        ) : (
+                          <>
+                            {user.betHomeScore !== null &&
+                            user.betAwayScore !== null ? (
+                              <>
+                                <div>{user.betHomeScore}</div>
+                                <div>{user.betAwayScore}</div>
+                                {!user.betPlaced && (
+                                  <button
+                                    onClick={() => onBetClick(user.match)}
+                                  >
+                                    Edytuj
+                                  </button>
+                                )}
+                              </>
+                            ) : (
+                              <button onClick={() => onBetClick(user.match)}>
+                                Obstaw mecz
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </>
-            )}
-          </div>
+                  </div>
 
                   <div className="row-item">
                     {user.match.status.type !== "notstarted" ? (
@@ -523,18 +558,20 @@ const handleReject = () => {
                 </>
               )}
             </div>
-            </div>
-             {/* Pole sumy punktów */}
-      <div className="total-points-container">
-        Łączna suma punktów: {totalPoints}
-      </div>
+          </div>
+          {/* Pole sumy punktów */}
+          <div className="total-points-container">
+            Łączna suma punktów: {totalPoints}
+          </div>
         </>
       )}
       {showInvitationModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
             <h2>Invitation to Bet</h2>
-            <button onClick={handleAccept} className="save-button">Accept</button>
+            <button onClick={handleAccept} className="save-button">
+              Accept
+            </button>
             <button onClick={handleReject}>Reject</button>
           </div>
         </div>

@@ -47,7 +47,7 @@ select {
     /* Removes default styling on Firefox browsers */
     appearance: none;
     /* Removes default arrow, add a custom arrow below */
-    background-image: url('path-to-your-custom-arrow.svg');
+  
     background-repeat: no-repeat;
     background-position: right 10px center;
     /* Adjust the position as needed */

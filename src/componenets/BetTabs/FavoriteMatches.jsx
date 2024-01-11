@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import PropTypes from "prop-types";
-import { FavoritesContext } from "./FavoritesContext";
+import { useState, useEffect, useContext } from "react";
+import { FavoritesContext } from "../../Context/FavoritesContext";
 import RemoveButton from "./RemoveButton";
-import SearchBar from "./SearchBar";
-import FilterButton from "./FilterButton";
-import "./CustomTable3.css";
+import SearchBar from "../SearchingComponents/SearchBar";
+import FilterButton from "../SearchingComponents/FilterButton";
+import "../../css/CustomTable3.css";
 import {
   getFirestore,
   doc,
@@ -20,7 +19,7 @@ import {
   ReturnTeamImage,
   getTurnamentImgURLbyId,
   tournaments,
-} from "../Services/apiService";
+} from "../../Services/apiService";
 export function FavoriteMatches() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);

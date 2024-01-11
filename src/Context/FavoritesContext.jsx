@@ -1,7 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection,onSnapshot, where, query  } from 'firebase/firestore';
-import { tournaments } from '../Services/apiService';
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 export const FavoritesContext = createContext();
 
@@ -29,40 +28,8 @@ export const FavoritesProvider = ({ children }) => {
     fetchFavorites();
   }, [auth.currentUser]);
 
-  // useEffect(() => {
-  //   const firestore = getFirestore();
-  //   const unsubscribeFromSnapshots = []; // Inicjalizacja zewnętrznej tablicy dla funkcji anulujących
-  //   const matches = [];
-  //   tournaments.forEach(tournament => {
-  //     const matchesRef = collection(firestore, `matchesData/${tournament.name}/matches`);
+ 
   
-  //     favorites.forEach((id) => {
-  //       const q = query(matchesRef, where("id", "==", id));
-  //       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        
-  //         querySnapshot.forEach((doc) => {
-          
-  //           matches.push(doc.data());
-  //         });
-         
-        
-  //       });
-  //       unsubscribeFromSnapshots.push(unsubscribe); // Dodawanie funkcji anulującej do zewnętrznej tablicy
-  //     });
-  //      // Aktualizacja stanu powinna odbyć się tutaj, ale trzeba uważać na synchronizację stanu
-  //     setFavoritesMatches(matches);
-  //     console.log(favoritesMatches)
-  //   });
-  
-    // Funkcja czyszcząca subskrypcje
-  //   return () => {
-  //     unsubscribeFromSnapshots.forEach(unsubscribe => unsubscribe());
-  //   };
-  // }, [favorites]); // Zależności useEffect
-  
-
-
-
   const addFavorite = async (match) => {
     const user = auth.currentUser;
     if (user) {

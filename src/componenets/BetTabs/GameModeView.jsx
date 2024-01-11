@@ -1,7 +1,6 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
-import './GameModeView.css'; // Make sure to create this CSS file with your styles
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+import "../../css/GameModeView.css"; // Make sure to create this CSS file with your styles
 
 const GameModeView = ({ isOpen, onClose, onSelectSolo, onSelectTeam }) => {
   if (!isOpen) return null;

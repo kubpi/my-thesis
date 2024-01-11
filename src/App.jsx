@@ -1,10 +1,9 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "./css/App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/home";
-import Account from "./pages/Account";
-import { FavoritesProvider } from "./componenets/FavoritesContext";
-import { MatchesDataProvider } from "./componenets/MatchesDataProvider";
+import Home from "./pages/Home";
+import Account from "./pages/Betting";
+import { FavoritesProvider } from "./Context/FavoritesContext";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 import { useState, useEffect } from "react";
@@ -21,6 +20,8 @@ import { query, where, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import Podium from "./componenets/Podium";
 import FriendsList from "./componenets/FriendsList";
+import Betting from "./pages/Betting";
+import { MatchesDataProvider } from "./Context/MatchesDataProvider";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -36,8 +37,6 @@ import FriendsList from "./componenets/FriendsList";
 
 // Your web app's Firebase configuration
 
-
-
 export default function App() {
   const firebaseConfig = {
     apiKey: "AIzaSyBkSEz109STYK02nQ-Kcij3eqpOMZ31R58",
@@ -49,13 +48,11 @@ export default function App() {
     messagingSenderId: "932466898301",
     appId: "1:932466898301:web:9700bdf9cae9ba07a00814",
   };
-  
+
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   // Get the current user's auth information
   const auth = getAuth();
-
-
 
   const [laLigaMatches, setLaLigaMatches] = useState([]);
 
@@ -100,27 +97,26 @@ export default function App() {
   // console.log(laLigaMetches)
   console.log(laLigaMatches);
 
- 
   const [user, loading, error] = useAuthState(auth);
   return (
     <>
       <div className="App">
         <section>
           <MatchesDataProvider>
-            <FavoritesProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Home />}>
-                    {" "}
-                    /
-                  </Route>
-                  <Route path="/account" element={<Account />} />
-                  <Route path="/ranking" element={<Podium />} />
-                  <Route path="/friends" element={<FriendsList />} />
-                </Routes>
-              </BrowserRouter>
+          <FavoritesProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />}>
+                  {" "}
+                  /
+                </Route>
+                <Route path="/betting" element={<Betting />} />
+                <Route path="/ranking" element={<Podium />} />
+                <Route path="/friends" element={<FriendsList />} />
+              </Routes>
+            </BrowserRouter>
             </FavoritesProvider>
-          </MatchesDataProvider>
+            </MatchesDataProvider>
         </section>
       </div>
     </>

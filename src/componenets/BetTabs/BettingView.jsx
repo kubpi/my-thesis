@@ -1,25 +1,30 @@
-import {useState,useEffect} from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import "./BettingView.css";
-import { getFirestore, collection, query, where,onSnapshot } from 'firebase/firestore';
-import { useMatchesData } from "./MatchesDataProvider";
+import "../../css/BettingView.css";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
+import { useMatchesData } from "../../Context/MatchesDataProvider";
 import {
   ReturnTeamImage,
   getTurnamentImgURLbyId,
   tournaments,
-} from "../Services/apiService";
-import { DateSlider } from "./DateSlider";
+} from "../../Services/apiService";
+import { DateSlider } from "../Slider/DateSlider";
 
-export function BettingView ({
+export function BettingView({
   isOpen,
   onClose,
   selectedMatches,
   setSelectedMatches,
   onAddTab,
-  teamUsers
+  teamUsers,
 }) {
-
   const [tabCount, setTabCount] = useState(1); // Stan do śledzenia liczby zakładek
   const [tabName, setTabName] = useState("Zakład");
   const { daysWithNoMatches } = useMatchesData();
@@ -37,13 +42,16 @@ export function BettingView ({
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
-  const [matchesData, setMatchesData] = useState()
+  const [matchesData, setMatchesData] = useState();
 
-  
   useEffect(() => {
     // Ustawienie domyślnej nazwy zakładki
     const today = new Date();
-    const formattedDate = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
+    const formattedDate = `${today.getDate().toString().padStart(2, "0")}.${(
+      today.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}.${today.getFullYear()}`;
     setTabName(`${formattedDate} Zakład ${tabCount}`);
   }, [tabCount]); // Ustawienie zależności od tabCount, aby aktualizować nazwę przy zmianie liczby zakładek
 
@@ -64,7 +72,7 @@ export function BettingView ({
   const handleSave = () => {
     if (tabName.trim() && selectedMatches.length > 0) {
       // Call onAddTab with the selected matches and the ID(s) of the other user(s)
-      const selectedUserIds = teamUsers.map(user => user.uid);
+      const selectedUserIds = teamUsers.map((user) => user.uid);
       onAddTab(tabName.trim(), selectedMatches, selectedUserIds);
       setTabCount(tabCount + 1); // Update the tab count state
       setTabName(""); // Reset the tab name state
@@ -74,8 +82,7 @@ export function BettingView ({
       alert("Please enter a tab name and select at least one match.");
     }
   };
-  
-  
+
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
@@ -85,27 +92,27 @@ export function BettingView ({
     let minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
- 
- 
+
   const handleDateSelect = (date, nextDate) => {
     setSelectedDate(date);
     setSelectedNextDate(nextDate); // Ustawienie wybranej daty
   };
 
-
-    
-   useEffect(() => {
+  useEffect(() => {
     const firestore = getFirestore();
     const leagues = [];
     const allMatches = {};
 
-    tournaments.forEach(tournament => {
+    tournaments.forEach((tournament) => {
       leagues.push(tournament.name);
     });
 
     const fetchData = () => {
       const unsubscribeFromSnapshots = leagues.map((league) => {
-        const matchesRef = collection(firestore, `matchesData/${league}/matches`);
+        const matchesRef = collection(
+          firestore,
+          `matchesData/${league}/matches`
+        );
         const selectedDateObj = new Date(selectedDate);
         const endDate = new Date(selectedDate);
         endDate.setHours(23, 59, 59, 999);
@@ -131,18 +138,18 @@ export function BettingView ({
 
       // Czyszczenie subskrypcji
       return () => {
-        unsubscribeFromSnapshots.forEach(unsubscribe => unsubscribe());
+        unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
       };
     };
 
     // Wywołaj fetchData na starcie oraz gdy selectedDate się zmienia
     const unsubscribe = fetchData();
-  
+
     return () => {
       unsubscribe();
     };
-   }, [selectedDate]);
-  console.log(matchesData)
+  }, [selectedDate]);
+  console.log(matchesData);
   if (!isOpen) {
     return null; // This should prevent BettingView from rendering if isOpen is false
   }
@@ -178,56 +185,56 @@ export function BettingView ({
             <div className="header-item">Status</div>
           </div>
           <div className="users-table-body">
-            {matchesData && (Object.keys(matchesData).map((tournamentName) => {
-          
-              return matchesData[tournamentName].map((user) => (
-                <div className="table-row" key={user.id}>
-                  <div className="row-item select-column">
-                    <input
-                      type="checkbox"
-                      checked={selectedMatches.includes(user)}
-                      onChange={() => handleCheckboxChange(user)}
-                    ></input>
-                  </div>
-                  <div className="row-item">
-                    <img
-                      src={getTurnamentImgURLbyId(
-                        user.tournament.uniqueTournament.id
-                      )}
-                      className="team-logo2"
-                      alt={user.tournament.name}
-                    />
-                    {user.tournament.name}
-                  </div>
-                  <div className="row-item">
-                    <div>
-                      <img
-                        src={ReturnTeamImage(user.homeTeam.id)}
-                        className="team-logo2"
-                        alt={user.homeTeam.name}
-                      />
-                      {user.homeTeam.name}
+            {matchesData &&
+              Object.keys(matchesData).map((tournamentName) => {
+                return matchesData[tournamentName].map((user) => (
+                  <div className="table-row" key={user.id}>
+                    <div className="row-item select-column">
+                      <input
+                        type="checkbox"
+                        checked={selectedMatches.includes(user)}
+                        onChange={() => handleCheckboxChange(user)}
+                      ></input>
                     </div>
-                    <img
-                      src={ReturnTeamImage(user.awayTeam.id)}
-                      className="team-logo2"
-                      alt={user.awayTeam.name}
-                    />
-                    {user.awayTeam.name}
+                    <div className="row-item">
+                      <img
+                        src={getTurnamentImgURLbyId(
+                          user.tournament.uniqueTournament.id
+                        )}
+                        className="team-logo2"
+                        alt={user.tournament.name}
+                      />
+                      {user.tournament.name}
+                    </div>
+                    <div className="row-item">
+                      <div>
+                        <img
+                          src={ReturnTeamImage(user.homeTeam.id)}
+                          className="team-logo2"
+                          alt={user.homeTeam.name}
+                        />
+                        {user.homeTeam.name}
+                      </div>
+                      <img
+                        src={ReturnTeamImage(user.awayTeam.id)}
+                        className="team-logo2"
+                        alt={user.awayTeam.name}
+                      />
+                      {user.awayTeam.name}
+                    </div>
+                    <div className="row-item">
+                      {convertDate(user.startTimestamp)}
+                    </div>
+                    <div className="row-item">{user.status.description}</div>
                   </div>
-                  <div className="row-item">
-                    {convertDate(user.startTimestamp)}
-                  </div>
-                  <div className="row-item">{user.status.description}</div>
-                </div>
-              ));
-            }))}
+                ));
+              })}
           </div>
         </div>
         <button onClick={handleSave}>Zapisz</button>
       </div>
     </div>
   );
-};
+}
 
 export default BettingView;
