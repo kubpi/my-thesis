@@ -14,6 +14,7 @@ import { getAuth } from "firebase/auth";
 const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   const auth = getAuth();
   const loggedInUserId = auth.currentUser;
+  console.log(loggedInUserId);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -25,7 +26,11 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   const handleSearch = async () => {
     const usersRef = collection(firestore, "users");
     const field = searchTerm.includes("@") ? "email" : "displayName";
-    const searchQuery = query(usersRef, where(field, "==", searchTerm));
+    const searchQuery = query(
+      usersRef,
+      where(field, "==", searchTerm),
+      where(field, "!=", loggedInUserId.displayName || loggedInUserId.email)
+    );
 
     try {
       const querySnapshot = await getDocs(searchQuery);
@@ -96,37 +101,39 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
         <div className="search-results">
           <div className="found-users-label">Znalezieni użytkownicy:</div>
           <ul className="user-list">
-          {searchResults.map((user) => (
-  <li key={user.uid} className="user-list-item">
-    <span className="user-name">
-      {user.displayName || user.email}
-    </span>
-    <button
-      className="content-button-add-remove"
-      onClick={() => handleAddUserToTab(user)}
-    >
-      +
-    </button>
-  </li>
-))}
+            {searchResults.map((user) => (
+              <li key={user.uid} className="user-list-item">
+                <span className="user-name">
+                  {user.displayName || user.email}
+                </span>
+                <button
+                  className="content-button-add-remove"
+                  onClick={() => handleAddUserToTab(user)}
+                >
+                  +
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="selected-users">
-  <div className="selected-users-label">Wybrani rywale:</div>
-  <ul className="user-list">
-    {selectedUsers.map((user) => (
-      <li key={user.uid} className="user-list-item">
-        <span className="user-name">{user.displayName || user.email}</span>
-        <button
-          className="content-button-remove"
-          onClick={() => handleRemoveUserFromTab(user.uid)}
-        >
-          -
-        </button>
-      </li>
-    ))}
-  </ul>
-</div>
+          <div className="selected-users-label">Wybrani rywale:</div>
+          <ul className="user-list">
+            {selectedUsers.map((user) => (
+              <li key={user.uid} className="user-list-item">
+                <span className="user-name">
+                  {user.displayName || user.email}
+                </span>
+                <button
+                  className="content-button-remove"
+                  onClick={() => handleRemoveUserFromTab(user.uid)}
+                >
+                  -
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
         <button className="content-button" onClick={handleCreateTab}>
           Utwórz zakład
         </button>
