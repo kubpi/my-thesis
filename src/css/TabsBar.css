@@ -25,11 +25,9 @@
   scrollbar-color: #888 #f1f1f1;
   /* kolor paska i ścieżki */
   flex-grow: 1;
-
 }
 
 .tab {
-
   padding: 10px 20px;
   cursor: pointer;
   position: relative;
@@ -122,8 +120,6 @@
   /* Added padding */
 }
 
-
-
 /* Update your .tab styles if necessary */
 .tab {
   margin-right: 20px;
@@ -131,7 +127,6 @@
   cursor: pointer;
   position: relative;
   transition: color 0.3s ease;
-
 }
 
 /* Rest of your .tab styles */
@@ -188,3 +183,29 @@
   background-color: #f2f2f2;
 }
 
+.tab.isGameWithFriends {
+  background: linear-gradient(
+    to right,
+    #6e8efb,
+    #88a2f9
+  ); /* Delikatny gradient */
+  color: white; /* Biały tekst na niebieskim tle */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtelny cień */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tab:hover {
+  transform: translateY(-2px); /* Lekkie podniesienie zakładki */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Zwiększenie cienia dla efektu "hover" */
+}
+
+/* Dla aktywnej zakładki isGameWithFriends, możesz chcieć zachować oryginalny kolor */
+.tab.active {
+  background: #466551; /* Powrót do oryginalnego koloru tła dla aktywnej zakładki */
+  color: white; /* Biały tekst dla lepszej czytelności */
+}
+
+/* Dla progresu paska pod zakładkami z grami z przyjaciółmi */
+.progress-bar.isGameWithFriends {
+  background-color: #88a2f9; /* Jaśniejszy niebieski kolor dla paska postępu */
+}

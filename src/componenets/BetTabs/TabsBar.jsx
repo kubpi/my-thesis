@@ -218,8 +218,7 @@ function TabsBar() {
     selectedUserIds,
     selectedUsers
   ) => {
-
-    console.log(selectedUserIds)
+    console.log(selectedUserIds);
     const updatedMatches = selectedMatches.map((match) => {
       return {
         id: match.id,
@@ -260,7 +259,7 @@ function TabsBar() {
             return acc;
           }, {})
         : null,
-      creator: currentUser
+      creator: currentUser,
     };
 
     // Update the local state with the new tab and set it as active
@@ -390,7 +389,9 @@ function TabsBar() {
               .map((tab) => (
                 <div
                   key={tab.id}
-                  className={`tab ${activeTabId === tab.id ? "active" : ""}`}
+                  className={`tab ${activeTabId === tab.id ? "active" : ""} ${
+                    tab.isGameWithFriends ? "isGameWithFriends" : ""
+                  }`}
                 >
                   <span onClick={() => setActiveTabId(tab.id)}>{tab.name}</span>
                   <span className="tab-count">{tab.count}</span>
@@ -429,7 +430,9 @@ function TabsBar() {
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
-                    className="game-mode-button"
+                    className={`game-mode-button ${
+                      tab.isGameWithFriends ? "gameWithFriends" : ""
+                    }`}
                     onClick={() => handleOpenTab(tab.id)}
                   >
                     {tab.name}
@@ -438,20 +441,22 @@ function TabsBar() {
                 <button
                   className="game-mode-button solo"
                   onClick={() => {
-                    setIsGameModeOpen(true); // Dodaj to, aby otworzyć GameModeView
-                    setIsBettingOpen(false); // Upewnij się, że BettingView jest zamknięte
-                    handleCloseAddTabModal(); // Zamknij modal
+                    setIsGameModeOpen(true); // To open GameModeView
+                    setIsBettingOpen(false); // Ensure BettingView is closed
+                    handleCloseAddTabModal(); // Close modal
                   }}
                 >
                   Stwórz nowy zakład
                 </button>
               </div>
+              {/* Move the close button here, inside the `game-mode-content` div */}
               <button className="close-button" onClick={handleCloseAddTabModal}>
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
           </div>
         )}
+
         {isGameModeOpen && (
           <GameModeView
             isOpen={isGameModeOpen}
