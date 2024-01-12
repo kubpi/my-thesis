@@ -50,12 +50,12 @@
 }
 
 .game-mode-button.team {
-  background-color: #3498db;
+  background-color: #668193;
   color: white;
 }
 
 .game-mode-button.team:hover {
-  background-color: #2980b9;
+  background-color: #5e7889;
 }
 
 .game-mode-button .icon {
@@ -92,10 +92,10 @@
 .game-mode-button.gameWithFriends {
   background: linear-gradient(
     to right,
-    #6e8efb,
-    #88a2f9
+    hwb(226 73% 11%),
+    #c9d1ee
   ); /* Delikatny gradient */
-  color: white; /* Biały tekst na niebieskim tle */
+  color: rgb(0, 0, 0); /* Biały tekst na niebieskim tle */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtelny cień */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

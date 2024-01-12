@@ -186,10 +186,10 @@
 .tab.isGameWithFriends {
   background: linear-gradient(
     to right,
-    #6e8efb,
-    #88a2f9
+    hwb(226 73% 11%),
+    #c9d1ee
   ); /* Delikatny gradient */
-  color: white; /* Biały tekst na niebieskim tle */
+  color: black; /* Biały tekst na niebieskim tle */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtelny cień */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

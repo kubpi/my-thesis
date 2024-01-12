@@ -1,67 +1,212 @@
 /* CreateTeamModal.css */
 .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .create-team-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 500px;
-  }
-  
-  .create-team-content h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .create-team-content input {
-    width: calc(100% - 22px); /* Adjust width for padding and borders */
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .create-team-content button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  .create-team-content button:hover {
-    background-color: #0056b3;
-  }
-  
-  .create-team-content .close-button {
-    background-color: #f44336;
-  }
-  
-  .create-team-content .close-button:hover {
-    background-color: #d32f2f;
-  }
-  
-  .create-team-content .search-results {
-    border-top: 1px solid #ccc;
-    margin-top: 10px;
-    padding-top: 10px;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.create-team-content {
+  position: relative; /* Added for positioning the close button */
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+}
+
+.create-team-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.create-team-content input {
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.content-button{
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #4CAF50; /* Changed to a softer green */
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease; /* Added for a smooth transition */
+}
+
+.content-button-add{
+  width: 50%;
+  padding: 5px 15px; /* Smaller padding for the '+' button */
+  margin-left: auto; /* Push the button to the right */
+  background-color: #45a049; /* Softer green background */
+  border: none;
+ 
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease; /* Added for a smooth transition */
+}
+.content-button-add:hover {
+  background-color: #45a049; /* Color change on hover */
+}
+.content-button:hover {
+  background-color: #45a049; /* A lighter green for hover state */
+}
+
+/* Style for the close button */
+.close-button {
+  position: absolute; /* Absolute position to the parent relative container */
+  top: 16px; /* Adjust this value to position the button from the top edge */
+  right: 16px; /* Adjust this value to position the button from the right edge */
+  padding: 0; /* No padding needed */
+  background: transparent; /* Transparent background */
+  border: none; /* No border */
+  outline: none; /* Remove outline if focused */
+  cursor: pointer; /* Cursor indicates clickable item */
+  color: #000; /* Button text color is black */
+  transition: color 0.3s; /* Smooth transition for color change */
+
+}
+
+/* Hover state for the close button */
+.close-button:hover {
+  color: #ccc; /* Change color to grey when hovered */
+}
+
+
+.found-users-label {
+  font-size: 1em; /* Adjust size as needed */
+  font-weight: bold; /* Make label bold */
+  margin-bottom: 5px; /* Space between label and list */
+}
+
+.user-list {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  background-color: #f8f8f8; /* Soft background color for each item */
+  border-radius: 4px; /* Rounded corners for the list items */
+}
+
+.user-name {
+  margin-right: 15px; /* Space between name and button */
+  /* Style as needed */
+}
+
+.create-team-content .search-results {
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.create-team-content .search-results {
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Separate the name and '+' button */
+  margin-bottom: 5px; /* Add some space between search result items */
+}
+
+.search-result-item .user-name {
+  flex-grow: 1; /* User name takes up the available space */
+  margin-right: 10px; /* Add some space before the '+' button */
+}
+
+.selected-users-label {
+  font-size: 1em; /* Adjust size as needed */
+  font-weight: bold; /* Make label bold */
+  margin-bottom: 5px; /* Space between label and list */
+}
+
+/* Reuse the user-list class for both found and selected users */
+.user-list {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Separate the name and any action button */
+  margin-bottom: 5px; /* Add some space between items */
+  padding: 5px 10px;
+  background-color: #f8f8f8; /* Soft background color for each item */
+  border-radius: 4px; /* Rounded corners for the list items */
+}
+
+.user-name {
+  flex-grow: 1; /* User name takes up the available space */
+  margin-right: 10px; /* Add some space before any button */
+}
+
+.content-button-remove {
+  width: auto; /* Auto width to shrink to content size */
+  padding: 5px 15px;
+  background-color: #f44336; /* Red color for remove button */
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.content-button-remove:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+.content-button-add-remove {
+  width: auto; /* Auto width to shrink to content size */
+  padding: 5px 15px;
+  background-color: #4CAF50; /* Green color for add button */
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Red style for remove button */
+.content-button-remove {
+  background-color: #f44336; /* Red color for remove button */
+}
+
+ .content-button-remove:hover {
+ 
+  background-color: #d32f2f; /* Color change on hover for '-' button */
+}
+
+.content-button-add-remove:hover{
+  background-color: #45a049; /* Color change on hover for '+' button */
+}
