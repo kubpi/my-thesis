@@ -25,6 +25,7 @@ const BettingMatches = ({
   isBetClosed,
   updateMatchPoints,
   activeTab,
+  activeUser
 }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
@@ -184,6 +185,7 @@ const BettingMatches = ({
 
   const auth = getAuth();
   const user = auth.currentUser;
+  
   console.log(user.uid);
   console.log(activeTab);
   // Check if there's a received invitation
@@ -331,7 +333,23 @@ const BettingMatches = ({
         <p>No favorite matches added.</p>
       ) : (
         <>
-          <div>Grasz z</div>
+          {activeTab?.isGameWithFriends  && (
+              <div>
+                Twoi rywale:
+                <div>
+                  {activeTab?.participants?.map(userParticipant => {
+                    
+                    if (userParticipant?.uid !== activeTab.creator) {
+                      return (userParticipant?.displayName)
+                    }
+                  })
+                   }
+                </div>
+              
+            
+            </div>
+          )}
+
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">
@@ -458,8 +476,8 @@ const BettingMatches = ({
               {closestMatch?.match?.status?.type === "finished" ||
               closestMatch?.match?.status?.type === "inprogress" ? (
                 <div>Zakład zamknięty</div>
-              ) : (          
-                    <>
+              ) : (
+                <>
                   <button onClick={handleSaveBet} className="save-all-button">
                     Zamknij zakład
                   </button>

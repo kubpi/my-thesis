@@ -14,7 +14,7 @@ import { getAuth } from "firebase/auth";
 
 const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   const auth = getAuth();
-const loggedInUserId = auth.currentUser?.uid;
+const loggedInUserId = auth.currentUser;
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -53,20 +53,25 @@ const loggedInUserId = auth.currentUser?.uid;
 
   const handleCreateTab = () => {
     if (selectedUsers.length === 0 && loggedInUserId) {
-      // Użytkownik jest zalogowany, ale nie wybrano żadnych użytkowników
-      onUsersSelected([loggedInUserId]);
+      // If no users are selected and the current user is logged in
+      onUsersSelected([{ uid: loggedInUserId }]);
     } else if (selectedUsers.length > 0) {
-      // Wybrano użytkowników, więc dodajemy zalogowanego użytkownika do listy, jeśli nie ma go już na liście
-      const allSelectedUsers = selectedUsers.map(user => user.uid);
-      if (!allSelectedUsers.includes(loggedInUserId)) {
-        allSelectedUsers.push(loggedInUserId);
+      // If users are selected
+      const updatedSelectedUsers = selectedUsers.map(user => ({
+        uid: user.uid,
+        displayName: user.displayName || user.email // Include the displayName or email
+      }));
+      // Add the logged-in user to the list if not already included
+      if (!updatedSelectedUsers.some(user => user.uid === loggedInUserId)) {
+        updatedSelectedUsers.push({ uid: loggedInUserId?.uid, displayName: loggedInUserId.displayName || loggedInUserId.email });
       }
-      onUsersSelected(allSelectedUsers.map(uid => ({ uid })));
+      onUsersSelected(updatedSelectedUsers);
     } else {
-      // Nie wybrano żadnych użytkowników i nikt nie jest zalogowany
+      // No users selected and no one is logged in
       alert("Please select at least one friend to create a tab.");
     }
   };
+  
 
   if (!isOpen) return null;
 

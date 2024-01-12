@@ -215,8 +215,11 @@ function TabsBar() {
   const handleAddTabWithMatches = (
     tabName,
     selectedMatches,
-    selectedUserIds
+    selectedUserIds,
+    selectedUsers
   ) => {
+
+    console.log(selectedUserIds)
     const updatedMatches = selectedMatches.map((match) => {
       return {
         id: match.id,
@@ -248,7 +251,7 @@ function TabsBar() {
       betClosed: false,
       isActive: true,
       isGameWithFriends: selectedUserIds.length !== 0 ? true : false, // nowy atrybut
-      participants: selectedUserIds, // nowy atrybut
+      participants: selectedUsers, // nowy atrybut
       invitations: selectedUserIds
         ? selectedUserIds.reduce((acc, userId) => {
             if (userId != currentUser) {
@@ -257,6 +260,7 @@ function TabsBar() {
             return acc;
           }, {})
         : null,
+      creator: currentUser
     };
 
     // Update the local state with the new tab and set it as active
@@ -356,6 +360,7 @@ function TabsBar() {
               onBetClick={handleBetClick}
               onSaveBet={handleSaveAllBets} // Pass the new onSaveBet handler
               isBetClosed={activeTab.betClosed} // Dodaj tę linię
+              activeUser={currentUser}
               //updateMatchPoints={updateMatchPoints}
             />
           );

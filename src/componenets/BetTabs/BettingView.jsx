@@ -73,7 +73,7 @@ export function BettingView({
     if (tabName.trim() && selectedMatches.length > 0) {
       // Call onAddTab with the selected matches and the ID(s) of the other user(s)
       const selectedUserIds = teamUsers.map((user) => user.uid);
-      onAddTab(tabName.trim(), selectedMatches, selectedUserIds);
+      onAddTab(tabName.trim(), selectedMatches, selectedUserIds, teamUsers);
       setTabCount(tabCount + 1); // Update the tab count state
       setTabName(""); // Reset the tab name state
       setSelectedMatches([]); // Clear the selected matches state
