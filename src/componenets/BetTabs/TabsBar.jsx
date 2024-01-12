@@ -37,6 +37,7 @@ function TabsBar() {
   const [teamUsers, setTeamUsers] = useState([]);
 
   console.log(tabs);
+
   const handleUsersSelectedForTeam = (selectedUsers) => {
     setTeamUsers(selectedUsers); // Sets the selected team users
     setIsCreateTeamModalOpen(false); // This should close the CreateTeamModal
@@ -90,7 +91,7 @@ function TabsBar() {
   const auth = getAuth();
   const firestore = getFirestore();
   const user = auth.currentUser;
-
+  console.log("To jest useruid: " + user.uid)
   useEffect(() => {
     // Ensure that user object is not null before proceeding
     if (user) {
@@ -230,7 +231,7 @@ function TabsBar() {
     const newTabId = generateUniqueId();
 
     //const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
-    console.log();
+    console.log(selectedUserIds);
     const newTab = {
       id: newTabId, // wspólny identyfikator dla wszystkich uczestników
       name: tabName,
@@ -240,10 +241,14 @@ function TabsBar() {
       isActive: true,
       isGameWithFriends: selectedUserIds.length !== 0 ? true : false, // nowy atrybut
       participants: selectedUserIds, // nowy atrybut
-      invitations: selectedUserIds
+      invitations: selectedUserIds 
         ? selectedUserIds.reduce((acc, userId) => {
+          if (userId != user.uid) {
             acc[userId] = { status: "received" }; // początkowy status dla każdego zaproszonego użytkownika
-            return acc;
+              return acc;
+          }
+              return null
+            
           }, {})
         : null,
     };

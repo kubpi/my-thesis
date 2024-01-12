@@ -391,17 +391,23 @@ const BettingMatches = ({
   //       const data = docSnap.data();
   //       const tabs = data.tabs; // Assuming tabs is an array of tabs
   //       let pointsUpdated = false;
-  // console.log(tabs)
-  //       tabs.forEach(tab => {
+  //       console.log(tabs);
+  //       tabs.forEach((tab) => {
   //         if (tab.id === activeTab.id) {
-  //           tab.matches.forEach(match => {
-  //             const changedMatch = matchesBetting.find(m => m.id === match.id);
-  //             console.log(changedMatch)
-  //             console.log(calculateMatchPoints(changedMatch))
-  //             if (changedMatch && changedMatch.match.status.type === "finished" && !match.pointsUpdated) {
-  //               console.log(changedMatch)
+  //           tab.matches.forEach((match) => {
+  //             const changedMatch = matchesBetting.find(
+  //               (m) => m.id === match.id
+  //             );
+  //             console.log(changedMatch);
+  //             console.log(calculateMatchPoints(changedMatch));
+  //             if (
+  //               changedMatch &&
+  //               changedMatch.match.status.type === "finished" &&
+  //               !match.pointsUpdated
+  //             ) {
+  //               console.log(changedMatch);
   //               match.points = calculateMatchPoints(changedMatch);
-  //               console.log(match.points)
+  //               console.log(match.points);
   //               match.pointsUpdated = true;
   //               pointsUpdated = true;
   //             }
@@ -410,11 +416,13 @@ const BettingMatches = ({
   //       });
 
   //       if (pointsUpdated) {
-  //         updateDoc(userBettingTabRef, { tabs }).then(() => {
-  //           console.log("Points updated for finished matches.");
-  //         }).catch(error => {
-  //           console.error("Error updating points:", error);
-  //         });
+  //         updateDoc(userBettingTabRef, { tabs })
+  //           .then(() => {
+  //             console.log("Points updated for finished matches.");
+  //           })
+  //           .catch((error) => {
+  //             console.error("Error updating points:", error);
+  //           });
   //       }
   //     }
   //   });
@@ -425,7 +433,8 @@ const BettingMatches = ({
       {matchesBetting && matchesBetting.length === 0 ? (
         <p>No favorite matches added.</p>
       ) : (
-        <>
+          <>
+            <div>Grasz z</div>
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">

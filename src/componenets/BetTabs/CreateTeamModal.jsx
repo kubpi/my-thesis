@@ -9,8 +9,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../../css/CreateTeamModal.css"; // Make sure this path is correct
+import { getAuth } from "firebase/auth";
+
 
 const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
+  const auth = getAuth();
+const loggedInUserId = auth.currentUser?.uid;
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -48,15 +52,20 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
   };
 
   const handleCreateTab = () => {
-    if (selectedUsers.length === 0) {
+    if (selectedUsers.length === 0 && loggedInUserId) {
+      // Użytkownik jest zalogowany, ale nie wybrano żadnych użytkowników
+      onUsersSelected([loggedInUserId]);
+    } else if (selectedUsers.length > 0) {
+      // Wybrano użytkowników, więc dodajemy zalogowanego użytkownika do listy, jeśli nie ma go już na liście
+      const allSelectedUsers = selectedUsers.map(user => user.uid);
+      if (!allSelectedUsers.includes(loggedInUserId)) {
+        allSelectedUsers.push(loggedInUserId);
+      }
+      onUsersSelected(allSelectedUsers.map(uid => ({ uid })));
+    } else {
+      // Nie wybrano żadnych użytkowników i nikt nie jest zalogowany
       alert("Please select at least one friend to create a tab.");
-      return;
     }
-    if (selectedUsers.length > 0) {
-      // Pass the selected users back to the parent component
-      onUsersSelected(selectedUsers);
-    }
-    onUsersSelected(selectedUsers); // This now handles everything
   };
 
   if (!isOpen) return null;
