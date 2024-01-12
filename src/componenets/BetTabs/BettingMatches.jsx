@@ -37,67 +37,24 @@ const BettingMatches = ({
 
   const [showInvitationModal, setShowInvitationModal] = useState(false);
 
+  const [closestMatch, setClosestMatch] = useState();
+
   // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
     (sum, match) => sum + (match.points || 0),
     0
   );
-  // Function to calculate points for a single match
-  const calculateMatchPoints = (match) => {
-    // Define points for different outcomes
-    const pointsForCorrectHomeScore = 1;
-    const pointsForCorrectAwayScore = 1;
-    const pointsForCorrectOutcome = 3;
-
-    let points = 0;
-
-    console.log(match);
-    // // Check if the match has been bet on and the result is available
-    // console.log(match.match.status.type);
-    // console.log(match.betHomeScore);
-    // console.log(match.betAwayScore);
-
-    if (
-      match.match.status.type === "finished" &&
-      match.betHomeScore &&
-      match.betAwayScore
-    ) {
-      // Add points for correctly predicted home score
-      console.log("match.betHomeScore " + match.betHomeScore);
-      console.log(
-        "match.match.homeScore.display " + match.match.homeScore.display
-      );
-
-      console.log(match.betHomeScore == match.match.homeScore.display);
-      if (match.betHomeScore == match.match.homeScore.display) {
-        points += pointsForCorrectHomeScore;
-        console.log("points " + points);
-      }
-
-      // Add points for correctly predicted away score
-      if (match.betAwayScore == match.match.awayScore.display) {
-        points += pointsForCorrectAwayScore;
-      }
-
-      if (
-        match.betHomeScore == match.match.homeScore.display &&
-        match.betAwayScore == match.match.awayScore.display
-      ) {
-        points += pointsForCorrectOutcome;
-        console.log("points " + points);
-      }
-    }
-
-    return points;
-  };
 
   // Aktualizacja czasu do rozpoczęcia najbliższego meczu
-  let closestMatch;
-  if (matchesBetting.length > 0) {
-    closestMatch = matchesBetting.reduce((a, b) =>
-      a.match.startTimestamp < b.match.startTimestamp ? a : b
-    );
-  }
+
+  useEffect(() => {
+    if (matchesBetting.length > 0) {
+      const closest = matchesBetting.reduce((a, b) =>
+        a.match.startTimestamp < b.match.startTimestamp ? a : b
+      );
+      setClosestMatch(closest);
+    }
+  }, [matchesBetting]); // Add matchesB
 
   // State to track whether betting time has expired
   const [bettingTimeExpired, setBettingTimeExpired] = useState(false);
@@ -124,9 +81,8 @@ const BettingMatches = ({
     let intervalId;
 
     const calculateNextMatchTime = () => {
-      if (matchesBetting.length > 0) {
-        // Assuming you have logic to find the closest match
-
+      if (matchesBetting.length > 0 && closestMatch && closestMatch.match) {
+        // Make sure closestMatch and its match property are defined
         const nextMatchDate = new Date(
           closestMatch.match.startTimestamp * 1000
         );
@@ -135,21 +91,21 @@ const BettingMatches = ({
         if (now < nextMatchDate) {
           setNextMatchTime(nextMatchDate);
         } else {
-          setNextMatchTime(null); // Resetting nextMatchTime
-          clearInterval(intervalId); // Stop the interval
+          setNextMatchTime(null);
+          clearInterval(intervalId);
         }
       }
     };
 
     if (!betClosed) {
       calculateNextMatchTime();
-      intervalId = setInterval(calculateNextMatchTime, 60000); // Set up the interval
+      intervalId = setInterval(calculateNextMatchTime, 60000);
     }
 
     return () => {
-      if (intervalId) clearInterval(intervalId); // Clear the interval when the component unmounts or dependencies change
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [matchesBetting]); // Dependencies
+  }, [matchesBetting, closestMatch, betClosed]);
 
   useEffect(() => {
     if (nextMatchTime) {
@@ -352,19 +308,6 @@ const BettingMatches = ({
             console.log(newMatches.match.status.type);
             console.log(newMatches.betHomeScore);
             console.log(newMatches.betAwayScore);
-            // if (
-            //   isBetClosed &&
-            //   newMatches.match.status.type === "finished" &&
-            //   newMatches.betHomeScore &&
-            //   newMatches.betAwayScore
-            // ) {
-
-            //   newMatches.points = calculateMatchPoints(newMatches);
-            //   // Call the updateMatchPoints function after calculating the points
-
-            // } else if (!newMatches.betHomeScore || !newMatches.betAwayScore) {
-            //   newMatches.points = 0;
-            // }
             matches[matchData.id] = newMatches;
           });
 
@@ -381,60 +324,14 @@ const BettingMatches = ({
   }, [selectedMatchesId]);
 
   console.log(matchesBetting);
-
-  // useEffect(() => {
-  //   const firestore = getFirestore();
-  //   const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-
-  //   getDoc(userBettingTabRef).then((docSnap) => {
-  //     if (docSnap.exists()) {
-  //       const data = docSnap.data();
-  //       const tabs = data.tabs; // Assuming tabs is an array of tabs
-  //       let pointsUpdated = false;
-  //       console.log(tabs);
-  //       tabs.forEach((tab) => {
-  //         if (tab.id === activeTab.id) {
-  //           tab.matches.forEach((match) => {
-  //             const changedMatch = matchesBetting.find(
-  //               (m) => m.id === match.id
-  //             );
-  //             console.log(changedMatch);
-  //             console.log(calculateMatchPoints(changedMatch));
-  //             if (
-  //               changedMatch &&
-  //               changedMatch.match.status.type === "finished" &&
-  //               !match.pointsUpdated
-  //             ) {
-  //               console.log(changedMatch);
-  //               match.points = calculateMatchPoints(changedMatch);
-  //               console.log(match.points);
-  //               match.pointsUpdated = true;
-  //               pointsUpdated = true;
-  //             }
-  //           });
-  //         }
-  //       });
-
-  //       if (pointsUpdated) {
-  //         updateDoc(userBettingTabRef, { tabs })
-  //           .then(() => {
-  //             console.log("Points updated for finished matches.");
-  //           })
-  //           .catch((error) => {
-  //             console.error("Error updating points:", error);
-  //           });
-  //       }
-  //     }
-  //   });
-  // }, [matchesBetting, activeTab, user.uid]);
-
+  console.log(closestMatch);
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
         <p>No favorite matches added.</p>
       ) : (
-          <>
-            <div>Grasz z</div>
+        <>
+          <div>Grasz z</div>
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">
@@ -491,7 +388,8 @@ const BettingMatches = ({
                     {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-                    {bettingTimeExpired ? (
+                    {closestMatch?.match?.status?.type === "finished" ||
+                    closestMatch?.match?.status?.type === "inprogress" ? (
                       <>
                         {user.betHomeScore !== null &&
                         user.betAwayScore !== null ? (
@@ -557,8 +455,11 @@ const BettingMatches = ({
               ))}
             </div>
             <div className="save-all-button-container">
-              {!isBetClosed && (
-                <>
+              {closestMatch?.match?.status?.type === "finished" ||
+              closestMatch?.match?.status?.type === "inprogress" ? (
+                <div>Zakład zamknięty</div>
+              ) : (          
+                    <>
                   <button onClick={handleSaveBet} className="save-all-button">
                     Zamknij zakład
                   </button>

@@ -35,7 +35,7 @@ function TabsBar() {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
   const [teamUsers, setTeamUsers] = useState([]);
-
+  const [currentUser, setCurrentUser] = useState(null); // Add a state for the current user
   console.log(tabs);
 
   const handleUsersSelectedForTeam = (selectedUsers) => {
@@ -91,7 +91,15 @@ function TabsBar() {
   const auth = getAuth();
   const firestore = getFirestore();
   const user = auth.currentUser;
-  console.log("To jest useruid: " + user.uid)
+
+  useEffect(() => {
+    const unsubscribe = getAuth().onAuthStateChanged((user) => {
+      setCurrentUser(user.uid); // Update the state when the auth state changes
+    });
+
+    return () => unsubscribe(); // Clean up the listener when the component unmounts
+  }, []);
+
   useEffect(() => {
     // Ensure that user object is not null before proceeding
     if (user) {
@@ -231,7 +239,7 @@ function TabsBar() {
     const newTabId = generateUniqueId();
 
     //const newTabId = Math.max(...tabs.map((t) => t.id), 0) + 1;
-    console.log(selectedUserIds);
+
     const newTab = {
       id: newTabId, // wspólny identyfikator dla wszystkich uczestników
       name: tabName,
@@ -241,14 +249,12 @@ function TabsBar() {
       isActive: true,
       isGameWithFriends: selectedUserIds.length !== 0 ? true : false, // nowy atrybut
       participants: selectedUserIds, // nowy atrybut
-      invitations: selectedUserIds 
+      invitations: selectedUserIds
         ? selectedUserIds.reduce((acc, userId) => {
-          if (userId != user.uid) {
-            acc[userId] = { status: "received" }; // początkowy status dla każdego zaproszonego użytkownika
-              return acc;
-          }
-              return null
-            
+            if (userId != currentUser) {
+              acc[userId] = { status: "received" }; // początkowy status dla każdego zaproszonego użytkownika
+            }
+            return acc;
           }, {})
         : null,
     };
