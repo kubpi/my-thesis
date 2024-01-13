@@ -44,49 +44,50 @@ const BettingMatches = ({
     useState(false);
   const [selectedBetIdForDeletion, setSelectedBetIdForDeletion] =
     useState(null);
-   
+
   const [friendGamesTabs, setFriendGamesTabs] = useState([]);
   const [friendsMatchesBetting, setfriendsMatchesBetting] = useState([]);
-  
 
- 
   async function fetchTabsWithTabId(tabId, participants) {
     const firestore = getFirestore();
-    
+
     // Map over the participants and create a promise for each query
     const queries = participants.map(async (user) => {
-      const userBettingTabsRef = doc(firestore, 'userBettingTabs', user.uid);
+      const userBettingTabsRef = doc(firestore, "userBettingTabs", user.uid);
       const docSnap = await getDoc(userBettingTabsRef);
-  
+
       if (docSnap.exists() && docSnap.data().tabs) {
         // Find the tab with the matching tabId
-        return {userUid: user.uid, userName: user.displayName, tab : docSnap.data().tabs.find(tab => tab.id === tabId)} ;
+        return {
+          userUid: user.uid,
+          userName: user.displayName,
+          tab: docSnap.data().tabs.find((tab) => tab.id === tabId),
+        };
       } else {
         return null;
       }
     });
-  
+
     // Wait for all queries to complete
     const tabs = await Promise.all(queries);
-    
+
     // Filter out any undefined or null results
-    return tabs.filter(tab => tab != null);
+    return tabs.filter((tab) => tab != null);
   }
-  
+
   useEffect(() => {
     if (activeTab && activeTab.participants) {
       const tabIdToSearch = activeTab.id; // Use the actual tab id you're searching for
       fetchTabsWithTabId(tabIdToSearch, activeTab.participants).then((tabs) => {
-        setFriendGamesTabs(tabs)
-       
+        setFriendGamesTabs(tabs);
       });
     }
   }, [activeTab]);
-  
-console.log(friendGamesTabs)
-  const allMatchesFinished = matchesBetting?.match?.every((match) => match.status.type === "finished");
 
-  
+  console.log(friendGamesTabs);
+  const allMatchesFinished = matchesBetting?.match?.every(
+    (match) => match.status.type === "finished"
+  );
 
   // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
@@ -465,12 +466,47 @@ console.log(friendGamesTabs)
     (invitation) => invitation.status === "accepted"
   );
 
+  console.log(matchesBetting);
+  console.log(friendGamesTabs);
 
-  console.log(matchesBetting)
-  const kuba = []
-  matchesBetting.map(match => kuba.push({ ...match, 'userUid' : user.uid }))
-  friendGamesTabs.map(tab => kuba.push(tab))
-  console.log(kuba)
+  const kuba = [];
+  const buba = [];
+
+  matchesBetting.forEach((tab) => {
+    console.log(tab);
+
+    kuba.push({ ...tab, userUid: user.uid });
+  });
+
+  friendGamesTabs.forEach((tab) => {
+    tab?.tab?.matches.forEach((mecz) => {
+      if (tab.userUid !== user.uid)
+        buba.push({
+          ...mecz,
+          userUid: tab.userUid,
+          displayName: tab.userName,
+        });
+    });
+  });
+
+  console.log(buba);
+  console.log(kuba);
+
+  kuba.forEach((tab) => {
+    const matchingMecze = buba.filter((mecz) => tab.id === mecz.id);
+    if (matchingMecze.length > 0) {
+      tab.mecze = matchingMecze.map((matchingMecz) => ({
+        userUid: matchingMecz.userUid,
+        displayName: matchingMecz.displayName,
+        betAwayScore: matchingMecz.betAwayScore,
+        betHomeScore: matchingMecz.betHomeScore,
+        points: matchingMecz.points,
+      }));
+    }
+  });
+
+  console.log(kuba);
+
   return (
     <div className="favorite-matches-container">
       {!allInvitationsAccepted ? (
@@ -491,7 +527,7 @@ console.log(friendGamesTabs)
             Usuń zakład
           </button>
         </div>
-      )   : !allMatchesFinished && activeTab?.isGameWithFriends  ? (
+      ) : !allMatchesFinished && activeTab?.isGameWithFriends ? (
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">
@@ -530,7 +566,18 @@ console.log(friendGamesTabs)
                 Gospodarze <div>Goście</div>
               </div>
               <div className="header-item">Twoje obstawiony wynik</div>
-             {friendGamesTabs && friendGamesTabs?.map(userParticipant => userParticipant.userUid !== user.uid && <div className="header-item" key={userParticipant?.userUid}> {userParticipant?.userName}</div>)}
+              {friendGamesTabs &&
+                friendGamesTabs?.map(
+                  (userParticipant) =>
+                    userParticipant.userUid !== user.uid && (
+                      <div
+                        className="header-item"
+                        key={userParticipant?.userUid}
+                      >
+                        {userParticipant?.userName}
+                      </div>
+                    )
+                )}
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
               <div className="header-item">Status</div>
@@ -538,7 +585,8 @@ console.log(friendGamesTabs)
               <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body">
-              {matchesBetting.map((user, index) => (
+                  {kuba.map((user, index) => (
+               <>
                 <div className="table-row " key={user.match.id}>
                   <div className="row-item select-column">
                     <input type="checkbox" />
@@ -570,22 +618,24 @@ console.log(friendGamesTabs)
                     {user.match.awayTeam.name}
                   </div>
                   <div className="row-item">
-                  
-                      <>
-                        {user.betHomeScore !== null &&
-                        user.betAwayScore !== null ? (
-                          <>
-                            <div>{user.betHomeScore}</div>
-                            <div>{user.betAwayScore}</div>
-                          </>
-                        ) : (
-                          <div>Nieobstawiono</div>
-                        )}
-                      </>
-                    
+                    <>
+                      {user.betHomeScore !== null &&
+                      user.betAwayScore !== null ? (
+                        <>
+                          <div>{user.betHomeScore}</div>
+                          <div>{user.betAwayScore}</div>
+                        </>
+                      ) : (
+                        <div>Nieobstawiono</div>
+                      )}
+                    </>
                   </div>
-                  {friendGamesTabs && friendGamesTabs?.map(userParticipant => userParticipant.userUid !== user.uid && <div className="header-item" key={userParticipant?.userUid}> {userParticipant?.tab.matches[0].betAwayScore}</div>)}
-
+                  {user?.mecze?.map((mecz, index) => (
+                    <div className="row-item" key={index}>
+                      <div>{mecz.betHomeScore}</div>
+                      <div>{mecz.betAwayScore}</div>
+                    </div>
+                  ))}
 
                   <div className="row-item">
                     {user.match.status.type !== "notstarted" ? (
@@ -606,7 +656,7 @@ console.log(friendGamesTabs)
 
                   <div className="row-item">{user.points}</div>
                 </div>
-              ))}
+                </>))}
             </div>
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
