@@ -233,60 +233,82 @@ const BettingMatches = ({
   // Inside BettingMatches component
 
   // Handle Reject
-  const handleReject = () => {
+ // Handle Reject
+const handleReject = () => {
+  const firestore = getFirestore();
+  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+
+  // Update the invitation status to 'rejected' for the current user
+  getDoc(userBettingTabRef).then((docSnap) => {
+    if (docSnap.exists()) {
+      let tabs = docSnap.data().tabs;
+      let tabToUpdateIndex = tabs.findIndex((tab) => tab.id === activeTab.id);
+
+      if (tabToUpdateIndex !== -1) {
+        // Update the invitation status to 'rejected'
+        tabs[tabToUpdateIndex].invitations[user.uid].status = 'rejected';
+
+        // Save the updated tabs back to Firestore for the current user
+        updateDoc(userBettingTabRef, { tabs })
+          .then(() => {
+            console.log("Invitation rejected by the user.");
+            setShowInvitationModal(false);
+          })
+          .catch((error) => console.error("Error updating tabs: ", error));
+      }
+    }
+  });
+
+  // Update the status in all participants' tabs to reflect the rejection
+  activeTab.participants.forEach((participant) => {
+    if (participant.uid !== user.uid) {
+      const participantTabRef = doc(firestore, "userBettingTabs", participant.uid);
+
+      // Fetch the current participant's betting tabs
+      getDoc(participantTabRef).then((participantDocSnap) => {
+        if (participantDocSnap.exists()) {
+          let participantTabs = participantDocSnap.data().tabs;
+          let participantTabToUpdateIndex = participantTabs.findIndex((tab) => tab.id === activeTab.id);
+
+          if (participantTabToUpdateIndex !== -1) {
+            // Update the invitation status to 'rejected'
+            participantTabs[participantTabToUpdateIndex].invitations[user.uid].status = 'rejected';
+
+            // Save the updated tabs back to Firestore for the participant
+            updateDoc(participantTabRef, { tabs: participantTabs })
+              .then(() => {
+                console.log(`Participant ${participant.uid} notified of the rejection.`);
+              })
+              .catch((error) => console.error("Error updating participant's tabs: ", error));
+          }
+        }
+      });
+    }
+  });
+};
+
+const isBetCanceled = (bet) => {
+  return Object.values(bet.invitations).some(invitation => invitation.status === 'rejected');
+  };
+  
+  const handleDeleteBet = (betId) => {
     const firestore = getFirestore();
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-
-    // Remove the tab from the current user's tabs
+  
     getDoc(userBettingTabRef).then((docSnap) => {
       if (docSnap.exists()) {
         let tabs = docSnap.data().tabs;
-        tabs = tabs.filter((tab) => tab.id !== activeTab.id);
+        tabs = tabs.filter((tab) => tab.id !== betId);
+        
         updateDoc(userBettingTabRef, { tabs })
           .then(() => {
-            console.log("Tab removed after rejection.");
-            setShowInvitationModal(false);
+            console.log("Bet deleted successfully.");
           })
-          .catch((error) => console.error("Error removing tab: ", error));
-      }
-    });
-
-    // Update the status in other participants' tabs
-    activeTab.participants.forEach((participantId) => {
-      if (participantId !== user.uid) {
-        const participantTabRef = doc(
-          firestore,
-          "userBettingTabs",
-          participantId
-        );
-
-        getDoc(participantTabRef).then((participantDocSnap) => {
-          if (participantDocSnap.exists()) {
-            let participantTabs = participantDocSnap.data().tabs;
-            let tabToUpdate = participantTabs.find(
-              (tab) => tab.id === activeTab.id
-            );
-
-            if (tabToUpdate) {
-              tabToUpdate.invitations[user.uid].status = "rejected";
-              // Optionally, remove the rejecting user from the participants list
-              tabToUpdate.participants = tabToUpdate.participants.filter(
-                (id) => id !== user.uid
-              );
-
-              updateDoc(participantTabRef, { tabs: participantTabs })
-                .then(() => {
-                  console.log("Participant's tab updated after rejection.");
-                })
-                .catch((error) =>
-                  console.error("Error updating participant's tab: ", error)
-                );
-            }
-          }
-        });
+          .catch((error) => console.error("Error deleting bet: ", error));
       }
     });
   };
+  
 
   useEffect(() => {
     const firestore = getFirestore();
@@ -328,33 +350,41 @@ const BettingMatches = ({
   console.log(matchesBetting);
   console.log(closestMatch);
   const creator = activeTab.participants.filter(creator => creator.uid === activeTab.creator)
+// Find the user(s) who have rejected the invitation
+const rejectedUsers = activeTab.participants.filter(participant => 
+  activeTab.invitations[participant.uid]?.status === "rejected"
+);
 
+// Extract the display names of the rejected users
+const rejectedUserNames = rejectedUsers.map(user => user.displayName || user.email.split('@')[0]);
   return (
     <div className="favorite-matches-container">
-      {matchesBetting && matchesBetting.length === 0 ? (
-        <p>No favorite matches added.</p>
+      {isBetCanceled(activeTab) ? (
+        <div className="canceled-bet-container">
+        <p>Zakład został anulowany. Użytkownik: <strong>{rejectedUserNames.join(', ')} </strong>niezaakceptował zaproszenia</p>
+          <button onClick={() => handleDeleteBet(activeTab.id)}>Usuń zakład</button>
+        </div>
       ) : (
         <>
-         
-            {activeTab?.isGameWithFriends && (
-              <div className="opponents-container">
-                <div className="opponents-title">Twoi rywale:</div>
-                <ul className="opponents-list">
-                  {activeTab?.participants?.map((userParticipant) => {
-                    if (userParticipant?.uid !== user.uid) {
-                      return (
-                        <li key={userParticipant.uid} className="opponent-item">
-                          <span className="opponent-name">
-                            {userParticipant?.displayName}
-                          </span>
-                        </li>
-                      );
-                    }
-                    return null;
-                  })}
-                </ul>
-              </div>
-            )}
+          {activeTab?.isGameWithFriends && (
+            <div className="opponents-container">
+              <div className="opponents-title">Twoi rywale:</div>
+              <ul className="opponents-list">
+                {activeTab?.participants?.map((userParticipant) => {
+                  if (userParticipant?.uid !== user.uid) {
+                    return (
+                      <li key={userParticipant.uid} className="opponent-item">
+                        <span className="opponent-name">
+                          {userParticipant?.displayName}
+                        </span>
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
+              </ul>
+            </div>
+          )}
          
 
           <div className="users-table">
