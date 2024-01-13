@@ -200,35 +200,43 @@ const BettingMatches = ({
   }, [activeTab, user.uid]);
 
   // Handle Accept
-  const handleAccept = () => {
-    const firestore = getFirestore();
-    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+ // Handle Accept
+const handleAccept = async () => {
+  const firestore = getFirestore();
+  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
-    // Fetch the current user's betting tabs
-    getDoc(userBettingTabRef)
-      .then((docSnap) => {
-        if (docSnap.exists()) {
-          let tabs = docSnap.data().tabs;
-          let tabToUpdate = tabs.find((tab) => tab.id === activeTab.id);
+  try {
+    // Update the current user's invitation status to 'accepted'
+    await updateInvitationStatus(userBettingTabRef, "accepted");
 
-          if (tabToUpdate) {
-            // Update the invitation status to 'accepted' for the current user
-            tabToUpdate.invitations[user.uid].status = "accepted";
+    // Update the invitation status for other participants
+    for (const participant of activeTab.participants) {
+      if (participant.uid !== user.uid) {
+        const participantTabRef = doc(firestore, "userBettingTabs", participant.uid);
+        await updateInvitationStatus(participantTabRef, "accepted");
+      }
+    }
 
-            // Save the updated tabs back to Firestore
-            updateDoc(userBettingTabRef, { tabs })
-              .then(() => {
-                console.log("Invitation accepted and tabs updated.");
-                setShowInvitationModal(false);
-              })
-              .catch((error) => console.error("Error updating tabs: ", error));
-          }
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user betting tabs: ", error);
-      });
-  };
+    console.log("Invitation accepted and all tabs updated.");
+    setShowInvitationModal(false);
+  } catch (error) {
+    console.error("Error updating tabs: ", error);
+  }
+};
+
+// Function to update the invitation status
+const updateInvitationStatus = async (tabRef, status) => {
+  const docSnap = await getDoc(tabRef);
+  if (docSnap.exists()) {
+    let tabs = docSnap.data().tabs;
+    let tabToUpdate = tabs.find(tab => tab.id === activeTab.id);
+    if (tabToUpdate) {
+      tabToUpdate.invitations[user.uid].status = status;
+      await updateDoc(tabRef, { tabs });
+    }
+  }
+};
+
 
   // Inside BettingMatches component
 
@@ -356,15 +364,33 @@ const rejectedUsers = activeTab.participants.filter(participant =>
 );
 
 // Extract the display names of the rejected users
-const rejectedUserNames = rejectedUsers.map(user => user.displayName || user.email.split('@')[0]);
+  const rejectedUserNames = rejectedUsers.map(user => user.displayName || user.email.split('@')[0]);
+ // Find the users who have not yet accepted the invitation
+  const pendingInvitations = activeTab.participants.filter(participant => 
+  participant.uid !== activeTab.creator &&
+  activeTab.invitations[participant.uid]?.status !== "accepted"
+
+);
+
+// Extract the display names of the users with pending invitations
+const pendingUserNames = pendingInvitations.map(user => user.displayName || user.email.split('@')[0]);
+
+// Check if all invitations have been accepted
+const allInvitationsAccepted = Object.values(activeTab.invitations).every(
+  (invitation) => invitation.status === "accepted"
+);
   return (
     <div className="favorite-matches-container">
-      {isBetCanceled(activeTab) ? (
-        <div className="canceled-bet-container">
-        <p>Zakład został anulowany. Użytkownik: <strong>{rejectedUserNames.join(', ')} </strong>niezaakceptował zaproszenia</p>
-          <button onClick={() => handleDeleteBet(activeTab.id)}>Usuń zakład</button>
-        </div>
-      ) : (
+      {!allInvitationsAccepted ? (
+      <div className="waiting-for-players">
+      <p>Oczekiwanie na akceptację graczy: <strong>{pendingUserNames.join(', ')}</strong></p>
+      </div>
+    ) : isBetCanceled(activeTab) ? (
+      <div className="canceled-bet-container">
+        <p>Zakład został anulowany. Użytkownik: <strong>{rejectedUserNames.join(', ')}</strong> nie zaakceptował zaproszenia.</p>
+        <button onClick={() => handleDeleteBet(activeTab.id)}>Usuń zakład</button>
+      </div>
+    ) : (
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">

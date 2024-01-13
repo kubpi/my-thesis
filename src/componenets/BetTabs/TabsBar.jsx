@@ -249,7 +249,7 @@ function TabsBar() {
       count: updatedMatches.length,
       matches: updatedMatches,
       betClosed: false,
-      isActive: false,
+      isActive: true,
       isGameWithFriends: selectedUserIds.length !== 0 ? true : false, // nowy atrybut
       participants: selectedUsers, // nowy atrybut
       invitations: selectedUserIds
