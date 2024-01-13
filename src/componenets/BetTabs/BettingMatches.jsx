@@ -18,6 +18,8 @@ import {
   getTurnamentImgURLbyId,
   tournaments,
 } from "../../Services/apiService";
+import Podium from "../Podium";
+import PodiumForFriendsBets from "../PodiumForFriendsBets";
 
 const BettingMatches = ({
   selectedMatchesId,
@@ -85,9 +87,7 @@ const BettingMatches = ({
   }, [activeTab]);
 
   console.log(friendGamesTabs);
-  const allMatchesFinished = matchesBetting?.match?.every(
-    (match) => match.status.type === "finished"
-  );
+
 
   // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
@@ -506,7 +506,11 @@ const BettingMatches = ({
   });
 
   console.log(kuba);
-
+  console.log(matchesBetting)
+  const allMatchesFinished = matchesBetting.every(
+    (match) => match.match.status.type === "finished"
+  );
+console.log(allMatchesFinished)
   return (
     <div className="favorite-matches-container">
       {!allInvitationsAccepted ? (
@@ -527,7 +531,7 @@ const BettingMatches = ({
             Usuń zakład
           </button>
         </div>
-      ) : !allMatchesFinished && activeTab?.isGameWithFriends ? (
+      ) : allMatchesFinished && activeTab?.isGameWithFriends ? (
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">
@@ -549,6 +553,7 @@ const BettingMatches = ({
             </div>
           )}
 
+          <div>Zakład zakończony</div>
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">
@@ -565,7 +570,7 @@ const BettingMatches = ({
               <div className="header-item">
                 Gospodarze <div>Goście</div>
               </div>
-              <div className="header-item">Twoje obstawiony wynik</div>
+              <div className="header-item">Twój obstawiony wynik</div>
               {friendGamesTabs &&
                 friendGamesTabs?.map(
                   (userParticipant) =>
@@ -580,83 +585,87 @@ const BettingMatches = ({
                 )}
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
-              <div className="header-item">Status</div>
 
-              <div className="header-item">Punkty</div>
+              <div className="header-item">Twoje punkty</div>
             </div>
             <div className="users-table-body">
-                  {kuba.map((user, index) => (
-               <>
-                <div className="table-row " key={user.match.id}>
-                  <div className="row-item select-column">
-                    <input type="checkbox" />
-                  </div>
-                  <div className="row-item">
-                    <img
-                      src={getTurnamentImgURLbyId(
-                        user.match.tournament.uniqueTournament.id
-                      )}
-                      className="team-logo2"
-                      alt={user.match.homeTeam.name}
-                    ></img>
-                    {user.match.tournament.name}
-                  </div>
-                  <div className="row-item">
-                    <div>
+              {kuba.map((user, index) => (
+                <>
+                  <div className="table-row " key={user.match.id}>
+                    <div className="row-item select-column">
+                      <input type="checkbox" />
+                    </div>
+                    <div className="row-item">
                       <img
-                        src={ReturnTeamImage(user.match.homeTeam.id)}
+                        src={getTurnamentImgURLbyId(
+                          user.match.tournament.uniqueTournament.id
+                        )}
                         className="team-logo2"
                         alt={user.match.homeTeam.name}
                       ></img>
-                      {user.match.homeTeam.name}
+                      {user.match.tournament.name}
                     </div>
-                    <img
-                      src={ReturnTeamImage(user.match.awayTeam.id)}
-                      className="team-logo2"
-                      alt={user.match.awayTeam.name}
-                    ></img>
-                    {user.match.awayTeam.name}
-                  </div>
-                  <div className="row-item">
-                    <>
-                      {user.betHomeScore !== null &&
-                      user.betAwayScore !== null ? (
+                    <div className="row-item">
+                      <div>
+                        <img
+                          src={ReturnTeamImage(user.match.homeTeam.id)}
+                          className="team-logo2"
+                          alt={user.match.homeTeam.name}
+                        ></img>
+                        {user.match.homeTeam.name}
+                      </div>
+                      <img
+                        src={ReturnTeamImage(user.match.awayTeam.id)}
+                        className="team-logo2"
+                        alt={user.match.awayTeam.name}
+                      ></img>
+                      {user.match.awayTeam.name}
+                    </div>
+                    <div className="row-item">
+                      <>
+                        {user.betHomeScore !== null &&
+                        user.betAwayScore !== null ? (
+                          <>
+                            <div>{user.betHomeScore}</div>
+                            <div>{user.betAwayScore}</div>
+                          </>
+                        ) : (
+                          <div>Nieobstawiono</div>
+                        )}
+                      </>
+                    </div>
+                    {(user?.mecze?.map((mecz, index) => (
+                      mecz.betHomeScore && mecz.betAwayScore ?(
+                      <div className="row-item" key={index}>
+                        <div>{mecz.betHomeScore}</div>
+                        <div>{mecz.betAwayScore}</div>
+                        </div>
+                      )
+                    : (
+                          <div>Nieobstawiono</div>
+                        ))))}
+
+                    <div className="row-item">
+                      {user.match.status.type !== "notstarted" ? (
                         <>
-                          <div>{user.betHomeScore}</div>
-                          <div>{user.betAwayScore}</div>
+                          <div>{user.match.homeScore.display}</div>
+                          {user.match.awayScore.display}
                         </>
                       ) : (
-                        <div>Nieobstawiono</div>
+                        <div>
+                          {getTimeUntilMatch(user.match.startTimestamp)}{" "}
+                        </div>
                       )}
-                    </>
-                  </div>
-                  {user?.mecze?.map((mecz, index) => (
-                    <div className="row-item" key={index}>
-                      <div>{mecz.betHomeScore}</div>
-                      <div>{mecz.betAwayScore}</div>
                     </div>
-                  ))}
+                    <div className="row-item">
+                      {convertDate(user.match.startTimestamp)}
+                    </div>
 
-                  <div className="row-item">
-                    {user.match.status.type !== "notstarted" ? (
-                      <>
-                        <div>{user.match.homeScore.display}</div>
-                        {user.match.awayScore.display}
-                      </>
-                    ) : (
-                      <div>{getTimeUntilMatch(user.match.startTimestamp)} </div>
-                    )}
-                  </div>
-                  <div className="row-item">
-                    {convertDate(user.match.startTimestamp)}
-                  </div>
-                  <div className="row-item">
-                    {user.match.status.description}
-                  </div>
 
-                  <div className="row-item">{user.points}</div>
-                </div>
-                </>))}
+                    <div className="row-item">{user.points}</div>
+                  </div>
+                </>
+              ))}
             </div>
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
@@ -677,7 +686,7 @@ const BettingMatches = ({
               )}
             </div>
           </div>
-          {closestMatch?.match?.status?.type !== "finished" && (
+          {allMatchesFinished && (
             <button
               onClick={() => handleDeleteBet(activeTab.id)}
               className="bet-match-button delete-bet-button"
@@ -687,9 +696,10 @@ const BettingMatches = ({
           )}
           {closestMatch?.match?.status?.type === "finished" && (
             <div className="total-points-container points-info">
-              Łączna suma punktów: {totalPoints}
+              Łączna suma twoich punktów: {totalPoints}
             </div>
-          )}
+              )}
+              <PodiumForFriendsBets kuba={kuba}></PodiumForFriendsBets>
         </>
       ) : (
         <>
