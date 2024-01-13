@@ -10,6 +10,7 @@ import {
   onSnapshot,
   where,
   query,
+  getDocs,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import {
@@ -39,9 +40,54 @@ const BettingMatches = ({
   const [showInvitationModal, setShowInvitationModal] = useState(false);
 
   const [closestMatch, setClosestMatch] = useState();
-  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
-  const [selectedBetIdForDeletion, setSelectedBetIdForDeletion] = useState(null);
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+    useState(false);
+  const [selectedBetIdForDeletion, setSelectedBetIdForDeletion] =
+    useState(null);
+   
+  const [friendGamesTabs, setFriendGamesTabs] = useState([]);
+  const [friendsMatchesBetting, setfriendsMatchesBetting] = useState([]);
   
+
+ 
+  async function fetchTabsWithTabId(tabId, participants) {
+    const firestore = getFirestore();
+    
+    // Map over the participants and create a promise for each query
+    const queries = participants.map(async (user) => {
+      const userBettingTabsRef = doc(firestore, 'userBettingTabs', user.uid);
+      const docSnap = await getDoc(userBettingTabsRef);
+  
+      if (docSnap.exists() && docSnap.data().tabs) {
+        // Find the tab with the matching tabId
+        return {userUid: user.uid, userName: user.displayName, tab : docSnap.data().tabs.find(tab => tab.id === tabId)} ;
+      } else {
+        return null;
+      }
+    });
+  
+    // Wait for all queries to complete
+    const tabs = await Promise.all(queries);
+    
+    // Filter out any undefined or null results
+    return tabs.filter(tab => tab != null);
+  }
+  
+  useEffect(() => {
+    if (activeTab && activeTab.participants) {
+      const tabIdToSearch = activeTab.id; // Use the actual tab id you're searching for
+      fetchTabsWithTabId(tabIdToSearch, activeTab.participants).then((tabs) => {
+        setFriendGamesTabs(tabs)
+       
+      });
+    }
+  }, [activeTab]);
+  
+console.log(friendGamesTabs)
+  const allMatchesFinished = matchesBetting?.match?.every((match) => match.status.type === "finished");
+
+  
+
   // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
     (sum, match) => sum + (match.points || 0),
@@ -202,116 +248,133 @@ const BettingMatches = ({
   }, [activeTab, user.uid]);
 
   // Handle Accept
- // Handle Accept
-const handleAccept = async () => {
-  const firestore = getFirestore();
-  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+  // Handle Accept
+  const handleAccept = async () => {
+    const firestore = getFirestore();
+    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
-  try {
-    // Update the current user's invitation status to 'accepted'
-    await updateInvitationStatus(userBettingTabRef, "accepted");
+    try {
+      // Update the current user's invitation status to 'accepted'
+      await updateInvitationStatus(userBettingTabRef, "accepted");
 
-    // Update the invitation status for other participants
-    for (const participant of activeTab.participants) {
-      if (participant.uid !== user.uid) {
-        const participantTabRef = doc(firestore, "userBettingTabs", participant.uid);
-        await updateInvitationStatus(participantTabRef, "accepted");
+      // Update the invitation status for other participants
+      for (const participant of activeTab.participants) {
+        if (participant.uid !== user.uid) {
+          const participantTabRef = doc(
+            firestore,
+            "userBettingTabs",
+            participant.uid
+          );
+          await updateInvitationStatus(participantTabRef, "accepted");
+        }
+      }
+
+      console.log("Invitation accepted and all tabs updated.");
+      setShowInvitationModal(false);
+    } catch (error) {
+      console.error("Error updating tabs: ", error);
+    }
+  };
+
+  // Function to update the invitation status
+  const updateInvitationStatus = async (tabRef, status) => {
+    const docSnap = await getDoc(tabRef);
+    if (docSnap.exists()) {
+      let tabs = docSnap.data().tabs;
+      let tabToUpdate = tabs.find((tab) => tab.id === activeTab.id);
+      if (tabToUpdate) {
+        tabToUpdate.invitations[user.uid].status = status;
+        await updateDoc(tabRef, { tabs });
       }
     }
-
-    console.log("Invitation accepted and all tabs updated.");
-    setShowInvitationModal(false);
-  } catch (error) {
-    console.error("Error updating tabs: ", error);
-  }
-};
-
-// Function to update the invitation status
-const updateInvitationStatus = async (tabRef, status) => {
-  const docSnap = await getDoc(tabRef);
-  if (docSnap.exists()) {
-    let tabs = docSnap.data().tabs;
-    let tabToUpdate = tabs.find(tab => tab.id === activeTab.id);
-    if (tabToUpdate) {
-      tabToUpdate.invitations[user.uid].status = status;
-      await updateDoc(tabRef, { tabs });
-    }
-  }
-};
-
+  };
 
   // Inside BettingMatches component
 
   // Handle Reject
- // Handle Reject
-const handleReject = () => {
-  const firestore = getFirestore();
-  const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
+  // Handle Reject
+  const handleReject = () => {
+    const firestore = getFirestore();
+    const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
-  // Update the invitation status to 'rejected' for the current user
-  getDoc(userBettingTabRef).then((docSnap) => {
-    if (docSnap.exists()) {
-      let tabs = docSnap.data().tabs;
-      let tabToUpdateIndex = tabs.findIndex((tab) => tab.id === activeTab.id);
+    // Update the invitation status to 'rejected' for the current user
+    getDoc(userBettingTabRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        let tabs = docSnap.data().tabs;
+        let tabToUpdateIndex = tabs.findIndex((tab) => tab.id === activeTab.id);
 
-      if (tabToUpdateIndex !== -1) {
-        // Update the invitation status to 'rejected'
-        tabs[tabToUpdateIndex].invitations[user.uid].status = 'rejected';
+        if (tabToUpdateIndex !== -1) {
+          // Update the invitation status to 'rejected'
+          tabs[tabToUpdateIndex].invitations[user.uid].status = "rejected";
 
-        // Save the updated tabs back to Firestore for the current user
-        updateDoc(userBettingTabRef, { tabs })
-          .then(() => {
-            console.log("Invitation rejected by the user.");
-            setShowInvitationModal(false);
-          })
-          .catch((error) => console.error("Error updating tabs: ", error));
-      }
-    }
-  });
-
-  // Update the status in all participants' tabs to reflect the rejection
-  activeTab.participants.forEach((participant) => {
-    if (participant.uid !== user.uid) {
-      const participantTabRef = doc(firestore, "userBettingTabs", participant.uid);
-
-      // Fetch the current participant's betting tabs
-      getDoc(participantTabRef).then((participantDocSnap) => {
-        if (participantDocSnap.exists()) {
-          let participantTabs = participantDocSnap.data().tabs;
-          let participantTabToUpdateIndex = participantTabs.findIndex((tab) => tab.id === activeTab.id);
-
-          if (participantTabToUpdateIndex !== -1) {
-            // Update the invitation status to 'rejected'
-            participantTabs[participantTabToUpdateIndex].invitations[user.uid].status = 'rejected';
-
-            // Save the updated tabs back to Firestore for the participant
-            updateDoc(participantTabRef, { tabs: participantTabs })
-              .then(() => {
-                console.log(`Participant ${participant.uid} notified of the rejection.`);
-              })
-              .catch((error) => console.error("Error updating participant's tabs: ", error));
-          }
+          // Save the updated tabs back to Firestore for the current user
+          updateDoc(userBettingTabRef, { tabs })
+            .then(() => {
+              console.log("Invitation rejected by the user.");
+              setShowInvitationModal(false);
+            })
+            .catch((error) => console.error("Error updating tabs: ", error));
         }
-      });
-    }
-  });
-};
+      }
+    });
 
-const isBetCanceled = (bet) => {
-  return Object.values(bet.invitations).some(invitation => invitation.status === 'rejected');
+    // Update the status in all participants' tabs to reflect the rejection
+    activeTab.participants.forEach((participant) => {
+      if (participant.uid !== user.uid) {
+        const participantTabRef = doc(
+          firestore,
+          "userBettingTabs",
+          participant.uid
+        );
+
+        // Fetch the current participant's betting tabs
+        getDoc(participantTabRef).then((participantDocSnap) => {
+          if (participantDocSnap.exists()) {
+            let participantTabs = participantDocSnap.data().tabs;
+            let participantTabToUpdateIndex = participantTabs.findIndex(
+              (tab) => tab.id === activeTab.id
+            );
+
+            if (participantTabToUpdateIndex !== -1) {
+              // Update the invitation status to 'rejected'
+              participantTabs[participantTabToUpdateIndex].invitations[
+                user.uid
+              ].status = "rejected";
+
+              // Save the updated tabs back to Firestore for the participant
+              updateDoc(participantTabRef, { tabs: participantTabs })
+                .then(() => {
+                  console.log(
+                    `Participant ${participant.uid} notified of the rejection.`
+                  );
+                })
+                .catch((error) =>
+                  console.error("Error updating participant's tabs: ", error)
+                );
+            }
+          }
+        });
+      }
+    });
   };
-  
+
+  const isBetCanceled = (bet) => {
+    return Object.values(bet.invitations).some(
+      (invitation) => invitation.status === "rejected"
+    );
+  };
+
   const handleDeleteBet = () => {
     setShowDeleteConfirmationModal(true);
     setSelectedBetIdForDeletion(activeTab.id); // Zakładając, że id zakładu do usunięcia to 'activeTab.id'
   };
-  
+
   const confirmDeleteBet = async () => {
     if (!selectedBetIdForDeletion) return;
-  
+
     const firestore = getFirestore();
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
-  
+
     try {
       // Pobierz aktualne zakładki
       const docSnap = await getDoc(userBettingTabRef);
@@ -319,7 +382,7 @@ const isBetCanceled = (bet) => {
         let tabs = docSnap.data().tabs;
         // Usuń zakład o wybranym ID
         tabs = tabs.filter((tab) => tab.id !== selectedBetIdForDeletion);
-  
+
         // Zaktualizuj zakładki w Firestore
         await updateDoc(userBettingTabRef, { tabs });
         console.log("Bet deleted successfully.");
@@ -327,12 +390,11 @@ const isBetCanceled = (bet) => {
     } catch (error) {
       console.error("Error deleting bet: ", error);
     }
-  
+
     // Zamknij modal i wyczyść stan
     setShowDeleteConfirmationModal(false);
     setSelectedBetIdForDeletion(null);
   };
-  
 
   useEffect(() => {
     const firestore = getFirestore();
@@ -373,42 +435,63 @@ const isBetCanceled = (bet) => {
 
   console.log(matchesBetting);
   console.log(closestMatch);
-  const creator = activeTab.participants.filter(creator => creator.uid === activeTab.creator)
-// Find the user(s) who have rejected the invitation
-const rejectedUsers = activeTab.participants.filter(participant => 
-  activeTab.invitations[participant.uid]?.status === "rejected"
-);
-
-// Extract the display names of the rejected users
-  const rejectedUserNames = rejectedUsers.map(user => user.displayName || user.email.split('@')[0]);
- // Find the users who have not yet accepted the invitation
-  const pendingInvitations = activeTab.participants.filter(participant => 
-  participant.uid !== activeTab.creator &&
-  activeTab.invitations[participant.uid]?.status !== "accepted"
-
-);
-
-// Extract the display names of the users with pending invitations
-const pendingUserNames = pendingInvitations.map(user => user.displayName || user.email.split('@')[0]);
-
-// Check if all invitations have been accepted
-const allInvitationsAccepted = Object.values(activeTab.invitations).every(
-  (invitation) => invitation.status === "accepted"
+  const creator = activeTab.participants.filter(
+    (creator) => creator.uid === activeTab.creator
   );
-  
-  
+  // Find the user(s) who have rejected the invitation
+  const rejectedUsers = activeTab.participants.filter(
+    (participant) =>
+      activeTab.invitations[participant.uid]?.status === "rejected"
+  );
+
+  // Extract the display names of the rejected users
+  const rejectedUserNames = rejectedUsers.map(
+    (user) => user.displayName || user.email.split("@")[0]
+  );
+  // Find the users who have not yet accepted the invitation
+  const pendingInvitations = activeTab.participants.filter(
+    (participant) =>
+      participant.uid !== activeTab.creator &&
+      activeTab.invitations[participant.uid]?.status !== "accepted"
+  );
+
+  // Extract the display names of the users with pending invitations
+  const pendingUserNames = pendingInvitations.map(
+    (user) => user.displayName || user.email.split("@")[0]
+  );
+
+  // Check if all invitations have been accepted
+  const allInvitationsAccepted = Object.values(activeTab.invitations).every(
+    (invitation) => invitation.status === "accepted"
+  );
+
+
+  console.log(matchesBetting)
+  const kuba = []
+  matchesBetting.map(match => kuba.push({ ...match, 'userUid' : user.uid }))
+  friendGamesTabs.map(tab => kuba.push(tab))
+  console.log(kuba)
   return (
     <div className="favorite-matches-container">
       {!allInvitationsAccepted ? (
-      <div className="waiting-for-players">
-      <p>Oczekiwanie na akceptację graczy: <strong>{pendingUserNames.join(', ')}</strong></p>
-      </div>
-    ) : isBetCanceled(activeTab) ? (
-      <div className="canceled-bet-container">
-        <p>Zakład został anulowany. Użytkownik: <strong>{rejectedUserNames.join(', ')}</strong> nie zaakceptował zaproszenia.</p>
-        <button onClick={() => handleDeleteBet(activeTab.id)}>Usuń zakład</button>
-      </div>
-    ) : (
+        <div className="waiting-for-players">
+          <p>
+            Oczekiwanie na akceptację graczy:{" "}
+            <strong>{pendingUserNames.join(", ")}</strong>
+          </p>
+        </div>
+      ) : isBetCanceled(activeTab) ? (
+        <div className="canceled-bet-container">
+          <p>
+            Zakład został anulowany. Użytkownik:{" "}
+            <strong>{rejectedUserNames.join(", ")}</strong> nie zaakceptował
+            zaproszenia.
+          </p>
+          <button onClick={() => handleDeleteBet(activeTab.id)}>
+            Usuń zakład
+          </button>
+        </div>
+      )   : !allMatchesFinished && activeTab?.isGameWithFriends  ? (
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">
@@ -429,7 +512,156 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
               </ul>
             </div>
           )}
-         
+
+          <div className="users-table">
+            {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
+                <div className="buttons-container">
+                  <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
+                  <FilterButton></FilterButton>
+                </div> */}
+
+            <div className="users-table-header">
+              <div className="header-item select-column">
+                <input type="checkbox" />
+              </div>
+
+              <div className="header-item">Liga</div>
+              <div className="header-item">
+                Gospodarze <div>Goście</div>
+              </div>
+              <div className="header-item">Twoje obstawiony wynik</div>
+             {friendGamesTabs && friendGamesTabs?.map(userParticipant => userParticipant.userUid !== user.uid && <div className="header-item" key={userParticipant?.userUid}> {userParticipant?.userName}</div>)}
+              <div className="header-item">Wynik meczu</div>
+              <div className="header-item">Data</div>
+              <div className="header-item">Status</div>
+
+              <div className="header-item">Punkty</div>
+            </div>
+            <div className="users-table-body">
+              {matchesBetting.map((user, index) => (
+                <div className="table-row " key={user.match.id}>
+                  <div className="row-item select-column">
+                    <input type="checkbox" />
+                  </div>
+                  <div className="row-item">
+                    <img
+                      src={getTurnamentImgURLbyId(
+                        user.match.tournament.uniqueTournament.id
+                      )}
+                      className="team-logo2"
+                      alt={user.match.homeTeam.name}
+                    ></img>
+                    {user.match.tournament.name}
+                  </div>
+                  <div className="row-item">
+                    <div>
+                      <img
+                        src={ReturnTeamImage(user.match.homeTeam.id)}
+                        className="team-logo2"
+                        alt={user.match.homeTeam.name}
+                      ></img>
+                      {user.match.homeTeam.name}
+                    </div>
+                    <img
+                      src={ReturnTeamImage(user.match.awayTeam.id)}
+                      className="team-logo2"
+                      alt={user.match.awayTeam.name}
+                    ></img>
+                    {user.match.awayTeam.name}
+                  </div>
+                  <div className="row-item">
+                  
+                      <>
+                        {user.betHomeScore !== null &&
+                        user.betAwayScore !== null ? (
+                          <>
+                            <div>{user.betHomeScore}</div>
+                            <div>{user.betAwayScore}</div>
+                          </>
+                        ) : (
+                          <div>Nieobstawiono</div>
+                        )}
+                      </>
+                    
+                  </div>
+                  {friendGamesTabs && friendGamesTabs?.map(userParticipant => userParticipant.userUid !== user.uid && <div className="header-item" key={userParticipant?.userUid}> {userParticipant?.tab.matches[0].betAwayScore}</div>)}
+
+
+                  <div className="row-item">
+                    {user.match.status.type !== "notstarted" ? (
+                      <>
+                        <div>{user.match.homeScore.display}</div>
+                        {user.match.awayScore.display}
+                      </>
+                    ) : (
+                      <div>{getTimeUntilMatch(user.match.startTimestamp)} </div>
+                    )}
+                  </div>
+                  <div className="row-item">
+                    {convertDate(user.match.startTimestamp)}
+                  </div>
+                  <div className="row-item">
+                    {user.match.status.description}
+                  </div>
+
+                  <div className="row-item">{user.points}</div>
+                </div>
+              ))}
+            </div>
+            <div className="save-all-button-container time-points-container">
+              {closestMatch?.match?.status?.type === "finished" ||
+              closestMatch?.match?.status?.type === "inprogress" ||
+              isBetClosed ? (
+                <div>Zakład zamknięty</div>
+              ) : (
+                <>
+                  <button
+                    onClick={handleSaveBet}
+                    className="save-all-button bet-match-button"
+                  >
+                    Zamknij zakład
+                  </button>
+
+                  <div className="time-info">{timeUntilNextMatch}</div>
+                </>
+              )}
+            </div>
+          </div>
+          {closestMatch?.match?.status?.type !== "finished" && (
+            <button
+              onClick={() => handleDeleteBet(activeTab.id)}
+              className="bet-match-button delete-bet-button"
+            >
+              Usuń zakład
+            </button>
+          )}
+          {closestMatch?.match?.status?.type === "finished" && (
+            <div className="total-points-container points-info">
+              Łączna suma punktów: {totalPoints}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {activeTab?.isGameWithFriends && (
+            <div className="opponents-container">
+              <div className="opponents-title">Twoi rywale:</div>
+              <ul className="opponents-list">
+                {activeTab?.participants?.map((userParticipant) => {
+                  if (userParticipant?.uid !== user.uid) {
+                    return (
+                      <li key={userParticipant.uid} className="opponent-item">
+                        <span className="opponent-name">
+                          {userParticipant?.displayName}
+                        </span>
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
+              </ul>
+            </div>
+          )}
 
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
@@ -514,7 +746,8 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                                 <div>{user.betHomeScore}</div>
                                 <div>{user.betAwayScore}</div>
                                 {!user.betPlaced && (
-                                  <button className="bet-match-button"
+                                  <button
+                                    className="bet-match-button"
                                     onClick={() => onBetClick(user.match)}
                                   >
                                     Edytuj
@@ -522,7 +755,10 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                                 )}
                               </>
                             ) : (
-                              <button className="bet-match-button" onClick={() => onBetClick(user.match)}>
+                              <button
+                                className="bet-match-button"
+                                onClick={() => onBetClick(user.match)}
+                              >
                                 Obstaw mecz
                               </button>
                             )}
@@ -555,11 +791,15 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
             </div>
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
-              closestMatch?.match?.status?.type === "inprogress" || isBetClosed ? (
+              closestMatch?.match?.status?.type === "inprogress" ||
+              isBetClosed ? (
                 <div>Zakład zamknięty</div>
               ) : (
                 <>
-                  <button onClick={handleSaveBet} className="save-all-button bet-match-button" >
+                  <button
+                    onClick={handleSaveBet}
+                    className="save-all-button bet-match-button"
+                  >
                     Zamknij zakład
                   </button>
 
@@ -567,26 +807,30 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                 </>
               )}
             </div>
-              </div>
-              {closestMatch?.match?.status?.type !== "finished" && (
-        <button
-          onClick={() => handleDeleteBet(activeTab.id)}
-          className="bet-match-button delete-bet-button"
-        >
-          Usuń zakład
-        </button>
-      )}
-              {closestMatch?.match?.status?.type === "finished" && (
-                <div className="total-points-container points-info">
-                  Łączna suma punktów: {totalPoints}
-                </div>
-              )}
+          </div>
+          {closestMatch?.match?.status?.type !== "finished" && (
+            <button
+              onClick={() => handleDeleteBet(activeTab.id)}
+              className="bet-match-button delete-bet-button"
+            >
+              Usuń zakład
+            </button>
+          )}
+          {closestMatch?.match?.status?.type === "finished" && (
+            <div className="total-points-container points-info">
+              Łączna suma punktów: {totalPoints}
+            </div>
+          )}
         </>
       )}
       {showInvitationModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
-            <h2>Użytkownik <strong>{creator[0].displayName?.split('@')[0]}</strong> zaprosił cię do gry</h2>
+            <h2>
+              Użytkownik{" "}
+              <strong>{creator[0].displayName?.split("@")[0]}</strong> zaprosił
+              cię do gry
+            </h2>
             <button onClick={handleAccept} className="save-button">
               Akceptuj
             </button>
@@ -594,18 +838,28 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
           </div>
         </div>
       )}
-       {/* Modal do potwierdzenia usunięcia zakładu */}
-    {showDeleteConfirmationModal && (
-      <div className="modal-backdrop">
-        <div className="modal-content">
-          <h2>Czy na pewno chcesz usunąć ten zakład?</h2>
-          <div className="modal-buttons">
-            <button onClick={confirmDeleteBet} className="modal-confirm-button">Usuń</button>
-            <button onClick={() => setShowDeleteConfirmationModal(false)} className="modal-cancel-button">Anuluj</button>
+      {/* Modal do potwierdzenia usunięcia zakładu */}
+      {showDeleteConfirmationModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h2>Czy na pewno chcesz usunąć ten zakład?</h2>
+            <div className="modal-buttons">
+              <button
+                onClick={confirmDeleteBet}
+                className="modal-confirm-button"
+              >
+                Usuń
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirmationModal(false)}
+                className="modal-cancel-button"
+              >
+                Anuluj
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };
