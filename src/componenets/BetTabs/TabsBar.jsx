@@ -3,7 +3,7 @@ import "../../css/TabsBar.css";
 
 import FavoriteMatches from "./FavoriteMatches";
 import BettingView from "./BettingView";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GameModeView from "./GameModeView";
 import BettingMatches from "./BettingMatches";
@@ -381,8 +381,7 @@ function TabsBar() {
     }
   }, [teamUsers]);
 
-  
-  console.log(tabs)
+  console.log(tabs);
   return (
     <>
       <div className="container">
@@ -397,7 +396,13 @@ function TabsBar() {
                     tab.isGameWithFriends ? "isGameWithFriends" : ""
                   }`}
                 >
-                  <span onClick={() => setActiveTabId(tab.id)}>{tab.name}</span>
+                  <span onClick={() => setActiveTabId(tab.id)}>
+                    {tab.isGameWithFriends && (
+                      <FontAwesomeIcon icon={faUsers} />
+                    )}{" "}
+                    {/* Dodajemy ikonę przyjaciół */}
+                    {tab.name}
+                  </span>
                   <span className="tab-count">{tab.count}</span>
 
                   {/* Only show the close button if it's not the "Favorites" tab */}
@@ -439,6 +444,10 @@ function TabsBar() {
                     }`}
                     onClick={() => handleOpenTab(tab.id)}
                   >
+                    {tab.isGameWithFriends && (
+                      <FontAwesomeIcon icon={faUsers} />
+                    )}{" "}
+                    {/* Dodajemy ikonę przyjaciół */}
                     {tab.name}
                   </button>
                 ))}

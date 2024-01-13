@@ -144,3 +144,19 @@
 .points-info {
   animation: pulse 2s infinite;
 }
+.delete-bet-button {
+  background-color: #dc3545; /* Czerwone tło */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.2s ease;
+  margin: 5px;
+}
+
+.delete-bet-button:hover {
+  background-color: #c82333; /* Ciemniejszy czerwony przy najechaniu */
+  transform: scale(1.05); /* Lekkie powiększenie przy najechaniu */
+}

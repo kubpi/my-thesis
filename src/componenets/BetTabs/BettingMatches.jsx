@@ -39,7 +39,9 @@ const BettingMatches = ({
   const [showInvitationModal, setShowInvitationModal] = useState(false);
 
   const [closestMatch, setClosestMatch] = useState();
-
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+  const [selectedBetIdForDeletion, setSelectedBetIdForDeletion] = useState(null);
+  
   // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
     (sum, match) => sum + (match.points || 0),
@@ -299,22 +301,36 @@ const isBetCanceled = (bet) => {
   return Object.values(bet.invitations).some(invitation => invitation.status === 'rejected');
   };
   
-  const handleDeleteBet = (betId) => {
+  const handleDeleteBet = () => {
+    setShowDeleteConfirmationModal(true);
+    setSelectedBetIdForDeletion(activeTab.id); // Zakładając, że id zakładu do usunięcia to 'activeTab.id'
+  };
+  
+  const confirmDeleteBet = async () => {
+    if (!selectedBetIdForDeletion) return;
+  
     const firestore = getFirestore();
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
   
-    getDoc(userBettingTabRef).then((docSnap) => {
+    try {
+      // Pobierz aktualne zakładki
+      const docSnap = await getDoc(userBettingTabRef);
       if (docSnap.exists()) {
         let tabs = docSnap.data().tabs;
-        tabs = tabs.filter((tab) => tab.id !== betId);
-        
-        updateDoc(userBettingTabRef, { tabs })
-          .then(() => {
-            console.log("Bet deleted successfully.");
-          })
-          .catch((error) => console.error("Error deleting bet: ", error));
+        // Usuń zakład o wybranym ID
+        tabs = tabs.filter((tab) => tab.id !== selectedBetIdForDeletion);
+  
+        // Zaktualizuj zakładki w Firestore
+        await updateDoc(userBettingTabRef, { tabs });
+        console.log("Bet deleted successfully.");
       }
-    });
+    } catch (error) {
+      console.error("Error deleting bet: ", error);
+    }
+  
+    // Zamknij modal i wyczyść stan
+    setShowDeleteConfirmationModal(false);
+    setSelectedBetIdForDeletion(null);
   };
   
 
@@ -378,7 +394,9 @@ const pendingUserNames = pendingInvitations.map(user => user.displayName || user
 // Check if all invitations have been accepted
 const allInvitationsAccepted = Object.values(activeTab.invitations).every(
   (invitation) => invitation.status === "accepted"
-);
+  );
+  
+  
   return (
     <div className="favorite-matches-container">
       {!allInvitationsAccepted ? (
@@ -537,7 +555,7 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
             </div>
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
-              closestMatch?.match?.status?.type === "inprogress" ? (
+              closestMatch?.match?.status?.type === "inprogress" || isBetClosed ? (
                 <div>Zakład zamknięty</div>
               ) : (
                 <>
@@ -549,7 +567,15 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                 </>
               )}
             </div>
-          </div>
+              </div>
+              {closestMatch?.match?.status?.type !== "finished" && (
+        <button
+          onClick={() => handleDeleteBet(activeTab.id)}
+          className="bet-match-button delete-bet-button"
+        >
+          Usuń zakład
+        </button>
+      )}
               {closestMatch?.match?.status?.type === "finished" && (
                 <div className="total-points-container points-info">
                   Łączna suma punktów: {totalPoints}
@@ -568,6 +594,18 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
           </div>
         </div>
       )}
+       {/* Modal do potwierdzenia usunięcia zakładu */}
+    {showDeleteConfirmationModal && (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <h2>Czy na pewno chcesz usunąć ten zakład?</h2>
+          <div className="modal-buttons">
+            <button onClick={confirmDeleteBet} className="modal-confirm-button">Usuń</button>
+            <button onClick={() => setShowDeleteConfirmationModal(false)} className="modal-cancel-button">Anuluj</button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
