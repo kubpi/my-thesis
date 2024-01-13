@@ -249,7 +249,7 @@ function TabsBar() {
       count: updatedMatches.length,
       matches: updatedMatches,
       betClosed: false,
-      isActive: true,
+      isActive: false,
       isGameWithFriends: selectedUserIds.length !== 0 ? true : false, // nowy atrybut
       participants: selectedUsers, // nowy atrybut
       invitations: selectedUserIds
@@ -380,6 +380,7 @@ function TabsBar() {
       setIsBettingOpen(true);
     }
   }, [teamUsers]);
+  console.log(tabs)
   return (
     <>
       <div className="container">

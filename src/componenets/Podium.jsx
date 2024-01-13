@@ -53,7 +53,7 @@ const Podium = () => {
               {index + 1}
             </div>
             <span className="rank-name">
-              {user.displayName || user.email}
+              {user.displayName}
             </span>
             <div className="points">{user.totalPoints} pkt</div>
             <div className="matches">{user.totalBets} meczy</div>
@@ -64,7 +64,7 @@ const Podium = () => {
         {paginatedUserScores.slice(3).map((user, index) => (
           <li key={user.userId} className="additional-place">
             <span className="additional-rank">{index + 4}</span>
-            <span className="additional-name">{user.displayName || user.email}</span>
+            <span className="additional-name">{user.displayName}</span>
             <span className="points">{user.totalPoints} pkt</span>
             <span className="matches">{user.totalBets} meczy</span>
           </li>

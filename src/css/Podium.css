@@ -19,7 +19,6 @@
   margin-bottom: 30px; /* Space below the title */
 }
 
-
 /* Podium styles */
 .podium-container {
   display: flex;
@@ -47,7 +46,7 @@
   border-radius: 10px;
   padding: 20px;
   position: relative;
-  background-color: #E0E0E0; /* Neutral background color */
+  background-color: #e0e0e0; /* Neutral background color */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 /* Heights for podium places */
@@ -67,9 +66,15 @@
 }
 
 /* Colors for each place */
-.first-place { background-color: #FFD700; }
-.second-place { background-color: #C0C0C0; }
-.third-place { background-color: #CD7F32; }
+.first-place {
+  background-color: #ffd700;
+}
+.second-place {
+  background-color: #c0c0c0;
+}
+.third-place {
+  background-color: #cd7f32;
+}
 
 /* Number styles */
 .podium-number {
@@ -116,14 +121,19 @@
   font-size: 18px;
   font-weight: 500;
   color: #333;
+  margin-left: 15px;
 }
 
-.points, .matches {
+.points,
+.matches {
   font-size: 16px;
   font-weight: bold;
   color: #333;
-}
 
+}
+.points{
+  margin-right: 10px;
+}
 .pagination-controls {
   text-align: center;
   padding-top: 20px;
@@ -145,7 +155,7 @@
 }
 
 .pagination-controls button.active {
-  background-color: #FFD700;
+  background-color: #347c22;
   color: #fff;
   font-weight: bold;
 }
@@ -163,11 +173,47 @@
     width: 100%;
     margin-bottom: 10px;
   }
-    .pagination-controls {
-      flex-direction: column;
-      }
-      
-      .pagination-controls button {
-      margin-bottom: 10px; /* Space between buttons */
-      }
-      }
+  .pagination-controls {
+    flex-direction: column;
+  }
+
+  .pagination-controls button {
+    margin-bottom: 10px; /* Space between buttons */
+  }
+}
+/* Podium places styles for responsive layout */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px;
+  }
+
+  .podium-container, .podium {
+    flex-direction: column;
+    align-items: center; /* Center align the podium places */
+  }
+
+  /* Adjust the order when in single-column layout */
+  .first-place, .second-place, .third-place {
+    order: 0; /* Reset the order for all places */
+    height: auto; /* Allow height to adjust to content */
+    margin-bottom: 15px; /* Add space between the podium places */
+  }
+
+  /* Restyle the podium number to fit the new layout */
+  .podium-number {
+    position: static; /* Take it out of absolute positioning */
+    font-size: 1.5em; /* Adjust the font size */
+    margin-bottom: 5px; /* Add space below the number */
+  }
+
+  /* Restyle pagination controls for a single-column layout */
+  .pagination-controls {
+    flex-direction: column;
+    align-items: center; /* Center align the buttons */
+  }
+
+  .pagination-controls button {
+    width: 100%; /* Full width buttons */
+    margin-bottom: 10px; /* Space between buttons */
+  }
+}

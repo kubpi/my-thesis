@@ -5,9 +5,13 @@ import { signOut } from 'firebase/auth';
 
 
 export function Navbar() {
+
   const auth = getAuth();
-  const [user, loading, error] = useAuthState(auth);
-  
+  const user = auth.currentUser; // If you're using Firebase authentication
+  console.log(user)
+  function getUsernameFromEmail(email) {
+    return email.split('@')[0];
+  }
   return (
     <>
       <nav className="navbar navbar-expand-sm "data-bs-theme="dark">
@@ -45,11 +49,14 @@ export function Navbar() {
                   obstawianie
                 </a>
               </li>
+              {user && <> 
               <li className="nav-item">
-                {/* <a className="nav-link" href="/friends">
-                  znajomi
-                </a> */}
-              </li>
+                <a className="nav-link" href="#">
+                  Witaj, {user?.displayName || getUsernameFromEmail(user?.email)}
+                </a>
+              </li></>}
+
+             
               {user ?  <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
             </ul>
           </div>

@@ -327,6 +327,8 @@ const BettingMatches = ({
 
   console.log(matchesBetting);
   console.log(closestMatch);
+  const creator = activeTab.participants.filter(creator => creator.uid === activeTab.creator)
+
   return (
     <div className="favorite-matches-container">
       {matchesBetting && matchesBetting.length === 0 ? (
@@ -339,7 +341,7 @@ const BettingMatches = ({
                 <div className="opponents-title">Twoi rywale:</div>
                 <ul className="opponents-list">
                   {activeTab?.participants?.map((userParticipant) => {
-                    if (userParticipant?.uid !== activeTab.creator) {
+                    if (userParticipant?.uid !== user.uid) {
                       return (
                         <li key={userParticipant.uid} className="opponent-item">
                           <span className="opponent-name">
@@ -501,11 +503,11 @@ const BettingMatches = ({
       {showInvitationModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
-            <h2>Invitation to Bet</h2>
+            <h2>Użytkownik <strong>{creator[0].displayName?.split('@')[0]}</strong> zaprosił cię do gry</h2>
             <button onClick={handleAccept} className="save-button">
-              Accept
+              Akceptuj
             </button>
-            <button onClick={handleReject}>Reject</button>
+            <button onClick={handleReject}>Odrzuć</button>
           </div>
         </div>
       )}
