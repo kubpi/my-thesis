@@ -9,7 +9,6 @@ import {
   where,
   onSnapshot,
 } from "firebase/firestore";
-import { useMatchesData } from "../../Context/MatchesDataProvider";
 import {
   ReturnTeamImage,
   getTurnamentImgURLbyId,
@@ -27,7 +26,7 @@ export function BettingView({
 }) {
   const [tabCount, setTabCount] = useState(1); // Stan do śledzenia liczby zakładek
   const [tabName, setTabName] = useState("Zakład");
-  const { daysWithNoMatches } = useMatchesData();
+  const localData = localStorage.getItem("daysWithNoMatches");
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -169,7 +168,7 @@ export function BettingView({
         </button>
         <DateSlider
           onDateSelect={handleDateSelect}
-          disabledDates={daysWithNoMatches}
+          disabledDates={localData}
           timeBackNumber={0}
         />
         <div className="users-table">

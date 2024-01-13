@@ -380,6 +380,8 @@ function TabsBar() {
       setIsBettingOpen(true);
     }
   }, [teamUsers]);
+
+  
   console.log(tabs)
   return (
     <>

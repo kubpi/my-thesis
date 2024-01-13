@@ -35,30 +35,27 @@ export function Navbar() {
           <div className="collapse navbar-collapse -xxl" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" aria-current="page" href="#">
+                <a className="nav-link" aria-current="page" href="#matchesSection">
                   mecze
                 </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/ranking">
-                  wyniki
-                </a>
-              </li>
+              </li>            
               <li className="nav-item">
                 <a className="nav-link" href="/betting">
                   obstawianie
                 </a>
               </li>
+              <li className="nav-item">
+              <a className="nav-link" href="/betting#podium">ranking</a>
+              </li>
+              {user ? <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
               {user && <> 
               <li className="nav-item">
                 <a className="nav-link" href="#">
-                  Witaj, {user?.displayName || getUsernameFromEmail(user?.email)}
+                  {user?.displayName || getUsernameFromEmail(user?.email)}
                 </a>
               </li></>}
-
-             
-              {user ?  <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
             </ul>
+            
           </div>
         </div>
       </nav>

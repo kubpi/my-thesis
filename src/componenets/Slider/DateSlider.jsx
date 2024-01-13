@@ -24,7 +24,7 @@ export function DateSlider({ onDateSelect, disabledDates, timeBackNumber }) {
     weekBefore.setDate(today.getDate() - timeBackNumber); // Odejmujemy 7 dni, aby uzyskać datę sprzed tygodnia
     const currentYear = today.getFullYear();
   
-    const numberOfDates = 218 + 120; // Dodajemy 7 dni do istniejącej liczby dni
+    const numberOfDates = 218 + 60 ; // Dodajemy 7 dni do istniejącej liczby dni
 
     const handleDateClick = (date, nextDate) => {
       onDateSelect(date, nextDate);

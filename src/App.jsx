@@ -21,7 +21,7 @@ import { initializeApp } from "firebase/app";
 import Podium from "./componenets/Podium";
 import FriendsList from "./componenets/FriendsList";
 import Betting from "./pages/Betting";
-import { MatchesDataProvider } from "./Context/MatchesDataProvider";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -102,7 +102,6 @@ export default function App() {
     <>
       <div className="App">
         <section>
-          <MatchesDataProvider>
           <FavoritesProvider>
             <BrowserRouter>
               <Routes>
@@ -111,12 +110,11 @@ export default function App() {
                   /
                 </Route>
                 <Route path="/betting" element={<Betting />} />
-                <Route path="/ranking" element={<Podium />} />
+                <Route path="#podium" element={<Podium />} />
                 <Route path="/friends" element={<FriendsList />} />
               </Routes>
             </BrowserRouter>
             </FavoritesProvider>
-            </MatchesDataProvider>
         </section>
       </div>
     </>

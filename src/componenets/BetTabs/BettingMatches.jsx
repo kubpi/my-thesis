@@ -496,7 +496,7 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                                 <div>{user.betHomeScore}</div>
                                 <div>{user.betAwayScore}</div>
                                 {!user.betPlaced && (
-                                  <button
+                                  <button className="bet-match-button"
                                     onClick={() => onBetClick(user.match)}
                                   >
                                     Edytuj
@@ -504,7 +504,7 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                                 )}
                               </>
                             ) : (
-                              <button onClick={() => onBetClick(user.match)}>
+                              <button className="bet-match-button" onClick={() => onBetClick(user.match)}>
                                 Obstaw mecz
                               </button>
                             )}
@@ -535,25 +535,26 @@ const allInvitationsAccepted = Object.values(activeTab.invitations).every(
                 </div>
               ))}
             </div>
-            <div className="save-all-button-container">
+            <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
               closestMatch?.match?.status?.type === "inprogress" ? (
                 <div>Zakład zamknięty</div>
               ) : (
                 <>
-                  <button onClick={handleSaveBet} className="save-all-button">
+                  <button onClick={handleSaveBet} className="save-all-button bet-match-button" >
                     Zamknij zakład
                   </button>
 
-                  <div>{timeUntilNextMatch}</div>
+                  <div className="time-info">{timeUntilNextMatch}</div>
                 </>
               )}
             </div>
           </div>
-          {/* Pole sumy punktów */}
-          <div className="total-points-container">
-            Łączna suma punktów: {totalPoints}
-          </div>
+              {closestMatch?.match?.status?.type === "finished" && (
+                <div className="total-points-container points-info">
+                  Łączna suma punktów: {totalPoints}
+                </div>
+              )}
         </>
       )}
       {showInvitationModal && (

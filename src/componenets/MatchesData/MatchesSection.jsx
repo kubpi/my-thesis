@@ -162,7 +162,7 @@ export function MatchesSection() {
 
   return (
     <>
-      <div className="slider-margin-top">
+      <div className="slider-margin-top" id="matchesSection">
         <DateSlider
           onDateSelect={handleDateSelect}
           disabledDates={localData}

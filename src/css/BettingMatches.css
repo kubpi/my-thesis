@@ -96,3 +96,51 @@
 .bet-match-button:hover {
   background-color: #218838; /* Darker green on hover */
 }
+
+
+/* Style dla przycisków */
+.bet-match-button1 {
+  background-color: #007bff; /* niebieskie tło */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.2s ease;
+  margin: 5px;
+}
+
+.bet-match-button1:hover {
+  background-color: #0056b3; /* ciemniejszy niebieski przy najechaniu */
+  transform: scale(1.05); /* lekkie powiększenie przy najechaniu */
+}
+
+/* Style dla informacji o czasie i punktach */
+.time-points-container {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+}
+
+.time-info {
+  color: #a72828; /* zielony kolor */
+  font-weight: bold;
+}
+
+.points-info {
+  color: #17a2b8; /* turkusowy kolor */
+  font-weight: bold;
+}
+
+
+
+.points-info {
+  animation: pulse 2s infinite;
+}
