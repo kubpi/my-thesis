@@ -1,102 +1,173 @@
-.podium-container {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  color: white;
-  max-width: 500px;
-  margin: auto;
-}
-
-.podium-title {
-  font-size: 24px;
-  margin-bottom: 15px;
-  color: #FFD700; /* Gold color for the title */
-}
-
-.podium {
-  list-style: none;
-  padding: 0;
-}
-
-.place {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  gap: 10px;
-  margin-bottom: 5px;
-  padding: 10px 20px;
+/* Main container for everything */
+.main-container {
+  background-color: #fff;
+  padding: 40px;
   border-radius: 20px;
-  background-color: #FFD700; /* Gold color for the first place */
-  color: black;
+  max-width: 800px;
+  margin: 40px auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 6px 6px rgba(0, 0, 0, 0.23);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Podium title styles */
+.podium-title {
+  font-size: 28px;
+  color: #030303; /* Gold color for the title */
+  text-align: center;
+  margin-bottom: 30px; /* Space below the title */
+}
+
+
+/* Podium styles */
+.podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align the bases of the podium steps */
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Podium styles */
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Aligns the base of podium steps */
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Individual podium places */
+.podium-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  background-color: #E0E0E0; /* Neutral background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/* Heights for podium places */
+.first-place {
+  height: 250px;
+  order: 2; /* Centers the first place */
 }
 
 .second-place {
-  background-color: #C0C0C0; /* Silver color for the second place */
+  height: 200px;
+  order: 1; /* Positions the second place to the left */
 }
 
 .third-place {
-  background-color: #CD7F32; /* Bronze color for the third place */
+  height: 200px;
+  order: 3; /* Positions the third place to the right */
 }
 
-.rank-icon {
-  font-size: 24px;
+/* Colors for each place */
+.first-place { background-color: #FFD700; }
+.second-place { background-color: #C0C0C0; }
+.third-place { background-color: #CD7F32; }
+
+/* Number styles */
+.podium-number {
+  position: absolute;
+  bottom: 100%;
+  font-size: 2em;
+  font-weight: bold;
+  color: black;
 }
 
-.rank-name {
+/* Styles for the list of remaining places */
+.additional-rankings {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.additional-place {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #f7f7f7; /* Light gray background */
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+.additional-place:hover {
+  background-color: #e7e7e7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.additional-rank {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.additional-name {
   flex-grow: 1;
   text-align: left;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
 }
 
-/* Styling for additional places beyond top 3, using darker shades */
-.place:nth-child(n+4) {
-  background-color: #AAA; /* Darker shade for places below third */
+.points, .matches {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
 }
 
-/* Pagination styles */
-.podium-pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.podium-pagination button {
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin: 0 5px;
-  cursor: pointer;
-}
-
-.podium-pagination button:hover {
-  background-color: #555;
-}
-
-.podium-pagination button.active {
-  background-color: #FFD700;
-}
 .pagination-controls {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  text-align: center;
+  padding-top: 20px;
 }
 
 .pagination-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination-controls button.active {
-  background-color: #4e5d50;
+  background-color: #474747;
   color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .pagination-controls button:hover {
-  background-color: #ddd;
+  background-color: #5e5e5e;
 }
+
+.pagination-controls button.active {
+  background-color: #FFD700;
+  color: #fff;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px;
+  }
+
+  .podium-container {
+    flex-direction: column;
+  }
+
+  .place {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+    .pagination-controls {
+      flex-direction: column;
+      }
+      
+      .pagination-controls button {
+      margin-bottom: 10px; /* Space between buttons */
+      }
+      }

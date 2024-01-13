@@ -25,7 +25,7 @@ const BettingMatches = ({
   isBetClosed,
   updateMatchPoints,
   activeTab,
-  activeUser
+  activeUser,
 }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
@@ -185,7 +185,7 @@ const BettingMatches = ({
 
   const auth = getAuth();
   const user = auth.currentUser;
-  
+
   console.log(user.uid);
   console.log(activeTab);
   // Check if there's a received invitation
@@ -333,22 +333,27 @@ const BettingMatches = ({
         <p>No favorite matches added.</p>
       ) : (
         <>
-          {activeTab?.isGameWithFriends  && (
-              <div>
-                Twoi rywale:
-                <div>
-                  {activeTab?.participants?.map(userParticipant => {
-                    
+         
+            {activeTab?.isGameWithFriends && (
+              <div className="opponents-container">
+                <div className="opponents-title">Twoi rywale:</div>
+                <ul className="opponents-list">
+                  {activeTab?.participants?.map((userParticipant) => {
                     if (userParticipant?.uid !== activeTab.creator) {
-                      return (userParticipant?.displayName)
+                      return (
+                        <li key={userParticipant.uid} className="opponent-item">
+                          <span className="opponent-name">
+                            {userParticipant?.displayName}
+                          </span>
+                        </li>
+                      );
                     }
-                  })
-                   }
-                </div>
-              
-            
-            </div>
-          )}
+                    return null;
+                  })}
+                </ul>
+              </div>
+            )}
+         
 
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>

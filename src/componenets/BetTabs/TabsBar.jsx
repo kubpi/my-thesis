@@ -20,6 +20,7 @@ import { FavoritesContext } from "../../Context/FavoritesContext";
 
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import CreateTeamModal from "./CreateTeamModal";
+import Podium from "../Podium";
 function TabsBar() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   console.log(favorites.length);
@@ -494,6 +495,7 @@ function TabsBar() {
           />
         )}
       </div>
+      <Podium></Podium>
     </>
   );
 }
