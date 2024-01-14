@@ -384,7 +384,7 @@ function TabsBar() {
   console.log(tabs);
   return (
     <>
-      <div className="container">
+      <div className="container betting-text-style">
         <div className="row tabs-container ">
           <div className="tabs-bar col-9">
             {tabs
