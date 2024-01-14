@@ -95,15 +95,16 @@ export const getTurnamentImgURL = function (turnamentName) {
     (turnament) => turnament.name === turnamentName
   );
   if (!turnamentObj) return null;
-  return `${SOFASCORE_URL}unique-tournament/${turnamentObj.id}/image/light`;
+  return `${BASE_URL}unique-tournament/${turnamentObj.id}/image/light`;
 };
 
 export const getTurnamentImgURLbyId = function (id) {
-  return `${SOFASCORE_URL}unique-tournament/${id}/image/light`;
+  
+  return `${BASE_URL}unique-tournament/${id}/image/light`;
 };
 export function ReturnTeamImage(teamId) {
   const baseUrl = "https://api.sofascore.app/api/v1/team";
-  const url = `${baseUrl}/${teamId}/image`;
+  const url = `${BASE_URL}/${teamId}/image`;
   return url;
 }
 export const fetchAllMatchesLive = async () => {

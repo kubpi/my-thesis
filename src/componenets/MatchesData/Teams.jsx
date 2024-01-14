@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
 import { ReturnTeamImage } from "../../Services/apiService";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 const convertDate = (timestamp) => {
   let date = new Date(timestamp * 1000);
@@ -44,6 +45,66 @@ export function Teams(props) {
 
   const [key, setKey] = useState(Math.random()); // początkowy klucz
   const [isLive, setIsLive] = useState(false);
+
+
+  const [homeTeamLogo, setHomeTeamLogo] = useState('');
+  const [awayTeamLogo, setAwayTeamLogo] = useState('');
+
+useEffect(() => {
+  const fetchTeamLogo = async () => {
+    // Check if the logo URL is already in local storage
+    const storedLogos = JSON.parse(localStorage.getItem('teamsLogos')) || {};
+    const storage = getStorage();
+
+    if (storedLogos[props.homeTeam.id]) {
+      // Use the URL from local storage if it exists
+      setHomeTeamLogo(storedLogos[props.homeTeam.id]);
+    } else {
+      // If not, fetch it from Firebase and store it in local storage
+      const logoRef = ref(storage, `teamsLogos/${props.homeTeam.id}.png`);
+      try {
+        const url = await getDownloadURL(logoRef);
+        setHomeTeamLogo(url);
+        storedLogos[props.homeTeam.id] = url;
+        localStorage.setItem('teamsLogos', JSON.stringify(storedLogos));
+      } catch (error) {
+        console.error("Error fetching tournament logo: ", error);
+     
+      }
+    }
+  };
+
+  fetchTeamLogo();
+}, [homeTeam]);
+  
+useEffect(() => {
+  const fetchTeamLogo = async () => {
+    // Check if the logo URL is already in local storage
+    const storedLogos = JSON.parse(localStorage.getItem('teamsLogos')) || {};
+    const storage = getStorage();
+
+    if (storedLogos[props.awayTeam.id]) {
+      // Use the URL from local storage if it exists
+      setAwayTeamLogo(storedLogos[props.awayTeam.id]);
+    } else {
+      // If not, fetch it from Firebase and store it in local storage
+      const logoRef = ref(storage, `teamsLogos/${props.awayTeam.id}.png`);
+      try {
+        const url = await getDownloadURL(logoRef);
+        setAwayTeamLogo(url);
+        storedLogos[props.awayTeam.id] = url;
+        localStorage.setItem('teamsLogos', JSON.stringify(storedLogos));
+      } catch (error) {
+        console.error("Error fetching tournament logo: ", error);
+        
+      }
+    }
+  };
+
+  fetchTeamLogo();
+}, [awayTeam]);
+
+
 
   function isEmptyObject(obj) {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
@@ -87,7 +148,7 @@ export function Teams(props) {
     <div className={`team-container ${isLive ? "match-live" : ""}`}>
       <div className="teams fadeanime" key={key}>
         <div className="single-team">
-          <img src={homeTeamImg} alt="Barcelona" className="team-logo" />
+          <img src={homeTeamLogo} alt="Barcelona" className="team-logo" />
           <span className="team-name">{homeTeam?.name}</span>
           {typeof homeScore.display !== "undefined" && (
             <div className="match-time">
@@ -98,7 +159,7 @@ export function Teams(props) {
           )}
         </div>
         <div className="single-team">
-          <img src={awayTeamImg} alt="Szachtar" className="team-logo" />
+          <img src={awayTeamLogo} alt="Szachtar" className="team-logo" />
           <span className="team-name">{awayTeam?.name}</span>
           {typeof awayScore.display !== "undefined" && (
             <div className="match-time">

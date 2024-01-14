@@ -1,16 +1,50 @@
 import "../../css/Matches.css";
 import { Teams } from "./Teams";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
+import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 
 export function CardBoxForMatches(props) {
   const auth = getAuth();
   const [user, loading, error] = useAuthState(auth);
+  const [logos, setLogos] = useState({});
 
   const matches = props.matches;
-  let img = props.img;
+  let tournamentId = props.tournamentId;
+
+  const [tournamentLogo, setTournamentLogo] = useState('');
+console.log(tournamentId)
+useEffect(() => {
+  const fetchTournamentLogo = async () => {
+    // Check if the logo URL is already in local storage
+    const storedLogos = JSON.parse(localStorage.getItem('tournamentLogos')) || {};
+    const storage = getStorage();
+
+    if (storedLogos[props.tournamentId]) {
+      // Use the URL from local storage if it exists
+      setTournamentLogo(storedLogos[props.tournamentId]);
+    } else {
+      // If not, fetch it from Firebase and store it in local storage
+      const logoRef = ref(storage, `tournamentsLogos/${props.tournamentId}.png`);
+      try {
+        const url = await getDownloadURL(logoRef);
+        setTournamentLogo(url);
+        storedLogos[props.tournamentId] = url;
+        localStorage.setItem('tournamentLogos', JSON.stringify(storedLogos));
+      } catch (error) {
+        console.error("Error fetching tournament logo: ", error);
+        // Optionally, set a default logo in case of an error
+        setTournamentLogo('path_to_default_logo.png');
+      }
+    }
+  };
+
+  fetchTournamentLogo();
+}, [props.tournamentId]);
+
+
 
   // Sortowanie meczów, mecze w trakcie będą pierwsze
   const sortedMatches = matches.slice().sort((a, b) => {
@@ -34,7 +68,8 @@ export function CardBoxForMatches(props) {
         style={{ width: "25rem", background: "#689577", position: "relative" }}
       >
         <div className="football-logo">
-          <img src={img} alt="Logo piłkarskie" />
+          {/* Use tournamentLogo for the src attribute */}
+          <img src={tournamentLogo} alt="Tournament Logo" />
         </div>
 
         <div className="card-body">
@@ -90,6 +125,7 @@ export function CardBoxForMatches(props) {
                   currentPeriodStartTimestamp={
                     match?.time?.currentPeriodStartTimestamp
                   }
+                 
                 />
               </React.Fragment>
             );

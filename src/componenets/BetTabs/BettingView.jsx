@@ -15,6 +15,7 @@ import {
   tournaments,
 } from "../../Services/apiService";
 import { DateSlider } from "../Slider/DateSlider";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 export function BettingView({
   isOpen,
@@ -42,6 +43,151 @@ export function BettingView({
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
 
   const [matchesData, setMatchesData] = useState();
+
+  const [tournamentLogos, setTournamentLogos] = useState({});
+  const [homeTeamLogo, setHomeTeamLogo] = useState("");
+  const [awayTeamLogo, setAwayTeamLogo] = useState("");
+  useEffect(() => {
+    const savedLogos =
+      JSON.parse(localStorage.getItem("tournamentLogos")) || {};
+    const storage = getStorage();
+    const fetchLogoPromises = [];
+
+    // Loop through the tournaments and matches to fetch logos
+    matchesData &&
+      Object.keys(matchesData).forEach((tournamentName) => {
+        matchesData[tournamentName].forEach((bet) => {
+          const tournamentId = bet.tournament.uniqueTournament.id;
+          if (!savedLogos[tournamentId]) {
+            const logoRef = ref(
+              storage,
+              `tournamentsLogos/${tournamentId}.png`
+            );
+            fetchLogoPromises.push(
+              getDownloadURL(logoRef)
+                .then((url) => {
+                  savedLogos[tournamentId] = url;
+                  return [tournamentId, url];
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error fetching logo for tournamentId: ${tournamentId}`,
+                    error
+                  );
+                  return [tournamentId, "default_logo_url.png"]; // Fallback to default logo URL
+                })
+            );
+          }
+        });
+      });
+
+    Promise.all(fetchLogoPromises).then((results) => {
+      const newLogos = results.reduce((acc, [id, url]) => {
+        acc[id] = url;
+        return acc;
+      }, savedLogos);
+
+      localStorage.setItem("tournamentLogos", JSON.stringify(newLogos));
+      setTournamentLogos(newLogos);
+    });
+
+    // If logos are already saved, set them directly
+    if (Object.keys(savedLogos).length > 0) {
+      setTournamentLogos(savedLogos);
+    }
+  }, [matchesData]); // Make sure to include the dependency array here
+
+  useEffect(() => {
+    const savedLogos = JSON.parse(localStorage.getItem("teamsLogos")) || {};
+    const storage = getStorage();
+    const fetchLogoPromises = [];
+    // Loop through the tournaments and matches to fetch logos
+    matchesData &&
+      Object.keys(matchesData).forEach((tournamentName) => {
+        matchesData[tournamentName].forEach((bet) => {
+          const homeTeamId = bet.homeTeam.id;
+          if (!savedLogos[homeTeamId]) {
+            const logoRef = ref(storage, `teamsLogos/${homeTeamId}.png`);
+            fetchLogoPromises.push(
+              getDownloadURL(logoRef)
+                .then((url) => {
+                  savedLogos[homeTeamId] = url;
+                  return [homeTeamId, url];
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error fetching logo for teamId: ${homeTeamId}`,
+                    error
+                  );
+                  // Optionally set a default logo URL
+                  return [homeTeamId, "default_logo_url.png"];
+                })
+            );
+          }
+        });
+      });
+
+    Promise.all(fetchLogoPromises).then((results) => {
+      const newLogos = results.reduce((acc, [id, url]) => {
+        acc[id] = url;
+        return acc;
+      }, savedLogos);
+
+      localStorage.setItem("teamsLogos", JSON.stringify(newLogos));
+      setHomeTeamLogo(newLogos);
+    });
+
+    // If logos are already saved, set them directly
+    if (Object.keys(savedLogos).length > 0) {
+      setHomeTeamLogo(savedLogos);
+    }
+  }, [matchesData]);
+
+  useEffect(() => {
+    const savedLogos = JSON.parse(localStorage.getItem("teamsLogos")) || {};
+    const storage = getStorage();
+    const fetchLogoPromises = [];
+
+    matchesData &&
+      Object.keys(matchesData).forEach((tournamentName) => {
+        matchesData[tournamentName].forEach((bet) => {
+          const awayTeamId = bet.awayTeam.id;
+          if (!savedLogos[awayTeamId]) {
+            const logoRef = ref(storage, `teamsLogos/${awayTeamId}.png`);
+            fetchLogoPromises.push(
+              getDownloadURL(logoRef)
+                .then((url) => {
+                  savedLogos[awayTeamId] = url;
+                  return [awayTeamId, url];
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error fetching logo for teamId: ${awayTeamId}`,
+                    error
+                  );
+                  // Optionally set a default logo URL
+                  return [awayTeamId, "default_logo_url.png"];
+                })
+            );
+          }
+        });
+      });
+
+    Promise.all(fetchLogoPromises).then((results) => {
+      const newLogos = results.reduce((acc, [id, url]) => {
+        acc[id] = url;
+        return acc;
+      }, savedLogos);
+
+      localStorage.setItem("teamsLogos", JSON.stringify(newLogos));
+      setAwayTeamLogo(newLogos);
+    });
+
+    // If logos are already saved, set them directly
+    if (Object.keys(savedLogos).length > 0) {
+      setAwayTeamLogo(savedLogos);
+    }
+  }, [matchesData]);
 
   useEffect(() => {
     // Ustawienie domyślnej nazwy zakładki
@@ -197,27 +343,31 @@ export function BettingView({
                     </div>
                     <div className="row-item">
                       <img
-                        src={getTurnamentImgURLbyId(
-                          user.tournament.uniqueTournament.id
-                        )}
+                        src={
+                          tournamentLogos[user.tournament.uniqueTournament.id]
+                        }
                         className="team-logo2"
-                        alt={user.tournament.name}
+                        alt={user.homeTeam.name}
                       />
                       {user.tournament.name}
                     </div>
                     <div className="row-item">
-                      <div>
-                        <img
-                          src={ReturnTeamImage(user.homeTeam.id)}
-                          className="team-logo2"
-                          alt={user.homeTeam.name}
-                        />
+                      <div>              
+                      <img
+                        src={
+                          homeTeamLogo[user.homeTeam.id]
+                        }
+                        className="team-logo2"
+                        alt={user.homeTeam.name}
+                      />
                         {user.homeTeam.name}
                       </div>
                       <img
-                        src={ReturnTeamImage(user.awayTeam.id)}
+                        src={
+                          awayTeamLogo[user.awayTeam.id]
+                        }
                         className="team-logo2"
-                        alt={user.awayTeam.name}
+                        alt={user.homeTeam.name}
                       />
                       {user.awayTeam.name}
                     </div>

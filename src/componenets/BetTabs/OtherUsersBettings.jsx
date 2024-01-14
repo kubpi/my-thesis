@@ -21,7 +21,9 @@ import {
 import PodiumForFriendsBets from "../PodiumForFriendsBets";
 
 const OtherUsersBettings = ({
-    user,activeTab,friendGamesTabs,kuba,closestMatch,isBetClosed,allMatchesFinished,totalPoints,convertDate,getTimeUntilMatch
+    user,activeTab,friendGamesTabs,kuba,closestMatch,isBetClosed,allMatchesFinished,totalPoints,convertDate,getTimeUntilMatch,tournamentLogos,
+    homeTeamLogo,
+    awayTeamLogo
 }) => {
     const isCorrectBet = (betScoreHome, betScoreAway, matchScoreHome, matchScoreAway) => {
         const isCorrect = betScoreHome == matchScoreHome && betScoreAway == matchScoreAway;
@@ -67,29 +69,31 @@ const OtherUsersBettings = ({
               <div className="table-row " key={user.match.id}>
                 
                 <div className="row-item">
-                  <img
-                    src={getTurnamentImgURLbyId(
-                      user.match.tournament.uniqueTournament.id
-                    )}
-                    className="team-logo2"
-                    alt={user.match.homeTeam.name}
-                  ></img>
+                <img
+                      src={
+                        tournamentLogos[
+                          user.match.tournament.uniqueTournament.id
+                        ]
+                      }
+                      className="team-logo2"
+                      alt={user.match.homeTeam.name}
+                    />
                   {user.match.tournament.name}
                 </div>
                 <div className="row-item">
                   <div>
-                    <img
-                      src={ReturnTeamImage(user.match.homeTeam.id)}
-                      className="team-logo2"
-                      alt={user.match.homeTeam.name}
-                    ></img>
+                  <img
+                        src={homeTeamLogo[user.match.homeTeam.id]}
+                        className="team-logo2"
+                        alt={user.match.homeTeam.name}
+                      />
                     {user.match.homeTeam.name}
                   </div>
                   <img
-                    src={ReturnTeamImage(user.match.awayTeam.id)}
-                    className="team-logo2"
-                    alt={user.match.awayTeam.name}
-                  ></img>
+                      src={awayTeamLogo[user.match.awayTeam.id]}
+                      className="team-logo2"
+                      alt={user.match.homeTeam.name}
+                    />
                   {user.match.awayTeam.name}
                 </div>
                 <div className={`row-item`}>

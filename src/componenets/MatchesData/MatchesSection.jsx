@@ -181,7 +181,7 @@ export function MatchesSection() {
                 >
                   <CardBoxForMatches
                     matches={tournamentMatches}
-                    img={getTurnamentImgURL(tournament.name)}
+                    tournamentId={tournament.id}
                     addToFavorites={addFavorite}
                     removeFromFavorites={removeFavoriteid}
                     isFavorite={(matchId) => isMatchFavorite(matchId)}

@@ -3,7 +3,7 @@ import { FavoritesContext } from "../../Context/FavoritesContext";
 import RemoveButton from "./RemoveButton";
 import SearchBar from "../SearchingComponents/SearchBar";
 import FilterButton from "../SearchingComponents/FilterButton";
-import "../../css/CustomTable3.css";
+import "../../css/FavoriteMatches.css";
 import {
   getFirestore,
   doc,
@@ -20,6 +20,7 @@ import {
   getTurnamentImgURLbyId,
   tournaments,
 } from "../../Services/apiService";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 export function FavoriteMatches() {
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
@@ -30,6 +31,98 @@ export function FavoriteMatches() {
   console.log(favoritesMatches);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [tournamentLogos, setTournamentLogos] = useState({});
+
+  const [homeTeamLogo, setHomeTeamLogo] = useState('');
+  const [awayTeamLogo, setAwayTeamLogo] = useState('');
+  // Fetch tournament logos
+  useEffect(() => {
+    const fetchTournamentLogos = async () => {
+      const storage = getStorage();
+      console.log(favoritesMatches)
+      const tournamentIds = favoritesMatches.map(
+        (bet) => bet.tournament.uniqueTournament.id
+      );
+      const uniqueTournamentIds = [...new Set(tournamentIds)];
+      const logoUrls = {};
+
+      for (const id of uniqueTournamentIds) {
+        const logoRef = ref(storage, `tournamentsLogos/${id}.png`);
+        try {
+          const url = await getDownloadURL(logoRef);
+          logoUrls[id] = url;
+        } catch (error) {
+          console.error("Error fetching tournament logo: ", error);
+          // Handle any errors here, such as setting a default image
+        }
+      }
+
+      setTournamentLogos(logoUrls);
+    };
+
+    if (favorites.length > 0) {
+      fetchTournamentLogos();
+    }
+  }, [favoritesMatches]);
+
+  useEffect(() => {
+    const fetchHomeTeamLogos = async () => {
+      const storage = getStorage();
+      console.log(favoritesMatches)
+      const tournamentIds = favoritesMatches.map(
+        (bet) => bet.homeTeam.id
+      );
+      const homeTeamIds = [...new Set(tournamentIds)];
+      const logoUrls = {};
+
+      for (const id of homeTeamIds) {
+        const logoRef = ref(storage, `teamsLogos/${id}.png`);
+        try {
+          const url = await getDownloadURL(logoRef);
+          logoUrls[id] = url;
+        } catch (error) {
+          console.error("Error fetching tournament logo: ", error);
+          // Handle any errors here, such as setting a default image
+        }
+      }
+
+      setHomeTeamLogo(logoUrls);
+    };
+
+    if (favorites.length > 0) {
+      fetchHomeTeamLogos();
+    }
+  }, [favoritesMatches]);
+
+  useEffect(() => {
+    const fetchAwayTeamLogos = async () => {
+      const storage = getStorage();
+      console.log(favoritesMatches)
+      const tournamentIds = favoritesMatches.map(
+        (bet) => bet.awayTeam.id
+      );
+      const awayTeamIds = [...new Set(tournamentIds)];
+      const logoUrls = {};
+
+      for (const id of awayTeamIds) {
+        const logoRef = ref(storage, `teamsLogos/${id}.png`);
+        try {
+          const url = await getDownloadURL(logoRef);
+          logoUrls[id] = url;
+        } catch (error) {
+          console.error("Error fetching tournament logo: ", error);
+          // Handle any errors here, such as setting a default image
+        }
+      }
+
+      setAwayTeamLogo(logoUrls);
+    };
+
+    if (favorites.length > 0) {
+      fetchAwayTeamLogos();
+    }
+  }, [favoritesMatches]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -175,10 +268,12 @@ export function FavoriteMatches() {
                     />
                   </div>
                   <div className="row-item">
-                    <img
-                      src={getTurnamentImgURLbyId(
-                        user.tournament.uniqueTournament.id
-                      )}
+                  <img
+                      src={
+                        tournamentLogos[
+                          user.tournament.uniqueTournament.id
+                        ]
+                      }
                       className="team-logo2"
                       alt={user.homeTeam.name}
                     ></img>
@@ -186,15 +281,23 @@ export function FavoriteMatches() {
                   </div>
                   <div className="row-item">
                     <div>
-                      <img
-                        src={ReturnTeamImage(user.homeTeam.id)}
-                        className="team-logo2"
-                        alt={user.homeTeam.name}
-                      ></img>
+                       <img
+                      src={
+                        homeTeamLogo[
+                          user.homeTeam.id
+                        ]
+                      }
+                      className="team-logo2"
+                      alt={user.homeTeam.name}
+                    ></img>
                       {user.homeTeam.name}
                     </div>
                     <img
-                      src={ReturnTeamImage(user.awayTeam.id)}
+                      src={
+                        awayTeamLogo[
+                          user.awayTeam.id
+                        ]
+                      }
                       className="team-logo2"
                       alt={user.awayTeam.name}
                     ></img>
