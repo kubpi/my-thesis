@@ -4,6 +4,7 @@ import RemoveButton from "./RemoveButton";
 import SearchBar from "../SearchingComponents/SearchBar";
 import FilterButton from "../SearchingComponents/FilterButton";
 import "../../css/FavoriteMatches.css";
+import { Oval, ThreeDots } from "react-loader-spinner";
 import {
   getFirestore,
   doc,
@@ -22,6 +23,9 @@ import {
 } from "../../Services/apiService";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 export function FavoriteMatches() {
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+  const [loadedImageCount, setLoadedImageCount] = useState(0);
+
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,13 +38,26 @@ export function FavoriteMatches() {
 
   const [tournamentLogos, setTournamentLogos] = useState({});
 
-  const [homeTeamLogo, setHomeTeamLogo] = useState('');
-  const [awayTeamLogo, setAwayTeamLogo] = useState('');
+  const [homeTeamLogo, setHomeTeamLogo] = useState("");
+  const [awayTeamLogo, setAwayTeamLogo] = useState("");
+  const onImageLoad = () => {
+    setLoadedImageCount((prevCount) => prevCount + 1);
+  };
+
+  useEffect(() => {
+    if (loadedImageCount === favoritesMatches.length * 3) {
+      // Assuming 3 images per match
+      setTimeout(() => {
+        setAllImagesLoaded(true); // Set the state to true after 1 second delay
+      }, 700); // Delay of 1 second
+    }
+  }, [loadedImageCount, favoritesMatches.length]);
+
   // Fetch tournament logos
   useEffect(() => {
     const fetchTournamentLogos = async () => {
       const storage = getStorage();
-      console.log(favoritesMatches)
+      console.log(favoritesMatches);
       const tournamentIds = favoritesMatches.map(
         (bet) => bet.tournament.uniqueTournament.id
       );
@@ -69,10 +86,8 @@ export function FavoriteMatches() {
   useEffect(() => {
     const fetchHomeTeamLogos = async () => {
       const storage = getStorage();
-      console.log(favoritesMatches)
-      const tournamentIds = favoritesMatches.map(
-        (bet) => bet.homeTeam.id
-      );
+      console.log(favoritesMatches);
+      const tournamentIds = favoritesMatches.map((bet) => bet.homeTeam.id);
       const homeTeamIds = [...new Set(tournamentIds)];
       const logoUrls = {};
 
@@ -98,10 +113,8 @@ export function FavoriteMatches() {
   useEffect(() => {
     const fetchAwayTeamLogos = async () => {
       const storage = getStorage();
-      console.log(favoritesMatches)
-      const tournamentIds = favoritesMatches.map(
-        (bet) => bet.awayTeam.id
-      );
+      console.log(favoritesMatches);
+      const tournamentIds = favoritesMatches.map((bet) => bet.awayTeam.id);
       const awayTeamIds = [...new Set(tournamentIds)];
       const logoUrls = {};
 
@@ -230,97 +243,104 @@ export function FavoriteMatches() {
   return (
     <div className="favorite-matches-container">
       {favoritesMatches.length === 0 ? (
-        <p>No favorite matches added.</p>
+        <p>Brak meczy ulubionych.</p>
       ) : (
         <>
-          <div className="users-table">
-            <SearchBar onSearch={setSearchQuery}></SearchBar>
-            <div className="buttons-container">
-              <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-              <FilterButton></FilterButton>
-            </div>
-
-            <div className="users-table-header">
-              <div className="header-item select-column">
-                <input
-                  type="checkbox"
-                  onChange={handleMasterCheckboxChange}
-                  checked={checkedIds.length === favoritesMatches.length}
-                />
+          {allImagesLoaded ? (
+            <div className={`users-table ${allImagesLoaded ? "fade-in" : ""}`}>
+              <SearchBar onSearch={setSearchQuery}></SearchBar>
+              <div className="buttons-container">
+                <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
+                <FilterButton></FilterButton>
               </div>
 
-              <div className="header-item">Liga</div>
-              <div className="header-item">
-                Gospodarze <div>Goście</div>
-              </div>
-              <div className="header-item">Wynik</div>
-              <div className="header-item">Data</div>
-              <div className="header-item">Status</div>
-            </div>
-            <div className="users-table-body">
-              {filteredFavorites.map((user, index) => (
-                <div className="table-row " key={user.id}>
-                  <div className="row-item select-column">
-                    <input
-                      type="checkbox"
-                      checked={checkedIds.includes(user.id)}
-                      onChange={() => handleCheckboxChange(user.id)}
-                    />
-                  </div>
-                  <div className="row-item">
-                  <img
-                      src={
-                        tournamentLogos[
-                          user.tournament.uniqueTournament.id
-                        ]
-                      }
-                      className="team-logo2"
-                      alt={user.homeTeam.name}
-                    ></img>
-                    {user.tournament.name}
-                  </div>
-                  <div className="row-item">
-                    <div>
-                       <img
-                      src={
-                        homeTeamLogo[
-                          user.homeTeam.id
-                        ]
-                      }
-                      className="team-logo2"
-                      alt={user.homeTeam.name}
-                    ></img>
-                      {user.homeTeam.name}
-                    </div>
-                    <img
-                      src={
-                        awayTeamLogo[
-                          user.awayTeam.id
-                        ]
-                      }
-                      className="team-logo2"
-                      alt={user.awayTeam.name}
-                    ></img>
-                    {user.awayTeam.name}
-                  </div>
-                  <div className="row-item">
-                    {user.status.type !== "notstarted" ? (
-                      <>
-                        <div>{user.homeScore.display}</div>
-                        {user.awayScore.display}
-                      </>
-                    ) : (
-                      <div>{getTimeUntilMatch(user.startTimestamp)} </div>
-                    )}
-                  </div>
-                  <div className="row-item">
-                    {convertDate(user.startTimestamp)}
-                  </div>
-                  <div className="row-item">{user.status.description}</div>
+              <div className="users-table-header">
+                <div className="header-item select-column">
+                  <input
+                    type="checkbox"
+                    onChange={handleMasterCheckboxChange}
+                    checked={checkedIds.length === favoritesMatches.length}
+                  />
                 </div>
-              ))}
+
+                <div className="header-item">Liga</div>
+                <div className="header-item">
+                  Gospodarze <div>Goście</div>
+                </div>
+                <div className="header-item">Wynik</div>
+                <div className="header-item">Data</div>
+                <div className="header-item">Status</div>
+              </div>
+              <div className="users-table-body">
+                {filteredFavorites.map((user, index) => (
+                  <div
+                    className="table-row fade-in-up"
+                    key={user.id}
+                    style={{ animationDelay: `${index * 50}ms` }} // Each row fades in slightly after the previous one
+                  >
+                    <div className="row-item select-column">
+                      <input
+                        type="checkbox"
+                        checked={checkedIds.includes(user.id)}
+                        onChange={() => handleCheckboxChange(user.id)}
+                      />
+                    </div>
+                    <div className="row-item">
+                      <img
+                        src={
+                          tournamentLogos[user.tournament.uniqueTournament.id]
+                        }
+                        onLoad={onImageLoad}
+                        className="team-logo2"
+                        alt={user.homeTeam.name}
+                      ></img>
+                      {user.tournament.name}
+                    </div>
+                    <div className="row-item">
+                      <div>
+                        <img
+                          src={homeTeamLogo[user.homeTeam.id]}
+                          onLoad={onImageLoad}
+                          className="team-logo2"
+                          alt={user.homeTeam.name}
+                        ></img>
+                        {user.homeTeam.name}
+                      </div>
+                      <img
+                        src={awayTeamLogo[user.awayTeam.id]}
+                        onLoad={onImageLoad}
+                        className="team-logo2"
+                        alt={user.awayTeam.name}
+                      ></img>
+                      {user.awayTeam.name}
+                    </div>
+                    <div className="row-item">
+                      {user.status.type !== "notstarted" ? (
+                        <>
+                          <div>{user.homeScore.display}</div>
+                          {user.awayScore.display}
+                        </>
+                      ) : (
+                        <div>{getTimeUntilMatch(user.startTimestamp)} </div>
+                      )}
+                    </div>
+                    <div className="row-item">
+                      {convertDate(user.startTimestamp)}
+                    </div>
+                    <div className="row-item">{user.status.description}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="loader-container">
+              <Oval
+                color="#466551" // Kolor animacji
+                height={80}
+                width={80}
+              />
+            </div>
+          )}
         </>
       )}
     </div>
