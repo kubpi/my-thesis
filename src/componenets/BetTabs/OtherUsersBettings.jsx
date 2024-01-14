@@ -32,14 +32,14 @@ const OtherUsersBettings = ({
   return (
     <>
          <h2 className="podium-title podium-title1">Podsumowanie: </h2>
-      <div className="users-table">
+      <div className="users-table ">
         {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">
                   <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
                   <FilterButton></FilterButton>
                 </div> */}
 
-        <div className="users-table-header">
+        <div className="users-table-header betting-text-style">
          
 
           <div className="header-item">Liga</div>
@@ -61,7 +61,7 @@ const OtherUsersBettings = ({
 
         
         </div>
-        <div className="users-table-body">
+        <div className="users-table-body betting-text-style">
           {kuba.map((user, index) => (
             <>
               <div className="table-row " key={user.match.id}>

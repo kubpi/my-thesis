@@ -49,6 +49,12 @@
   background-color: #e0e0e0; /* Neutral background color */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.podium-place:hover {
+  transform: scale(1.05); /* Slightly scale up the podium place */
+  z-index: 10; /* Raise above other elements */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
 /* Heights for podium places */
 .first-place {
   height: 250px;
@@ -83,8 +89,13 @@
   font-size: 2em;
   font-weight: bold;
   color: black;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease-in-out, text-shadow 0.3s ease;
 }
-
+.podium-place:hover .podium-number {
+  transform: translateY(-5px); /* Move the number slightly up */
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
+}
 /* Styles for the list of remaining places */
 .additional-rankings {
   width: 100%;
@@ -216,4 +227,50 @@
     width: 100%; /* Full width buttons */
     margin-bottom: 10px; /* Space between buttons */
   }
+}
+
+.rank-name,
+.points {
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.podium-place:hover .rank-name,
+.podium-place:hover .points {
+  color: #212121; /* Darker color for better readability */
+  transform: scale(1.1); /* Slightly scale up the text */
+}
+
+/* Styling for additional rankings to add a hover effect */
+.additional-place:hover {
+  transform: translateY(-3px); /* Slightly raise the list item */
+  background-color: #eeeeee; /* Slightly lighter background */
+}
+
+/* Pagination button enhancements */
+.pagination-controls button:hover {
+  transform: scale(1.1); /* Slightly scale up the button */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Active pagination button styles to make it stand out more */
+.pagination-controls button.active {
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Add a subtle pulse animation to the first place to draw attention */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(255, 215, 0, 0);
+  }
+}
+
+.first-place {
+  animation: pulse 2s infinite;
 }

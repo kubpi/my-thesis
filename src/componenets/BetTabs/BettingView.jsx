@@ -154,8 +154,8 @@ export function BettingView({
   }
   return (
     <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Wybierz mecze do obstawiania</h2>
+      <div className="modal-content ">
+        <h2 className="betting-text-style">Wybierz mecze do obstawiania</h2>
         <input
           className="textView"
           placeholder="Tab name"
@@ -172,7 +172,7 @@ export function BettingView({
           timeBackNumber={0}
         />
         <div className="users-table">
-          <div className="users-table-header">
+          <div className="users-table-header betting-text-style">
             <div className="header-item select-column">
               <input type="checkbox" />
             </div>
@@ -183,7 +183,7 @@ export function BettingView({
             <div className="header-item">Data</div>
             <div className="header-item">Status</div>
           </div>
-          <div className="users-table-body">
+          <div className="users-table-body  betting-text-style">
             {matchesData &&
               Object.keys(matchesData).map((tournamentName) => {
                 return matchesData[tournamentName].map((user) => (

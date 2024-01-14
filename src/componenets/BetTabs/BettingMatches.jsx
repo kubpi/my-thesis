@@ -512,7 +512,7 @@ const BettingMatches = ({
   console.log(allMatchesFinished);
   return (
     <div className="favorite-matches-container">
-      <div className="betting-text-style">
+    
         {!allInvitationsAccepted ? (
           <div className="waiting-for-players">
             <p>
@@ -534,18 +534,14 @@ const BettingMatches = ({
         ) : allMatchesFinished && activeTab?.isGameWithFriends ? (
           <>
             {activeTab?.isGameWithFriends && (
-              <div className="opponents-container">
+              <div className="opponents-container betting-text-style">
                 <div className="opponents-title">Grasz przeciwko</div>
                 <ul className="opponents-list">
                   {activeTab?.participants?.map((userParticipant) => {
                     if (userParticipant?.uid !== user.uid) {
                       return (
                         <li key={userParticipant.uid} className="opponent-item">
-                          <span
-                            className="
-
-opponent-name"
-                          >
+                          <span className="opponent-name">
                             {userParticipant?.displayName}
                           </span>
                           {/* If you have a remove functionality add it here /}
@@ -566,7 +562,7 @@ opponent-name"
                   <FilterButton></FilterButton>
                 </div> */}
 
-              <div className="users-table-header">
+              <div className="users-table-header betting-text-style">
                 <div className="header-item">Liga</div>
                 <div className="header-item">
                   Gospodarze <div>Goście</div>
@@ -589,7 +585,7 @@ opponent-name"
 
                 <div className="header-item">Punkty</div>
               </div>
-              <div className="users-table-body">
+              <div className="users-table-body betting-text-style">
                 {kuba.map((user, index) => (
                   <>
                     <div className="table-row " key={user.match.id}>
@@ -664,7 +660,7 @@ opponent-name"
                   </>
                 ))}
               </div>
-              <div className="save-all-button-container time-points-container">
+              <div className="save-all-button-container time-points-container betting-text-style">
                 {closestMatch?.match?.status?.type === "finished" ||
                 closestMatch?.match?.status?.type === "inprogress" ||
                 isBetClosed ? (
@@ -720,7 +716,7 @@ opponent-name"
         ) : (
           <>
             {activeTab?.isGameWithFriends && (
-              <div className="opponents-container">
+              <div className="opponents-container betting-text-style">
                 <div className="opponents-title">Grasz przeciwko</div>
                 <ul className="opponents-list">
                   {activeTab?.participants?.map((userParticipant) => {
@@ -746,7 +742,7 @@ opponent-name"
                   <FilterButton></FilterButton>
                 </div> */}
 
-              <div className="users-table-header">
+              <div className="users-table-header betting-text-style">
                 <div className="header-item">Liga</div>
                 <div className="header-item">
                   Gospodarze <div>Goście</div>
@@ -758,7 +754,7 @@ opponent-name"
 
                 <div className="header-item">Punkty</div>
               </div>
-              <div className="users-table-body">
+              <div className="users-table-body betting-text-style">
                 {matchesBetting.map((user, index) => (
                   <div className="table-row " key={user.match.id}>
                     <div className="row-item">
@@ -860,13 +856,13 @@ opponent-name"
                   </div>
                 ))}
               </div>
-              <div className="save-all-button-container time-points-container">
+              <div className="save-all-button-container time-points-container betting-text-style">
                 {closestMatch?.match?.status?.type === "finished" ||
                 closestMatch?.match?.status?.type === "inprogress" ||
                 isBetClosed ? (
                   <>
                     <span>
-                      Zakład zakończony{" "}
+                      Zakład zamknięty{" "}
                       <button
                         onClick={() => handleDeleteBet(activeTab.id)}
                         className="bet-match-button delete-bet-button"
@@ -921,7 +917,7 @@ opponent-name"
         {/* Modal do potwierdzenia usunięcia zakładu */}
         {showDeleteConfirmationModal && (
           <div className="modal-backdrop">
-            <div className="modal-content">
+            <div className="modal-content betting-text-style">
               <h2>Czy na pewno chcesz usunąć ten zakład?</h2>
               <div className="modal-buttons">
                 <button
@@ -940,7 +936,7 @@ opponent-name"
             </div>
           </div>
         )}
-      </div>
+   
     </div>
   );
 };

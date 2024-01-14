@@ -37,9 +37,9 @@ const Podium = () => {
   // Calculate the slice of userScores to display
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedUserScores = userScores.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
+  console.log(userScores)
   return (
-    <div className="main-container" id="podium">
+    <div className="main-container betting-text-style" id="podium">
       <h2 className="podium-title">Ranking wszystkich użytkowników</h2>
       <div className="podium">
         {userScores.slice(0, 3).map((user, index) => (
