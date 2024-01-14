@@ -135,8 +135,8 @@
 }
 
 .points-info {
-  color: #17a2b8; /* turkusowy kolor */
-  font-weight: bold;
+  color: #000000; /* turkusowy kolor */
+  margin-right: 40px;
 }
 
 
@@ -159,4 +159,219 @@
 .delete-bet-button:hover {
   background-color: #c82333; /* Ciemniejszy czerwony przy najechaniu */
   transform: scale(1.05); /* Lekkie powiększenie przy najechaniu */
+}
+
+
+/* zmiany */
+/* Overall styling for the table container */
+.favorite-matches-container {
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header styles */
+.users-table-header {
+  display: flex;
+  padding: 10px;
+  align-items: center;
+}
+
+.header-item {
+  flex: 1; /* Distribute space equally */
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* Checkbox column specific style to keep it narrow */
+.header-item.select-column,
+.row-item.select-column {
+  flex: 0 0 40px; /* Do not grow or shrink, set a fixed width */
+}
+
+/* Body styles */
+.users-table-body {
+  background: #f9f9f9;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+  padding: 10px;
+  transition: background-color 0.3s;
+}
+
+.table-row:hover {
+  background-color: #f1f1f1;
+}
+
+.row-item {
+  flex: 1; /* Distribute space equally */
+  text-align: center;
+  padding: 10px;
+  word-break: keep-all; /* Prevent text from breaking into multiple lines */
+}
+
+/* Score and betting result specific style */
+.row-item.bet-result {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Column for team images */
+.team-logo2 {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  margin-right: 5px;
+}
+
+/* Button styles */
+.bet-match-button,
+.delete-bet-button {
+  border: none;
+  padding: 8px 15px;
+  margin: 5px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bet-match-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.delete-bet-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.bet-match-button:hover {
+  background-color: #218838;
+}
+
+.delete-bet-button:hover {
+  background-color: #c82333;
+}
+
+/* Footer styles */
+.save-all-button-container {
+  padding: 10px;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header-item,
+  .row-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bet-match-button,
+  .delete-bet-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+/* Apply a distinct background color and padding to the container */
+.betting-matches-container {
+  background-color: #ffffff; /* White background for a clean look */
+  border: 1px solid #ddd; /* Light border for definition */
+  padding: 20px;
+  margin-bottom: 30px; /* Space between this and the next component */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Adjust the header styles if necessary */
+.users-table-header {
+  background-color: #f7f7f7; /* Lighter background for the header */
+  border-bottom: 2px solid #eee; /* A subtle bottom border for the header */
+}
+
+/* Continue with your existing styles */
+/* ... */
+/* Opponents display container */
+.opponents-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.opponents-container:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Opponents list title */
+.opponents-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4a4a4a;
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+/* Opponents list */
+.opponents-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Individual opponent item */
+.opponent-item {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.opponent-item:hover {
+  background-color: #e0e0e0;
+}
+
+/* Opponent name */
+.opponent-name {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Opponent remove button - if you have functionality for removing opponents */
+.opponent-remove-btn {
+  color: #d9534f;
+  cursor: pointer;
+  padding: 4px 8px;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+}
+
+.opponent-remove-btn:hover {
+  color: #c9302c;
+  text-decoration: underline;
 }

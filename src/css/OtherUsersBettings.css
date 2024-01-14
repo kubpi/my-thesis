@@ -1,0 +1,33 @@
+/* OtherUsersBettings.css */
+/* OtherUsersBettings.css */
+ .correct-bet {
+ 
+    width: 50%; /* Sets the width to half of its container */
+    background-color: #466551; /* Green background */
+    color: white; /* White text */
+   
+    text-align: center; /* Center the text within the 'correct-bet' */
+    margin: 0 auto; /* Center the 'correct-bet' box within the cell */
+  }
+  
+  /* Apply a distinct background color and padding to the container */
+.other-users-bettings-container {
+  background-color: #f9f9f9; /* Slightly off-white background for differentiation */
+  border-top: 3px solid #466551; /* A colored top border for branding */
+  padding: 20px;
+  margin-top: 30px; /* Ensure there is space from the previous component */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Consistent shadow for depth */
+}
+
+/* Style the title more prominently */
+.podium-title1 {
+  color: #466551; /* Use the theme color */
+  font-weight: bold;
+  text-transform: uppercase; /* Optional: style preference */
+  margin-bottom: 15px; /* Spacing below the title */
+  padding-bottom: 10px;
+  border-bottom: 2px solid #466551; /* A line to accentuate the title */
+}
+
+/* Continue with your existing styles */
+/* ... */

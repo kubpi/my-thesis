@@ -66,7 +66,7 @@ const PodiumForFriendsBets = ({kuba}) => {
 
   return (
     <div className="main-container" id="podium">
-      <h2 className="podium-title">Wynik zakładu: </h2>
+  
       <div className="podium">
         {sortedData.slice(0, 3).map((user, index) => (
           <div

@@ -18,8 +18,8 @@ import {
   getTurnamentImgURLbyId,
   tournaments,
 } from "../../Services/apiService";
-import Podium from "../Podium";
 import PodiumForFriendsBets from "../PodiumForFriendsBets";
+import OtherUsersBettings from "./OtherUsersBettings";
 
 const BettingMatches = ({
   selectedMatchesId,
@@ -535,25 +535,28 @@ console.log(allMatchesFinished)
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">
-              <div className="opponents-title">Twoi rywale:</div>
-              <ul className="opponents-list">
-                {activeTab?.participants?.map((userParticipant) => {
-                  if (userParticipant?.uid !== user.uid) {
-                    return (
-                      <li key={userParticipant.uid} className="opponent-item">
-                        <span className="opponent-name">
-                          {userParticipant?.displayName}
-                        </span>
-                      </li>
-                    );
-                  }
-                  return null;
-                })}
-              </ul>
-            </div>
+  <div className="opponents-title">Grasz przeciwko</div>
+  <ul className="opponents-list">
+    {activeTab?.participants?.map((userParticipant) => {
+      if (userParticipant?.uid !== user.uid) {
+        return (
+          <li key={userParticipant.uid} className="opponent-item">
+            <span className="
+
+opponent-name">
+{userParticipant?.displayName}
+</span>
+{/* If you have a remove functionality add it here /}
+{/ <button className="opponent-remove-btn">Usuń</button> */}
+</li>
+);
+}
+return null;
+})}
+  </ul>
+</div>
           )}
 
-          <div>Zakład zakończony</div>
           <div className="users-table">
             {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
                 <div className="buttons-container">
@@ -562,16 +565,14 @@ console.log(allMatchesFinished)
                 </div> */}
 
             <div className="users-table-header">
-              <div className="header-item select-column">
-                <input type="checkbox" />
-              </div>
+             
 
               <div className="header-item">Liga</div>
               <div className="header-item">
                 Gospodarze <div>Goście</div>
               </div>
-              <div className="header-item">Twój obstawiony wynik</div>
-              {friendGamesTabs &&
+              <div className="header-item">Obstawiony wynik</div>
+              {/* {friendGamesTabs &&
                 friendGamesTabs?.map(
                   (userParticipant) =>
                     userParticipant.userUid !== user.uid && (
@@ -582,19 +583,17 @@ console.log(allMatchesFinished)
                         {userParticipant?.userName}
                       </div>
                     )
-                )}
+                )} */}
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
 
-              <div className="header-item">Twoje punkty</div>
+              <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body">
               {kuba.map((user, index) => (
                 <>
                   <div className="table-row " key={user.match.id}>
-                    <div className="row-item select-column">
-                      <input type="checkbox" />
-                    </div>
+             
                     <div className="row-item">
                       <img
                         src={getTurnamentImgURLbyId(
@@ -634,7 +633,7 @@ console.log(allMatchesFinished)
                         )}
                       </>
                     </div>
-                    {(user?.mecze?.map((mecz, index) => (
+                    {/* {(user?.mecze?.map((mecz, index) => (
                       mecz.betHomeScore && mecz.betAwayScore ?(
                       <div className="row-item" key={index}>
                         <div>{mecz.betHomeScore}</div>
@@ -643,7 +642,7 @@ console.log(allMatchesFinished)
                       )
                     : (
                           <div>Nieobstawiono</div>
-                        ))))}
+                        ))))} */}
 
                     <div className="row-item">
                       {user.match.status.type !== "notstarted" ? (
@@ -670,8 +669,16 @@ console.log(allMatchesFinished)
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
               closestMatch?.match?.status?.type === "inprogress" ||
-              isBetClosed ? (
-                <div>Zakład zamknięty</div>
+              isBetClosed ? (<>
+                      <span>Zakład zakończony       <button
+              onClick={() => handleDeleteBet(activeTab.id)}
+              className="bet-match-button delete-bet-button"
+            >
+              Usuń zakład
+            </button></span>
+                      <span className="total-points-container points-info">
+              Suma punktów: {totalPoints}
+            </span></>
               ) : (
                 <>
                   <button
@@ -680,32 +687,28 @@ console.log(allMatchesFinished)
                   >
                     Zamknij zakład
                   </button>
-
-                  <div className="time-info">{timeUntilNextMatch}</div>
-                </>
-              )}
-            </div>
-          </div>
-          {allMatchesFinished && (
-            <button
+                  <button
               onClick={() => handleDeleteBet(activeTab.id)}
               className="bet-match-button delete-bet-button"
             >
               Usuń zakład
             </button>
-          )}
-          {closestMatch?.match?.status?.type === "finished" && (
-            <div className="total-points-container points-info">
-              Łączna suma twoich punktów: {totalPoints}
-            </div>
+                        <div className="time-info">{timeUntilNextMatch}</div>
+                        
+                </>
               )}
+            </div>
+          </div>
+         
+         
+              <OtherUsersBettings user={user} activeTab={activeTab} friendGamesTabs={friendGamesTabs} kuba={kuba}  closestMatch={closestMatch} isBetClosed={isBetClosed} allMatchesFinished={allMatchesFinished} totalPoints={totalPoints} convertDate={convertDate} getTimeUntilMatch={getTimeUntilMatch}></OtherUsersBettings>
               <PodiumForFriendsBets kuba={kuba}></PodiumForFriendsBets>
         </>
       ) : (
         <>
           {activeTab?.isGameWithFriends && (
             <div className="opponents-container">
-              <div className="opponents-title">Twoi rywale:</div>
+              <div className="opponents-title">Grasz przeciwko</div>
               <ul className="opponents-list">
                 {activeTab?.participants?.map((userParticipant) => {
                   if (userParticipant?.uid !== user.uid) {
@@ -731,9 +734,7 @@ console.log(allMatchesFinished)
                 </div> */}
 
             <div className="users-table-header">
-              <div className="header-item select-column">
-                <input type="checkbox" />
-              </div>
+            
 
               <div className="header-item">Liga</div>
               <div className="header-item">
@@ -749,9 +750,7 @@ console.log(allMatchesFinished)
             <div className="users-table-body">
               {matchesBetting.map((user, index) => (
                 <div className="table-row " key={user.match.id}>
-                  <div className="row-item select-column">
-                    <input type="checkbox" />
-                  </div>
+                
                   <div className="row-item">
                     <img
                       src={getTurnamentImgURLbyId(
@@ -852,35 +851,39 @@ console.log(allMatchesFinished)
             <div className="save-all-button-container time-points-container">
               {closestMatch?.match?.status?.type === "finished" ||
               closestMatch?.match?.status?.type === "inprogress" ||
-              isBetClosed ? (
-                <div>Zakład zamknięty</div>
+              isBetClosed ? (<>
+                <span>Zakład zakończony <button
+              onClick={() => handleDeleteBet(activeTab.id)}
+              className="bet-match-button delete-bet-button"
+            >
+              Usuń zakład
+            </button></span>
+            <span className="total-points-container points-info">
+              Suma punktów: {totalPoints}
+            </span></>
+            
               ) : (
-                <>
-                  <button
+                        <>
+                          <span> <button
                     onClick={handleSaveBet}
                     className="save-all-button bet-match-button"
                   >
                     Zamknij zakład
-                  </button>
+                  </button> <button
+              onClick={() => handleDeleteBet(activeTab.id)}
+              className="bet-match-button delete-bet-button"
+            >
+              Usuń zakład
+            </button></span>
+                 
 
                   <div className="time-info">{timeUntilNextMatch}</div>
                 </>
               )}
             </div>
           </div>
-          {closestMatch?.match?.status?.type !== "finished" && (
-            <button
-              onClick={() => handleDeleteBet(activeTab.id)}
-              className="bet-match-button delete-bet-button"
-            >
-              Usuń zakład
-            </button>
-          )}
-          {closestMatch?.match?.status?.type === "finished" && (
-            <div className="total-points-container points-info">
-              Łączna suma punktów: {totalPoints}
-            </div>
-          )}
+   
+         
         </>
       )}
       {showInvitationModal && (
