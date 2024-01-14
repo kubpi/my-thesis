@@ -130,7 +130,7 @@ const LoginModal = ({
           Zaloguj się
         </button>
       </form>
-      <button onClick={signInWithGoogle}>Sign in with Google</button>
+      <button type="submit" onClick={signInWithGoogle}>Sign in with Google</button>
       <div className="login-help-links">
         <a href="#" onClick={handleForgotPassword}>
           Zapomniałeś(aś) hasła?

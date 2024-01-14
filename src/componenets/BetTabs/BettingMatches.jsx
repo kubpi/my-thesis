@@ -359,6 +359,9 @@ const BettingMatches = ({
   };
 
   const isBetCanceled = (bet) => {
+    console.log(Object.values(bet.invitations).some(
+      (invitation) => invitation.status === "rejected"
+    ))
     return Object.values(bet.invitations).some(
       (invitation) => invitation.status === "rejected"
     );
@@ -513,7 +516,7 @@ const BettingMatches = ({
   return (
     <div className="favorite-matches-container">
     
-        {!allInvitationsAccepted ? (
+        {!allInvitationsAccepted && !isBetCanceled(activeTab) ? (
           <div className="waiting-for-players">
             <p>
               Oczekiwanie na akceptację graczy:{" "}
@@ -524,8 +527,8 @@ const BettingMatches = ({
           <div className="canceled-bet-container">
             <p>
               Zakład został anulowany. Użytkownik:{" "}
-              <strong>{rejectedUserNames.join(", ")}</strong> nie zaakceptował
-              zaproszenia.
+              <strong>{rejectedUserNames.join(", ")}</strong> odrzucił
+              zaproszenie.
             </p>
             <button onClick={() => handleDeleteBet(activeTab.id)}>
               Usuń zakład

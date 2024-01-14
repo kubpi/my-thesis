@@ -375,3 +375,85 @@
   color: #c9302c;
   text-decoration: underline;
 }
+/* Common Styles for Waiting and Canceled Containers */
+.waiting-for-players,
+.canceled-bet-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-bottom: 25px;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease;
+  transform: scale(1);
+}
+
+.waiting-for-players:hover,
+.canceled-bet-container:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.02);
+}
+
+/* Specific Styles for Waiting Container */
+.waiting-for-players {
+  background-color: #f8f9fa;
+  border-left: 5px solid #ffc107; /* Highlighted border color */
+}
+
+.waiting-for-players p {
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Specific Styles for Canceled Bet Container */
+.canceled-bet-container {
+  background-color: #fefefe;
+  border-left: 5px solid #dc3545; /* Error border color for canceled bets */
+}
+
+.canceled-bet-container p {
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.canceled-bet-container button {
+  background-color: #dc3545; /* Red color for the delete button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 10px; /* Space above the button */
+}
+
+.canceled-bet-container button:hover {
+  background-color: #c82333; /* Darker shade on hover */
+}
+
+/* Add a fade-in animation for both containers */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.waiting-for-players,
+.canceled-bet-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Bold the user names for emphasis */
+.waiting-for-players strong,
+.canceled-bet-container strong {
+  font-weight: 600;
+  color: #212529;
+}
