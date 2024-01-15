@@ -2,40 +2,16 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./css/App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import Account from "./pages/Betting";
 import { FavoritesProvider } from "./Context/FavoritesContext";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
 import { useState, useEffect } from "react";
-
 import { getFirestore } from "firebase/firestore";
 import { collection } from "firebase/firestore";
-
-import { onSnapshot } from "firebase/firestore";
-
-import { doc, setDoc, writeBatch } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
-
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import Podium from "./componenets/Podium";
 import FriendsList from "./componenets/FriendsList";
 import Betting from "./pages/Betting";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBkSEz109STYK02nQ-Kcij3eqpOMZ31R58",
-//   authDomain: "inzynierka-e7180.firebaseapp.com",
-//   projectId: "inzynierka-e7180",
-//   storageBucket: "inzynierka-e7180.appspot.com",
-//   messagingSenderId: "932466898301",
-//   appId: "1:932466898301:web:9700bdf9cae9ba07a00814"
-// };
-
-// Your web app's Firebase configuration
 
 export default function App() {
   const firebaseConfig = {
@@ -49,9 +25,8 @@ export default function App() {
     appId: "1:932466898301:web:9700bdf9cae9ba07a00814",
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  // Get the current user's auth information
+
   const auth = getAuth();
 
   const [laLigaMatches, setLaLigaMatches] = useState([]);
@@ -94,10 +69,6 @@ export default function App() {
     fetchMatchesInRange("laLiga", "2023-12-24", "2024-01-07");
   }, []);
 
-  // console.log(laLigaMetches)
-  console.log(laLigaMatches);
-
-  const [user, loading, error] = useAuthState(auth);
   return (
     <>
       <div className="App">
@@ -106,12 +77,9 @@ export default function App() {
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Home />}>
-                  {" "}
-                  /
                 </Route>
                 <Route path="/betting" element={<Betting />} />
-                <Route path="#podium" element={<Podium />} />
-                <Route path="/friends" element={<FriendsList />} />
+                <Route path="#podium" element={<Podium />} />           
               </Routes>
             </BrowserRouter>
             </FavoritesProvider>

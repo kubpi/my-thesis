@@ -10,8 +10,6 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import {
-  ReturnTeamImage,
-  getTurnamentImgURLbyId,
   tournaments,
 } from "../../Services/apiService";
 import { DateSlider } from "../Slider/DateSlider";

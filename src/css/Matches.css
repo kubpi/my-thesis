@@ -173,3 +173,47 @@
 .favorite-button:focus {
   outline: none;
 }
+/* Style for the select dropdown */
+.select-league {
+  display: block;
+  width: 100%; /* Full width */
+  max-width: 300px; /* Maximum width, adjust as needed */
+  margin: 20px auto; /* Centered with some margin */
+  padding: 10px 15px; /* Padding for better readability */
+  background-color: #689577; /* Background color that matches your theme */
+  color: white; /* Text color */
+  border-radius: 5px; /* Slightly rounded corners */
+  border: 2px solid #456a58; /* Border color slightly darker than the background */
+  font-size: 16px; /* Reasonable font size */
+  cursor: pointer; /* Cursor indicates it's clickable */
+  transition: all 0.3s ease; /* Smooth transition for interactions */
+}
+
+.select-league:hover {
+  background-color: #567e6a; /* Slightly darker on hover */
+}
+
+.select-league:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow to indicate focus */
+}
+
+/* If you are using a modern browser, you can also style the dropdown arrow */
+.select-league::-ms-expand {
+  display: none; /* Removes the default arrow in IE */
+}
+
+.select-league-appearance {
+  -webkit-appearance: none; /* Removes the default arrow in WebKit browsers */
+  -moz-appearance: none; /* Removes the default arrow in Mozilla browsers */
+  appearance: none;
+  background-image: url('path_to_custom_arrow_icon.svg'); /* Path to your custom arrow icon */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* Style for options */
+.select-league option {
+  background-color: white; /* Background color for options */
+  color: #456a58; /* Text color that contrasts with the background */
+}

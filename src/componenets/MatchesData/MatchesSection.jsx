@@ -42,9 +42,13 @@ export function MatchesSection() {
 
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
+  const [selectedLeague, setSelectedLeague] = useState("");
 
   // Adres URL endpointu, na który będą wysyłane mecze
   const endpoint = "http://localhost:3000/";
+  const handleLeagueSelect = (event) => {
+    setSelectedLeague(event.target.value);
+  };
 
   useEffect(() => {
     const firestore = getFirestore();
@@ -163,34 +167,48 @@ export function MatchesSection() {
   return (
     <>
       <div className="slider-margin-top" id="matchesSection">
+      <select className="select-league" value={selectedLeague} onChange={handleLeagueSelect}>
+          <option value="">Wszystkie mecze</option>
+          {tournaments.map((tournament) => (
+            <option key={tournament.id} value={tournament.name}>
+              {tournament.name}
+            </option>
+          ))}
+        </select>
         <DateSlider
           onDateSelect={handleDateSelect}
           disabledDates={localData}
           timeBackNumber={120}
         />
+        
       </div>
       <div className="container">
         <div className="row">
-          {tournaments.map((tournament) => {
-            const tournamentMatches = matchesData[tournament.name];
-            if (tournamentMatches?.length > 0) {
-              return (
-                <div
-                  className="col-md-auto d-flex justify-content-center mb-5 mt-4"
-                  key={tournament.id}
-                >
-                  <CardBoxForMatches
-                    matches={tournamentMatches}
-                    tournamentId={tournament.id}
-                    addToFavorites={addFavorite}
-                    removeFromFavorites={removeFavoriteid}
-                    isFavorite={(matchId) => isMatchFavorite(matchId)}
-                  />
-                </div>
-              );
-            }
-            return null;
-          })}
+          {tournaments
+            .filter(
+              (tournament) =>
+                selectedLeague === "" || tournament.name === selectedLeague
+            )
+            .map((tournament) => {
+              const tournamentMatches = matchesData[tournament.name];
+              if (tournamentMatches?.length > 0) {
+                return (
+                  <div
+                    className="col-md-auto d-flex justify-content-center mb-5 mt-4"
+                    key={tournament.id}
+                  >
+                    <CardBoxForMatches
+                      matches={tournamentMatches}
+                      tournamentId={tournament.id}
+                      addToFavorites={addFavorite}
+                      removeFromFavorites={removeFavoriteid}
+                      isFavorite={(matchId) => isMatchFavorite(matchId)}
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })}
         </div>
       </div>
     </>
