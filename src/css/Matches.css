@@ -217,3 +217,15 @@
   background-color: white; /* Background color for options */
   color: #456a58; /* Text color that contrasts with the background */
 }
+/* NoMatchesTile.css */
+
+.no-matches-tile {
+  padding: 20px;
+  text-align: center;
+  background-color: #689577;
+  color: white;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 80%; /* Adjust based on your layout */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

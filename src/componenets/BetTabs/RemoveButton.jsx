@@ -6,7 +6,7 @@ const RemoveButton = ({ onClick }) => {
   return (
     <button className="remove-button" onClick={onClick}>
       <FontAwesomeIcon icon={faTrash} />
-      <span>Remove</span>
+      <span>Usuń</span>
     </button>
   );
 };

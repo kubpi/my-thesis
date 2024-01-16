@@ -24,7 +24,7 @@ const SearchBar = ({ onSearch }) => {
         className="search-input"
         value={searchQuery}
         onChange={handleSearchChange}
-        placeholder="Search..."
+        placeholder="Wyszukaj..."
       />
       <FontAwesomeIcon
         icon={faTimes}

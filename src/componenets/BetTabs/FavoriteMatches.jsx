@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { FavoritesContext } from "../../Context/FavoritesContext";
 import RemoveButton from "./RemoveButton";
 import SearchBar from "../SearchingComponents/SearchBar";
-import FilterButton from "../SearchingComponents/FilterButton";
+//import FilterButton from "../SearchingComponents/FilterButton";
 import "../../css/FavoriteMatches.css";
 import { Oval, ThreeDots } from "react-loader-spinner";
 import {
@@ -251,7 +251,7 @@ export function FavoriteMatches() {
               <SearchBar onSearch={setSearchQuery}></SearchBar>
               <div className="buttons-container">
                 <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-                <FilterButton></FilterButton>
+                {/* <FilterButton></FilterButton> */}
               </div>
 
               <div className="users-table-header">

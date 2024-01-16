@@ -204,12 +204,15 @@ export function MatchesSection() {
                       removeFromFavorites={removeFavoriteid}
                       isFavorite={(matchId) => isMatchFavorite(matchId)}
                     />
+                    
                   </div>
+                  
                 );
               }
               return null;
             })}
         </div>
+        
       </div>
     </>
   );
