@@ -210,3 +210,10 @@
 .content-button-add-remove:hover{
   background-color: #45a049; /* Color change on hover for '+' button */
 }
+
+.error-message {
+  color: red; /* You can choose your preferred text color */
+  font-size: 14px; /* Adjust the font size as needed */
+  margin-top: 5px; /* Add margin to separate the message from other elements */
+  /* You can also add additional styling if needed */
+}

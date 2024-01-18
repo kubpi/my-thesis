@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import { FavoritesContext } from "../../Context/FavoritesContext";
 import RemoveButton from "./RemoveButton";
 import SearchBar from "../SearchingComponents/SearchBar";
-//import FilterButton from "../SearchingComponents/FilterButton";
 import "../../css/FavoriteMatches.css";
 import { Oval, ThreeDots } from "react-loader-spinner";
 import {
@@ -16,11 +15,7 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import {
-  ReturnTeamImage,
-  getTurnamentImgURLbyId,
-  tournaments,
-} from "../../Services/apiService";
+import { tournaments } from "../../Services/apiService";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 export function FavoriteMatches() {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);

@@ -10,7 +10,6 @@ import { collection } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import Podium from "./componenets/Podium";
-import FriendsList from "./componenets/FriendsList";
 import Betting from "./pages/Betting";
 
 export default function App() {
@@ -76,13 +75,12 @@ export default function App() {
           <FavoritesProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Home />}>
-                </Route>
+                <Route path="/" element={<Home />}></Route>
                 <Route path="/betting" element={<Betting />} />
-                <Route path="#podium" element={<Podium />} />           
+                <Route path="#podium" element={<Podium />} />
               </Routes>
             </BrowserRouter>
-            </FavoritesProvider>
+          </FavoritesProvider>
         </section>
       </div>
     </>

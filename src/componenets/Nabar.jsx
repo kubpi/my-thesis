@@ -48,10 +48,10 @@ export function Navbar() {
                 <li className="nav-item">
                   <a className="nav-link" href="/betting#podium">ranking</a>
                 </li>
-                {user ? <a className="nav-link" href="/#" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
+                {user ? <a className="nav-link" href="/" onClick={() => signOut(auth)}>wyloguj się</a> : <div></div>}
                 {user && <>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <a className="nav-link" href="/">
                       {user?.displayName || getUsernameFromEmail(user?.email)}
                     </a>
                   </li></>}

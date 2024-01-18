@@ -9,9 +9,7 @@ import {
   where,
   onSnapshot,
 } from "firebase/firestore";
-import {
-  tournaments,
-} from "../../Services/apiService";
+import { tournaments } from "../../Services/apiService";
 import { DateSlider } from "../Slider/DateSlider";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
@@ -222,7 +220,7 @@ export function BettingView({
       setSelectedMatches([]); // Clear the selected matches state
       onClose(); // Close the BettingView modal
     } else {
-      alert("Please enter a tab name and select at least one match.");
+      alert("Uzupełnij nazwę zakładki oraz wybierz mecze do obstawiania");
     }
   };
 
@@ -350,20 +348,16 @@ export function BettingView({
                       {user.tournament.name}
                     </div>
                     <div className="row-item">
-                      <div>              
-                      <img
-                        src={
-                          homeTeamLogo[user.homeTeam.id]
-                        }
-                        className="team-logo2"
-                        alt={user.homeTeam.name}
-                      />
+                      <div>
+                        <img
+                          src={homeTeamLogo[user.homeTeam.id]}
+                          className="team-logo2"
+                          alt={user.homeTeam.name}
+                        />
                         {user.homeTeam.name}
                       </div>
                       <img
-                        src={
-                          awayTeamLogo[user.awayTeam.id]
-                        }
+                        src={awayTeamLogo[user.awayTeam.id]}
                         className="team-logo2"
                         alt={user.homeTeam.name}
                       />

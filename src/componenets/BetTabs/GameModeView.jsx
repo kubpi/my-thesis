@@ -13,11 +13,11 @@ const GameModeView = ({ isOpen, onClose, onSelectSolo, onSelectTeam }) => {
         <div className="game-mode-buttons">
           <button className="game-mode-button solo" onClick={onSelectSolo}>
             <FontAwesomeIcon icon={faUser} className="icon" />
-            Gram solo
+            Gram pomiędzy wszystkimi użytkownikami
           </button>
           <button className="game-mode-button team" onClick={onSelectTeam}>
             <FontAwesomeIcon icon={faUsers} className="icon" />
-            Gram z znajomym
+            Gram ze znajomymi
           </button>
         </div>
 

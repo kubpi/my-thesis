@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   collection,
   query,
@@ -8,21 +8,32 @@ import {
 } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import "../../css/CreateTeamModal.css"; // Make sure this path is correct
+import "../../css/CreateTeamModal.css"; // Upewnij się, że ścieżka jest poprawna
 import { getAuth } from "firebase/auth";
 
-const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
+const CreateTeamModal = ({
+  isOpen,
+  onClose,
+  onCreateTab,
+  onUsersSelected,
+}) => {
   const auth = getAuth();
   const loggedInUserId = auth.currentUser;
   console.log(loggedInUserId);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
+    // Usuń komunikat o błędzie, gdy użytkownik wprowadza nowe dane do pola wyszukiwania
+    setErrorMessage("");
   };
+
   const firestore = getFirestore();
+
   const handleSearch = async () => {
     const usersRef = collection(firestore, "users");
     const field = searchTerm.includes("@") ? "email" : "displayName";
@@ -38,7 +49,13 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
         uid: doc.id,
         ...doc.data(),
       }));
-      setSearchResults(users);
+
+      if (users.length === 0) {
+        setErrorMessage("Dany użytkownik nie został znaleziony.");
+        setShowErrorModal(true);
+      } else {
+        setSearchResults(users);
+      }
     } catch (error) {
       console.error("Error searching users:", error);
     }
@@ -57,15 +74,15 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
 
   const handleCreateTab = () => {
     if (selectedUsers.length === 0 && loggedInUserId) {
-      // If no users are selected and the current user is logged in
-      onUsersSelected([{ uid: loggedInUserId }]);
+      setErrorMessage("Please select at least one friend to create a tab.");
+      setShowErrorModal(true);
+      return;
     } else if (selectedUsers.length > 0) {
-      // If users are selected
       const updatedSelectedUsers = selectedUsers.map((user) => ({
         uid: user.uid,
-        displayName: user.displayName || user.email, // Include the displayName or email
+        displayName: user.displayName || user.email,
       }));
-      // Add the logged-in user to the list if not already included
+
       if (!updatedSelectedUsers.some((user) => user.uid === loggedInUserId)) {
         updatedSelectedUsers.push({
           uid: loggedInUserId?.uid,
@@ -73,15 +90,18 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
         });
       }
       onUsersSelected(updatedSelectedUsers);
-    } else {
-      // No users selected and no one is logged in
-      alert("Please select at least one friend to create a tab.");
+      onClose();
     }
   };
 
   const handleRemoveUserFromTab = (userId) => {
     setSelectedUsers(selectedUsers.filter((user) => user.uid !== userId));
   };
+
+  // Efekt, który wywołuje się przy zmianie searchTerm i czyści komunikat o błędzie
+  useEffect(() => {
+    setErrorMessage("");
+  }, [searchTerm]);
 
   if (!isOpen) return null;
 
@@ -98,6 +118,7 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
         <button className="content-button" onClick={handleSearch}>
           Wyszukaj
         </button>
+        {showErrorModal && <p>{errorMessage}</p>}
         <div className="search-results">
           <div className="found-users-label">Znalezieni użytkownicy:</div>
           <ul className="user-list">
@@ -134,7 +155,16 @@ const CreateTeamModal = ({ isOpen, onClose, onCreateTab, onUsersSelected }) => {
             ))}
           </ul>
         </div>
-        <button className="content-button" onClick={handleCreateTab}>
+        {selectedUsers.length === 0 && (
+          <div className="error-message">
+            Wybierz przynajmniej jedną osobę do rywalizacji
+          </div>
+        )}
+        <button
+          className="content-button"
+          onClick={handleCreateTab}
+          disabled={selectedUsers.length === 0}
+        >
           Utwórz zakład
         </button>
         <button className="close-button" onClick={onClose}>

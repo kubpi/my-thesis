@@ -1,0 +1,10 @@
+[
+  {
+    "componentName": "Teams",
+    "errorMessage": "Cannot read properties of undefined (reading 'display')"
+  },
+  {
+    "componentName": "MatchesSection",
+    "errorMessage": "Cannot read properties of undefined (reading 'addFavorite')"
+  }
+]

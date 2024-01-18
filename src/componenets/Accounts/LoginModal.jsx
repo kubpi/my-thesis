@@ -13,13 +13,24 @@ const LoginModal = ({
   isOpen,
   onRequestClose,
   onRegisterClick,
-  onForgotPasswordClick,
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [loginError, setLoginError] = useState("");
   const auth = getAuth();
   const firestore = getFirestore();
+  const validateEmail = (email) => {
+    if (!email.includes('@')) {
+      setEmailError('Nieprawidłowy format e-maila.');
+      return false;
+    } else {
+      setEmailError('');
+      return true;
+    }
+  };
+  
   const handleForgotPassword = (e) => {
     e.preventDefault();
     if (email) {
@@ -52,26 +63,23 @@ const LoginModal = ({
     setIsFormValid(isValid);
   };
 
-
   const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then(() => {
-        // This would be triggered after a user registers/logs in and we have their user UID
+     
         const createUserProfile = async (userAuth) => {
           const userRef = doc(firestore, "users", userAuth.uid);
 
           const userProfile = {
-            displayName: userAuth.displayName || userAuth.email.split("@")[0], // Default to part of the email if no displayName
+            displayName: userAuth.displayName || userAuth.email.split("@")[0],
             email: userAuth.email,
-            createdAt: new Date(), // Store the timestamp of when the user was created
-            // ... any other fields you'd like to include
+            createdAt: new Date(),    
           };
 
           await setDoc(userRef, userProfile);
         };
 
-        // This function would need to be called after user registration/login
         if (auth.currentUser) {
           createUserProfile(auth.currentUser)
             .then(() => {
@@ -81,7 +89,7 @@ const LoginModal = ({
               console.error("Error creating user profile: ", error);
             });
         }
-        onRequestClose(); // Close the modal on successful sign in
+        onRequestClose();
       })
       .catch((error) => {
         console.error("Error signing in with Google:", error);
@@ -90,14 +98,15 @@ const LoginModal = ({
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (isFormValid) {
+    if (validateEmail(email) && isFormValid) {
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-         
-          onRequestClose(); // Close the modal on successful login
+          alert("Pomyślnie zalogowano");
+          onRequestClose();
         })
         .catch((error) => {
           console.error("Error signing in with email and password:", error);
+          setLoginError("Logowanie nieudane. Sprawdź swoje dane.");
         });
     }
   };
@@ -120,12 +129,14 @@ const LoginModal = ({
           value={email}
           onChange={handleEmailChange}
         />
+        {emailError && <div className="error-message">{emailError}</div>}
         <input
           type="password"
           placeholder="Hasło"
           value={password}
           onChange={handlePasswordChange}
         />
+        {loginError && <div className="error-message">{loginError}</div>}
         <button type="submit" disabled={!isFormValid}>
           Zaloguj się
         </button>

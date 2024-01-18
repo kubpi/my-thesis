@@ -3,54 +3,38 @@ import "../../css//BettingMatches.css";
 import {
   getFirestore,
   doc,
-  setDoc,
   getDoc,
   updateDoc,
   collection,
   onSnapshot,
   where,
-  query,
-  getDocs,
+  query
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import {
-  ReturnTeamImage,
-  getTurnamentImgURLbyId,
-  tournaments,
-} from "../../Services/apiService";
-import PodiumForFriendsBets from "../PodiumForFriendsBets";
+import PodiumForFriendsBets from "../Podium/PodiumForFriendsBets";
 import OtherUsersBettings from "./OtherUsersBettings";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
-
+import { tournaments } from "../../Services/apiService";
 const BettingMatches = ({
   selectedMatchesId,
   onBetClick,
   onSaveBet,
   isBetClosed,
-  updateMatchPoints,
   activeTab,
-  activeUser,
 }) => {
   console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
-
   const [currentTime, setCurrentTime] = useState(new Date());
-
   const [nextMatchTime, setNextMatchTime] = useState(null);
   const [timeUntilNextMatch, setTimeUntilNextMatch] = useState("");
   const [betClosed, setBetClosed] = useState(false);
-
   const [showInvitationModal, setShowInvitationModal] = useState(false);
-
   const [closestMatch, setClosestMatch] = useState();
   const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
     useState(false);
   const [selectedBetIdForDeletion, setSelectedBetIdForDeletion] =
     useState(null);
-
   const [friendGamesTabs, setFriendGamesTabs] = useState([]);
-  const [friendsMatchesBetting, setfriendsMatchesBetting] = useState([]);
-
   const [tournamentLogos, setTournamentLogos] = useState({});
   const [homeTeamLogo, setHomeTeamLogo] = useState("");
   const [awayTeamLogo, setAwayTeamLogo] = useState("");
@@ -665,7 +649,10 @@ const BettingMatches = ({
             <strong>{rejectedUserNames.join(", ")}</strong> odrzucił
             zaproszenie.
           </p>
-          <button onClick={() => handleDeleteBet(activeTab.id)}>
+          <button
+            onClick={() => handleDeleteBet(activeTab.id)}
+            className="delete-bet-button"
+          >
             Usuń zakład
           </button>
         </div>

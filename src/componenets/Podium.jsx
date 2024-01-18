@@ -1,5 +1,5 @@
 import  { useEffect, useState } from 'react';
-import '../css/Podium.css';
+//import '../css/Podium.css';
 import { collection, getFirestore, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 

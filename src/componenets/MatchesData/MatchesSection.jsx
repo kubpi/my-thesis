@@ -2,14 +2,7 @@ import { CardBoxForMatches } from "./CardBoxForMatches";
 import { useState, useEffect, useContext } from "react";
 import { DateSlider } from "../Slider/DateSlider";
 import {
-  getTurnamentImgURL,
-  divideMatchesToLeagues,
   tournaments,
-  tournamentIds,
-  addMatchesTotempAllMatchesData,
-  getAllMatchesDays,
-  filterMatchesByDate,
-  getDaysWithoutMatches,
   sendMatches,
 } from "../../Services/apiService";
 import "../../css/Matches.css";
@@ -26,7 +19,7 @@ import {
 } from "firebase/firestore";
 
 export function MatchesSection() {
-  const { addFavorite, removeFavorite, favorites, removeFavoriteid } =
+  const { addFavorite, favorites, removeFavoriteid } =
     useContext(FavoritesContext);
   const [matchesData, setMatchesData] = useState({});
   const localData = localStorage.getItem("daysWithNoMatches");
@@ -163,7 +156,9 @@ export function MatchesSection() {
   const isMatchFavorite = (matchId) => {
     return favorites.some((m) => m === matchId);
   };
-
+  const hasMatchesInSelectedLeague = tournaments.some((tournament) =>
+  selectedLeague === "" || (tournament.name === selectedLeague && matchesData[tournament.name]?.length > 0)
+);
   return (
     <>
       <div className="slider-margin-top" id="matchesSection">
@@ -212,7 +207,16 @@ export function MatchesSection() {
               return null;
             })}
         </div>
-        
+        {tournaments.every((tournament) => !matchesData[tournament.name]?.length) && (
+        <div className="no-matches-info col-12">
+          Brak meczów tego dnia
+        </div>
+        )}
+        {!hasMatchesInSelectedLeague && (
+        <div className="no-matches-info col-12">
+          Brak meczów tego dnia
+        </div>
+      )}
       </div>
     </>
   );
