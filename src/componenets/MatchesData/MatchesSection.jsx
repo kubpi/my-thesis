@@ -1,10 +1,7 @@
 import { CardBoxForMatches } from "./CardBoxForMatches";
 import { useState, useEffect, useContext } from "react";
 import { DateSlider } from "../Slider/DateSlider";
-import {
-  tournaments,
-  sendMatches,
-} from "../../Services/apiService";
+import { tournaments, sendMatches } from "../../Services/apiService";
 import "../../css/Matches.css";
 import { FavoritesContext } from "../../Context/FavoritesContext";
 import {
@@ -12,7 +9,6 @@ import {
   collection,
   query,
   where,
-  getDocs,
   getDoc,
   doc,
   onSnapshot,
@@ -37,7 +33,6 @@ export function MatchesSection() {
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
   const [selectedLeague, setSelectedLeague] = useState("");
 
-  // Adres URL endpointu, na który będą wysyłane mecze
   const endpoint = "http://localhost:3000/";
   const handleLeagueSelect = (event) => {
     setSelectedLeague(event.target.value);
@@ -46,15 +41,10 @@ export function MatchesSection() {
   useEffect(() => {
     const firestore = getFirestore();
     const fetchDaysWithNoMatches = async () => {
-      // First, try to load the data from localStorage
-
       if (localData) {
-        // If data is found in localStorage, parse it and use it directly
         const daysWithNoMatchesData = JSON.parse(localData);
         console.log("Loaded from localStorage:", daysWithNoMatchesData);
-        // Here you can set state or perform other operations with daysWithNoMatchesData
       } else {
-        // If not found in localStorage, fetch from Firestore
         const daysWithNoMatchesRef = doc(
           firestore,
           "matchesData",
@@ -63,7 +53,6 @@ export function MatchesSection() {
         try {
           const docSnap = await getDoc(daysWithNoMatchesRef);
           if (docSnap.exists()) {
-            // Save the data to localStorage for future access
             localStorage.setItem(
               "daysWithNoMatches",
               JSON.stringify(docSnap.data().dates)
@@ -72,7 +61,6 @@ export function MatchesSection() {
               "Fetched from Firestore and saved to localStorage:",
               docSnap.data().dates
             );
-            // Here you can set state or perform other operations with docSnap.data().dates
           } else {
             console.log("No such document in Firestore!");
           }
@@ -86,11 +74,11 @@ export function MatchesSection() {
     };
 
     fetchDaysWithNoMatches();
-  }, []); // The empty dependency array ensures this effect runs once when the component mounts
+  }, []);
 
   const handleDateSelect = (date, nextDate) => {
     setSelectedDate(date);
-    setSelectedNextDate(nextDate); // Ustawienie wybranej daty
+    setSelectedNextDate(nextDate);
   };
 
   useEffect(() => {
@@ -125,7 +113,6 @@ export function MatchesSection() {
       return unsubscribe;
     });
 
-    // Czyszczenie subskrypcji
     return () => {
       unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
     };
@@ -136,9 +123,6 @@ export function MatchesSection() {
 
     const formattedToday = today.toISOString().split("T")[0];
 
-    //console.log(formattedToday);
-
-    // Sprawdź, czy selectedDate jest dzisiejszą datą i wyślij mecze, jeśli tak
     if (selectedDate === formattedToday) {
       console.log(matchesData);
       sendMatches(matchesData, endpoint)
@@ -156,13 +140,20 @@ export function MatchesSection() {
   const isMatchFavorite = (matchId) => {
     return favorites.some((m) => m === matchId);
   };
-  const hasMatchesInSelectedLeague = tournaments.some((tournament) =>
-  selectedLeague === "" || (tournament.name === selectedLeague && matchesData[tournament.name]?.length > 0)
-);
+  const hasMatchesInSelectedLeague = tournaments.some(
+    (tournament) =>
+      selectedLeague === "" ||
+      (tournament.name === selectedLeague &&
+        matchesData[tournament.name]?.length > 0)
+  );
   return (
     <>
       <div className="slider-margin-top" id="matchesSection">
-      <select className="select-league" value={selectedLeague} onChange={handleLeagueSelect}>
+        <select
+          className="select-league"
+          value={selectedLeague}
+          onChange={handleLeagueSelect}
+        >
           <option value="">Wszystkie mecze</option>
           {tournaments.map((tournament) => (
             <option key={tournament.id} value={tournament.name}>
@@ -175,7 +166,6 @@ export function MatchesSection() {
           disabledDates={localData}
           timeBackNumber={120}
         />
-        
       </div>
       <div className="container">
         <div className="row">
@@ -199,24 +189,20 @@ export function MatchesSection() {
                       removeFromFavorites={removeFavoriteid}
                       isFavorite={(matchId) => isMatchFavorite(matchId)}
                     />
-                    
                   </div>
-                  
                 );
               }
               return null;
             })}
         </div>
-        {tournaments.every((tournament) => !matchesData[tournament.name]?.length) && (
-        <div className="no-matches-info col-12">
-          Brak meczów tego dnia
-        </div>
+        {tournaments.every(
+          (tournament) => !matchesData[tournament.name]?.length
+        ) && (
+          <div className="no-matches-info col-12">Brak meczów tego dnia</div>
         )}
         {!hasMatchesInSelectedLeague && (
-        <div className="no-matches-info col-12">
-          Brak meczów tego dnia
-        </div>
-      )}
+          <div className="no-matches-info col-12">Brak meczów tego dnia</div>
+        )}
       </div>
     </>
   );

@@ -17,7 +17,7 @@ body {
   display: flex;
 }
 
-.over{
+.over {
   overflow: hidden;
 }
 
@@ -47,8 +47,7 @@ body {
 }
 
 .slider > button:hover {
-  /* background-color: #E2B1B1; Zmieniony kolor tła podczas najechania */
-  background-color: #ddde99; /* Zmieniony kolor tła podczas najechania */
+  background-color: #ddde99;
 }
 
 .handle {
@@ -56,9 +55,8 @@ body {
   border-radius: 1rem;
   flex-grow: 0;
   flex-shrink: 0;
-  /* background-color: rgba(255, 255, 255, 0.25); */
-  /* background-color: white; */
-  background-color: #1F2937;
+
+  background-color: #1f2937;
   z-index: 10;
   margin: var(--img-gap) 0;
   width: var(--handle-size);
@@ -67,7 +65,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* color: black; */
+
   color: white;
   line-height: 0;
   transition: background-color 150ms ease-in-out;
@@ -83,10 +81,8 @@ body {
   border-bottom-right-radius: 0;
 }
 
-/* .handle:focus, */
-.handle:hover{
-  /* background-color: rgba(255, 255, 255, 0.5); */
-  background-color: #4B5563;
+.handle:hover {
+  background-color: #4b5563;
 }
 
 .text {
@@ -121,11 +117,11 @@ body {
 }
 
 .button-selected {
-  background-color: #ddde99;  /* Background color for the selected button */
-  border: 5px solid #ddde99;    /* Border for the selected button */
-  box-shadow: 0 0 100px 3px rgba(255, 0, 0, 0.3); /* Red shadow around the button */
-  transform: scale(1.05);  /* Slightly increase the size of the selected button for emphasis */
-  transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out; /* Smooth transition for the transform and box-shadow changes */
+  background-color: #ddde99;
+  border: 5px solid #ddde99;
+  box-shadow: 0 0 100px 3px rgba(255, 0, 0, 0.3);
+  transform: scale(1.05);
+  transition: transform 250ms ease-in-out, box-shadow 250ms ease-in-out;
 }
 
 .button-disabled {
@@ -136,4 +132,3 @@ body {
 .slider-margin-top {
   margin-bottom: 5rem;
 }
-

@@ -1,120 +1,114 @@
-/* login.css */
 .Modal {
-    position: relative;
-    background: #466551; /* Dark background for the modal */
-    color: white;
-    max-width: 400px;
-    padding: 40px;
-    border-radius: 8px;
-    margin: 100px auto;
-    animation: 0.5s ease-out 0s 1 slideInFromTop; /* Apply the animation to your modal */
-  }
-  
-  .Overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent black background */
-  }
-  
-  input[type="email"], input[type="password"], input[type="text"] {
-    width: 100%;
-    margin-bottom: 20px;
-    padding: 15px;
-    border: none;
-    border-radius: 5px;
-    /* background-color: #333; Slightly lighter black for input backgrounds */
-    /* background-color: #ffffff; Slightly lighter black for input backgrounds */
-    background-color: #cdcbcb;
-    color: rgb(4, 4, 4);
-    margin-bottom: 5px;
-  }
-  
-  button[type="submit"] {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 5px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-  
-  button[type="submit"]:hover, .buttonik2:hover, .buttonik:hover {
-    background-color: #80b47c; /* Darker blue on hover */
-  }
-  
-  a {
-    color: #1A75FF; /* Blue text for links */
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  .close-modal-button {
-    background: none;
-    border: none;
-    color: white;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .close-modal-button:hover {
-    text-decoration: underline;
-  }
-  
-  /* Adding some spacing and alignment */
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .help-text {
-    display: block;
-    margin-top: 5px;
-    font-size: 0.9em;
-  }
-  
-  /* Inside login.css */
+  position: relative;
+  background: #466551;
+  color: white;
+  max-width: 400px;
+  padding: 40px;
+  border-radius: 8px;
+  margin: 100px auto;
+  animation: 0.5s ease-out 0s 1 slideInFromTop;
+}
 
-  .close-button {
-    position: absolute;
-    top: 10px;  /* Adjust top and right as needed */
-    right: 10px;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 24px; /* Larger font size for the 'X' */
-    cursor: pointer;
-  }
-  
-  .close-button:hover {
-    color: #aaa; /* Lighter grey to indicate hover state */
-  }
-  
-  @keyframes slideInFromTop {
-    0% {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  /* login.css */
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
 
-/* login.css */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
 
-/* ... other styles ... */
+  background-color: #cdcbcb;
+  color: rgb(4, 4, 4);
+  margin-bottom: 5px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover,
+.buttonik2:hover,
+.buttonik:hover {
+  background-color: #80b47c;
+}
+
+a {
+  color: #1a75ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.close-modal-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.close-modal-button:hover {
+  text-decoration: underline;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.help-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #aaa;
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
 .login-help-links {
   margin-top: 20px;
@@ -131,16 +125,14 @@
   text-decoration: underline;
 }
 
-/* Separate the two links with a vertical bar */
 .login-help-links span {
   margin: 0 10px;
   color: white;
 }
 
-/* Use pseudo-elements for the 'or' text to style it differently */
 .login-help-links span::before,
 .login-help-links span::after {
-  content: ' | ';
+  content: " | ";
   color: white;
 }
 
@@ -152,15 +144,14 @@
   margin-left: 10px;
 }
 .login-header {
-  text-align: center; /* Centers text horizontally */
-  margin-bottom: 20px; /* Adds some space below the header */
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-/* Style for error messages */
 .error {
-  color: #e74c3c; /* Use a color that stands out, such as a shade of red */
-  font-size: 0.85em; /* Keep the font size smaller than the input text */
-  margin-top: 0px; /* Remove top margin if any */
-  margin-bottom: 10px; /* Add some space before the next input field */
-  display: block; /* Ensure it takes its own line */
+  color: #e74c3c;
+  font-size: 0.85em;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  display: block;
 }

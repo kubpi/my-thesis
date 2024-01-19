@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -21,7 +22,7 @@ export function BettingView({
   onAddTab,
   teamUsers,
 }) {
-  const [tabCount, setTabCount] = useState(1); // Stan do śledzenia liczby zakładek
+  const [tabCount, setTabCount] = useState(1);
   const [tabName, setTabName] = useState("Zakład");
   const localData = localStorage.getItem("daysWithNoMatches");
 
@@ -37,19 +38,17 @@ export function BettingView({
 
   const [selectedDate, setSelectedDate] = useState(apiFormatDate);
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
-
   const [matchesData, setMatchesData] = useState();
-
   const [tournamentLogos, setTournamentLogos] = useState({});
   const [homeTeamLogo, setHomeTeamLogo] = useState("");
   const [awayTeamLogo, setAwayTeamLogo] = useState("");
+
   useEffect(() => {
     const savedLogos =
       JSON.parse(localStorage.getItem("tournamentLogos")) || {};
     const storage = getStorage();
     const fetchLogoPromises = [];
 
-    // Loop through the tournaments and matches to fetch logos
     matchesData &&
       Object.keys(matchesData).forEach((tournamentName) => {
         matchesData[tournamentName].forEach((bet) => {
@@ -70,7 +69,7 @@ export function BettingView({
                     `Error fetching logo for tournamentId: ${tournamentId}`,
                     error
                   );
-                  return [tournamentId, "default_logo_url.png"]; // Fallback to default logo URL
+                  return [tournamentId, "default_logo_url.png"];
                 })
             );
           }
@@ -87,17 +86,16 @@ export function BettingView({
       setTournamentLogos(newLogos);
     });
 
-    // If logos are already saved, set them directly
     if (Object.keys(savedLogos).length > 0) {
       setTournamentLogos(savedLogos);
     }
-  }, [matchesData]); // Make sure to include the dependency array here
+  }, [matchesData]);
 
   useEffect(() => {
     const savedLogos = JSON.parse(localStorage.getItem("teamsLogos")) || {};
     const storage = getStorage();
     const fetchLogoPromises = [];
-    // Loop through the tournaments and matches to fetch logos
+
     matchesData &&
       Object.keys(matchesData).forEach((tournamentName) => {
         matchesData[tournamentName].forEach((bet) => {
@@ -115,7 +113,7 @@ export function BettingView({
                     `Error fetching logo for teamId: ${homeTeamId}`,
                     error
                   );
-                  // Optionally set a default logo URL
+
                   return [homeTeamId, "default_logo_url.png"];
                 })
             );
@@ -133,7 +131,6 @@ export function BettingView({
       setHomeTeamLogo(newLogos);
     });
 
-    // If logos are already saved, set them directly
     if (Object.keys(savedLogos).length > 0) {
       setHomeTeamLogo(savedLogos);
     }
@@ -161,7 +158,7 @@ export function BettingView({
                     `Error fetching logo for teamId: ${awayTeamId}`,
                     error
                   );
-                  // Optionally set a default logo URL
+
                   return [awayTeamId, "default_logo_url.png"];
                 })
             );
@@ -179,14 +176,12 @@ export function BettingView({
       setAwayTeamLogo(newLogos);
     });
 
-    // If logos are already saved, set them directly
     if (Object.keys(savedLogos).length > 0) {
       setAwayTeamLogo(savedLogos);
     }
   }, [matchesData]);
 
   useEffect(() => {
-    // Ustawienie domyślnej nazwy zakładki
     const today = new Date();
     const formattedDate = `${today.getDate().toString().padStart(2, "0")}.${(
       today.getMonth() + 1
@@ -194,31 +189,26 @@ export function BettingView({
       .toString()
       .padStart(2, "0")}.${today.getFullYear()}`;
     setTabName(`${formattedDate} Zakład ${tabCount}`);
-  }, [tabCount]); // Ustawienie zależności od tabCount, aby aktualizować nazwę przy zmianie liczby zakładek
+  }, [tabCount]);
 
-  // Function to handle the checkbox change
   const handleCheckboxChange = (matchId) => {
     setSelectedMatches((prevSelectedMatches) => {
       if (prevSelectedMatches.includes(matchId)) {
-        // If the match is already selected, remove it from the array
         return prevSelectedMatches.filter((id) => id !== matchId);
       } else {
-        // If the match is not selected, add it to the array
         return [...prevSelectedMatches, matchId];
       }
     });
   };
 
-  // Function to handle the Save button click
   const handleSave = () => {
     if (tabName.trim() && selectedMatches.length > 0) {
-      // Call onAddTab with the selected matches and the ID(s) of the other user(s)
       const selectedUserIds = teamUsers.map((user) => user.uid);
       onAddTab(tabName.trim(), selectedMatches, selectedUserIds, teamUsers);
-      setTabCount(tabCount + 1); // Update the tab count state
-      setTabName(""); // Reset the tab name state
-      setSelectedMatches([]); // Clear the selected matches state
-      onClose(); // Close the BettingView modal
+      setTabCount(tabCount + 1);
+      setTabName("");
+      setSelectedMatches([]);
+      onClose();
     } else {
       alert("Uzupełnij nazwę zakładki oraz wybierz mecze do obstawiania");
     }
@@ -236,7 +226,7 @@ export function BettingView({
 
   const handleDateSelect = (date, nextDate) => {
     setSelectedDate(date);
-    setSelectedNextDate(nextDate); // Ustawienie wybranej daty
+    setSelectedNextDate(nextDate);
   };
 
   useEffect(() => {
@@ -277,13 +267,11 @@ export function BettingView({
         return unsubscribe;
       });
 
-      // Czyszczenie subskrypcji
       return () => {
         unsubscribeFromSnapshots.forEach((unsubscribe) => unsubscribe());
       };
     };
 
-    // Wywołaj fetchData na starcie oraz gdy selectedDate się zmienia
     const unsubscribe = fetchData();
 
     return () => {
@@ -292,7 +280,7 @@ export function BettingView({
   }, [selectedDate]);
   console.log(matchesData);
   if (!isOpen) {
-    return null; // This should prevent BettingView from rendering if isOpen is false
+    return null;
   }
   return (
     <div className="modal-backdrop">
@@ -379,3 +367,16 @@ export function BettingView({
 }
 
 export default BettingView;
+
+BettingView.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  selectedMatches: PropTypes.array,
+  setSelectedMatches: PropTypes.func,
+  onAddTab: PropTypes.func.isRequired,
+  teamUsers: PropTypes.arrayOf(
+    PropTypes.shape({
+      uid: PropTypes.string,
+    })
+  ),
+};

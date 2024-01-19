@@ -1,6 +1,7 @@
+import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import "../../css/RemoveButton.css"; // We will create this CSS file
+import "../../css/RemoveButton.css";
 
 const RemoveButton = ({ onClick }) => {
   return (
@@ -12,3 +13,7 @@ const RemoveButton = ({ onClick }) => {
 };
 
 export default RemoveButton;
+
+RemoveButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};

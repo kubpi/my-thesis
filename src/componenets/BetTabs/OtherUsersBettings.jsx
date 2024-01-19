@@ -1,15 +1,9 @@
-
-
+import PropTypes from "prop-types";
+import "../../css/OtherUsersBettings.css";
 const OtherUsersBettings = ({
   user,
-  activeTab,
   friendGamesTabs,
-  kuba,
-  closestMatch,
-  isBetClosed,
-  allMatchesFinished,
-  totalPoints,
-  convertDate,
+  tab1,
   getTimeUntilMatch,
   tournamentLogos,
   homeTeamLogo,
@@ -23,13 +17,6 @@ const OtherUsersBettings = ({
   ) => {
     const isCorrect =
       betScoreHome == matchScoreHome && betScoreAway == matchScoreAway;
-    console.log({
-      betScoreHome,
-      betScoreAway,
-      matchScoreHome,
-      matchScoreAway,
-      isCorrect,
-    }); // Debugging line
     return isCorrect;
   };
 
@@ -37,12 +24,6 @@ const OtherUsersBettings = ({
     <>
       <h2 className="podium-title podium-title1">Podsumowanie: </h2>
       <div className="users-table ">
-        {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
-                <div className="buttons-container">
-                  <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-                  <FilterButton></FilterButton>
-                </div> */}
-
         <div className="users-table-header betting-text-style">
           <div className="header-item">Liga</div>
           <div className="header-item">
@@ -59,10 +40,9 @@ const OtherUsersBettings = ({
                 )
             )}
           <div className="header-item">Wynik meczu</div>
-          {/* <div className="header-item">Data</div> */}
         </div>
         <div className="users-table-body betting-text-style">
-          {kuba.map((user, index) => (
+          {tab1.map((user) => (
             <>
               <div className="table-row " key={user.match.id}>
                 <div className="row-item">
@@ -177,9 +157,6 @@ const OtherUsersBettings = ({
                     <div>{getTimeUntilMatch(user.match.startTimestamp)} </div>
                   )}
                 </div>
-                {/* <div className="row-item">
-                  {convertDate(user.match.startTimestamp)}
-                </div> */}
               </div>
             </>
           ))}
@@ -190,3 +167,24 @@ const OtherUsersBettings = ({
 };
 
 export default OtherUsersBettings;
+
+OtherUsersBettings.propTypes = {
+  user: PropTypes.shape({
+    uid: PropTypes.string,
+  }).isRequired,
+  friendGamesTabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      userUid: PropTypes.string,
+      userName: PropTypes.string,
+    })
+  ).isRequired,
+  tab1: PropTypes.arrayOf(
+    PropTypes.shape({
+      match: PropTypes.object,
+    })
+  ).isRequired,
+  getTimeUntilMatch: PropTypes.func,
+  tournamentLogos: PropTypes.object,
+  homeTeamLogo: PropTypes.string,
+  awayTeamLogo: PropTypes.string,
+};

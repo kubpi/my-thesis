@@ -17,7 +17,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-width: 90%; /* Prevents the modal from being too wide on larger screens */
+  max-width: 90%; 
   position: relative;
 }
 
@@ -27,17 +27,17 @@
 
 .game-mode-buttons {
   display: flex;
-  flex-wrap: wrap; /* Allow buttons to wrap */
-  justify-content: center; /* Center align the buttons */
+  flex-wrap: wrap; 
+  justify-content: center; 
   margin-bottom: 30px;
 }
 
 .game-mode-button {
-  padding: 10px 20px; /* Adjust padding for better fitting */
-  margin: 5px; /* Add some margin around buttons */
-  flex: 0 1 auto; /* Allow buttons to grow and shrink but not beyond their content */
-  max-width: 45%; /* Max-width for each button */
-  word-break: break-word; /* Break long words */
+  padding: 10px 20px; 
+  margin: 5px; 
+  flex: 0 1 auto; 
+  max-width: 45%; 
+  word-break: break-word; 
 }
 
 .game-mode-button.solo {
@@ -79,12 +79,12 @@
 
 @media (max-width: 600px) {
   .game-mode-content {
-    padding: 20px; /* Reduce padding on smaller screens */
+    padding: 20px; 
   }
   .game-mode-button {
-    padding: 5px 10px; /* Smaller padding for smaller screens */
-    font-size: 16px; /* Smaller font size */
-    max-width: 100%; /* Full width buttons on small screens */
+    padding: 5px 10px; 
+    font-size: 16px; 
+    max-width: 100%; 
   }
 }
 
@@ -94,14 +94,14 @@
     to right,
     hwb(226 73% 11%),
     #c9d1ee
-  ); /* Delikatny gradient */
-  color: rgb(0, 0, 0); /* Biały tekst na niebieskim tle */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtelny cień */
+  ); 
+  color: rgb(0, 0, 0); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .game-mode-button:hover {
-  transform: translateY(-2px); /* Lekkie podniesienie zakładki */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Zwiększenie cienia dla efektu "hover" */
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
 }
 

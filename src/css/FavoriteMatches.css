@@ -1,118 +1,118 @@
 .users-table {
-   font-family: "Roboto", sans-serif;
-    max-width: 100%;
-    margin: 0 auto;
-    width: 1200px;
-  }
-  
-  .users-table-header, .table-row {
-    display: flex;
-    align-items: center;
-    background-color: #F5F5F7; /* Light grey background */
-    padding: 20px;
-    border-bottom: 2px solid #E0E0E0; /* Light border for separation */
+  font-family: "Roboto", sans-serif;
+   max-width: 100%;
+   margin: 0 auto;
+   width: 1200px;
+ }
+ 
+ .users-table-header, .table-row {
+   display: flex;
+   align-items: center;
+   background-color: #F5F5F7; 
+   padding: 20px;
+   border-bottom: 2px solid #E0E0E0; 
 
-  }
-  
-  .users-table-header {
-  font-weight: bold; 
-    color: #333; /* Dark text for headers */
-    /* background-color: rgba(47, 128, 237, 0.10); */
-    background-color: #ddde99;
-    border-radius: 10px;
-  }
-  
-  .header-item, .row-item {
-    flex: 1;
-    text-align: left;
-    padding: 0 10px;
-    
-  }
-  
-  .users-table-body .table-row {
-    background-color: #F5F5F5; /* White background for rows */
-    transition: background-color 0.3s;
-    
-    border: none;
-  }
-  
-  .users-table-body .table-row:nth-child(odd) {
-    background-color: #F5F5F5; /* White background for rows */
-  }
-  
-  .users-table-body .table-row:hover {
-    background-color: #EDEDEF; /* Hover effect */
-  }
+ }
+ 
+ .users-table-header {
+ font-weight: bold; 
+   color: #333; 
+   
+   background-color: #ddde99;
+   border-radius: 10px;
+ }
+ 
+ .header-item, .row-item {
+   flex: 1;
+   text-align: left;
+   padding: 0 10px;
+   
+ }
+ 
+ .users-table-body .table-row {
+   background-color: #F5F5F5; 
+   transition: background-color 0.3s;
+   
+   border: none;
+ }
+ 
+ .users-table-body .table-row:nth-child(odd) {
+   background-color: #F5F5F5; 
+ }
+ 
+ .users-table-body .table-row:hover {
+   background-color: #EDEDEF; 
+ }
 
-  .select-column{
-    width: 1px;
-  }
+ .select-column{
+   width: 1px;
+ }
 
-  /* Adjust the flex property for select-column */
+ 
 .select-column {
-  flex: 0 0 auto; /* Do not grow, do not shrink, base width auto */
-  width: 50px; /* Set a base width for your select column */
+ flex: 0 0 auto; 
+ width: 50px; 
 }
 
-/* Centering the checkbox inside the select-column */
+
 .select-column input[type="checkbox"] {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+ margin-left: auto;
+ margin-right: auto;
+ display: block;
 }
 
 .buttons-container {
-  display: flex;
-  gap: 10px; /* Adjust the gap to your preference */
-  padding: 10px;
+ display: flex;
+ gap: 10px; 
+ padding: 10px;
 }
 
 
 
-/* Update your .row-item to handle the flex layout with images */
 
 
-/* Update your .users-table-header and .table-row to better handle padding and alignment */
+
+
 .users-table-header, .table-row {
-  display: flex;
-  align-items: center;
-  background-color: #F5F5F7; /* Light grey background */
-  padding: 10px; /* Reduced padding */
-  border-bottom: 2px solid #E0E0E0; /* Light border for separation */
+ display: flex;
+ align-items: center;
+ background-color: #F5F5F7; 
+ padding: 10px; 
+ border-bottom: 2px solid #E0E0E0; 
 }
 
-/* ... rest of your styles ... */
 
-/* Kontener dla wyszukiwarki i przycisków */
+
+
 .search-and-buttons-container {
-  display: flex;
-  align-items: center; /* Wyrównanie elementów pionowo */
-  justify-content: space-between; /* Rozłożenie elementów na całej dostępnej szerokości */
+ display: flex;
+ align-items: center; 
+ justify-content: space-between; 
 }
 
-/* Styl dla SearchBar */
+
 .search-bar {
-  flex-grow: 1; /* Pozwala wyszukiwarce rozciągnąć się, aby zająć dostępną przestrzeń */
+ flex-grow: 1; 
 }
 
-/* Kontener dla przycisków */
+
 .buttons-container {
-  display: flex;
-  align-items: center; /* To powinno już być ustawione, ale warto upewnić się */
+ display: flex;
+ align-items: center; 
 }
 
-/* Przyciski */
+
 .remove-button, .filter-button {
-  /* Twoje istniejące style */
-  height: 38px; /* Przykładowa wysokość, dostosuj do wysokości SearchBar */
-  margin-left: 8px; /* Dostosuj według potrzeb */
+ 
+ height: 38px; 
+ margin-left: 8px; 
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+ from { opacity: 0; }
+ to { opacity: 1; }
 }
 
 .fade-in {
-  animation: fadeIn 1s ease-in-out forwards;
-  opacity: 0; /* Start with an invisible state */
+ animation: fadeIn 1s ease-in-out forwards;
+ opacity: 0; 
 }

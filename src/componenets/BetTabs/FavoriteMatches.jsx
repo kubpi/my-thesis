@@ -3,13 +3,9 @@ import { FavoritesContext } from "../../Context/FavoritesContext";
 import RemoveButton from "./RemoveButton";
 import SearchBar from "../SearchingComponents/SearchBar";
 import "../../css/FavoriteMatches.css";
-import { Oval, ThreeDots } from "react-loader-spinner";
+import { Oval } from "react-loader-spinner";
 import {
   getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
   collection,
   onSnapshot,
   where,
@@ -20,35 +16,28 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 export function FavoriteMatches() {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
-
   const { favorites, removeFavorite } = useContext(FavoritesContext);
   const [checkedIds, setCheckedIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [favoritesMatches, setFavoritesMatches] = useState([]);
   const [filteredFavorites, setFilteredFavorites] = useState(favoritesMatches);
-
-  console.log(favoritesMatches);
-
   const [currentTime, setCurrentTime] = useState(new Date());
-
   const [tournamentLogos, setTournamentLogos] = useState({});
-
   const [homeTeamLogo, setHomeTeamLogo] = useState("");
   const [awayTeamLogo, setAwayTeamLogo] = useState("");
+
   const onImageLoad = () => {
     setLoadedImageCount((prevCount) => prevCount + 1);
   };
 
   useEffect(() => {
     if (loadedImageCount === favoritesMatches.length * 3) {
-      // Assuming 3 images per match
       setTimeout(() => {
-        setAllImagesLoaded(true); // Set the state to true after 1 second delay
-      }, 700); // Delay of 1 second
+        setAllImagesLoaded(true);
+      }, 700);
     }
   }, [loadedImageCount, favoritesMatches.length]);
 
-  // Fetch tournament logos
   useEffect(() => {
     const fetchTournamentLogos = async () => {
       const storage = getStorage();
@@ -66,7 +55,6 @@ export function FavoriteMatches() {
           logoUrls[id] = url;
         } catch (error) {
           console.error("Error fetching tournament logo: ", error);
-          // Handle any errors here, such as setting a default image
         }
       }
 
@@ -93,7 +81,6 @@ export function FavoriteMatches() {
           logoUrls[id] = url;
         } catch (error) {
           console.error("Error fetching tournament logo: ", error);
-          // Handle any errors here, such as setting a default image
         }
       }
 
@@ -120,7 +107,6 @@ export function FavoriteMatches() {
           logoUrls[id] = url;
         } catch (error) {
           console.error("Error fetching tournament logo: ", error);
-          // Handle any errors here, such as setting a default image
         }
       }
 
@@ -135,9 +121,9 @@ export function FavoriteMatches() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60000); // aktualizacja co 1 minutę
+    }, 60000);
 
-    return () => clearInterval(interval); // Czyszczenie interwału
+    return () => clearInterval(interval);
   }, []);
 
   const getTimeUntilMatch = (timestamp) => {
@@ -188,7 +174,6 @@ export function FavoriteMatches() {
   }, [favorites]);
 
   useEffect(() => {
-    // Filter matches whenever the searchQuery changes or favorites change
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = favoritesMatches.filter((match) => {
       return (
@@ -196,7 +181,6 @@ export function FavoriteMatches() {
         match.homeTeam.name.toLowerCase().includes(lowercasedQuery) ||
         match.awayTeam.name.toLowerCase().includes(lowercasedQuery) ||
         match.status.description.toLowerCase().includes(lowercasedQuery) ||
-        // Assuming startTimestamp is in a human-readable format or convert it accordingly
         match.startTimestamp.toString().toLowerCase().includes(lowercasedQuery)
       );
     });
@@ -213,16 +197,16 @@ export function FavoriteMatches() {
 
   const handleMasterCheckboxChange = (e) => {
     if (e.target.checked) {
-      setCheckedIds(favoritesMatches.map((match) => match.id)); // Add all match IDs to checkedIds
+      setCheckedIds(favoritesMatches.map((match) => match.id));
     } else {
-      setCheckedIds([]); // Clear all selections
+      setCheckedIds([]);
     }
   };
 
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
-    let month = (date.getMonth() + 1).toString().padStart(2, "0"); // January is 0!
+    let month = (date.getMonth() + 1).toString().padStart(2, "0");
     let year = date.getFullYear();
     let hours = date.getHours().toString().padStart(2, "0");
     let minutes = date.getMinutes().toString().padStart(2, "0");
@@ -246,7 +230,6 @@ export function FavoriteMatches() {
               <SearchBar onSearch={setSearchQuery}></SearchBar>
               <div className="buttons-container">
                 <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-                {/* <FilterButton></FilterButton> */}
               </div>
 
               <div className="users-table-header">
@@ -271,7 +254,7 @@ export function FavoriteMatches() {
                   <div
                     className="table-row fade-in-up"
                     key={user.id}
-                    style={{ animationDelay: `${index * 50}ms` }} // Each row fades in slightly after the previous one
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="row-item select-column">
                       <input
@@ -329,11 +312,7 @@ export function FavoriteMatches() {
             </div>
           ) : (
             <div className="loader-container">
-              <Oval
-                color="#466551" // Kolor animacji
-                height={80}
-                width={80}
-              />
+              <Oval color="#466551" height={80} width={80} />
             </div>
           )}
         </>
@@ -342,10 +321,4 @@ export function FavoriteMatches() {
   );
 }
 
-FavoriteMatches.propTypes = {
-  // If you have any props to pass to this component, define them here
-};
-
 export default FavoriteMatches;
-
-// Add styling as needed in your Matches.css

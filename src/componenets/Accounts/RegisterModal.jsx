@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import Modal from "react-modal";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -70,7 +71,6 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
     }
   };
 
-
   const resetForm = () => {
     setEmail("");
     setPassword("");
@@ -104,7 +104,6 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
       registerError === ""
     );
   };
-  
 
   const closeButtonFun = function () {
     resetForm();
@@ -119,34 +118,47 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
       className="Modal"
       overlayClassName="Overlay"
     >
-      <button onClick={closeButtonFun} className="close-button">&times;</button>
+      <button onClick={closeButtonFun} className="close-button">
+        &times;
+      </button>
       <h2 className="login-header">Załóż nowe konto</h2>
       <form onSubmit={handleRegister}>
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => handleInputChange(e, 'email')}
+          onChange={(e) => handleInputChange(e, "email")}
         />
         {emailError && <div className="email-error-message">{emailError}</div>}
         <input
           type="password"
           placeholder="Hasło"
           value={password}
-          onChange={(e) => handleInputChange(e, 'password')}
+          onChange={(e) => handleInputChange(e, "password")}
         />
         <input
           type="password"
           placeholder="Potwierdź hasło"
           value={confirmPassword}
-          onChange={(e) => handleInputChange(e, 'confirmPassword')}
+          onChange={(e) => handleInputChange(e, "confirmPassword")}
         />
-        {passwordError && <div className="password-error-message">{passwordError}</div>}
-        <button type="submit" disabled={!isFormValid()}>Zarejestruj się</button>
-        {registerError && <div className="register-error-message">{registerError}</div>}
+        {passwordError && (
+          <div className="password-error-message">{passwordError}</div>
+        )}
+        <button type="submit" disabled={!isFormValid()}>
+          Zarejestruj się
+        </button>
+        {registerError && (
+          <div className="register-error-message">{registerError}</div>
+        )}
       </form>
     </Modal>
   );
 };
 
 export default RegisterModal;
+
+RegisterModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+};

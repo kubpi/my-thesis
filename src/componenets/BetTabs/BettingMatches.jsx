@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import "../../css//BettingMatches.css";
 import {
   getFirestore,
@@ -8,7 +9,7 @@ import {
   collection,
   onSnapshot,
   where,
-  query
+  query,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import PodiumForFriendsBets from "../Podium/PodiumForFriendsBets";
@@ -22,7 +23,6 @@ const BettingMatches = ({
   isBetClosed,
   activeTab,
 }) => {
-  console.log(selectedMatchesId);
   const [matchesBetting, setMatchesBetting] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [nextMatchTime, setNextMatchTime] = useState(null);
@@ -38,6 +38,7 @@ const BettingMatches = ({
   const [tournamentLogos, setTournamentLogos] = useState({});
   const [homeTeamLogo, setHomeTeamLogo] = useState("");
   const [awayTeamLogo, setAwayTeamLogo] = useState("");
+
   useEffect(() => {
     const savedLogos =
       JSON.parse(localStorage.getItem("tournamentLogos")) || {};
@@ -59,7 +60,7 @@ const BettingMatches = ({
                 `Error fetching logo for tournamentId: ${tournamentId}`,
                 error
               );
-              // Optionally set a default logo URL
+
               return [tournamentId, "default_logo_url.png"];
             })
         );
@@ -76,7 +77,6 @@ const BettingMatches = ({
       setTournamentLogos(newLogos);
     });
 
-    // If logos are already saved, set them directly
     if (Object.keys(savedLogos).length > 0) {
       setTournamentLogos(savedLogos);
     }
@@ -102,7 +102,6 @@ const BettingMatches = ({
                 `Error fetching logo for teamId: ${homeTeamId}`,
                 error
               );
-              // Optionally set a default logo URL
               return [homeTeamId, "default_logo_url.png"];
             })
         );
@@ -119,7 +118,6 @@ const BettingMatches = ({
       setHomeTeamLogo(newLogos);
     });
 
-    // If logos are already saved, set them directly
     if (Object.keys(savedLogos).length > 0) {
       setHomeTeamLogo(savedLogos);
     }
@@ -145,7 +143,6 @@ const BettingMatches = ({
                 `Error fetching logo for teamId: ${awayTeamId}`,
                 error
               );
-              // Optionally set a default logo URL
               return [awayTeamId, "default_logo_url.png"];
             })
         );
@@ -170,14 +167,10 @@ const BettingMatches = ({
 
   async function fetchTabsWithTabId(tabId, participants) {
     const firestore = getFirestore();
-
-    // Map over the participants and create a promise for each query
     const queries = participants.map(async (user) => {
       const userBettingTabsRef = doc(firestore, "userBettingTabs", user.uid);
       const docSnap = await getDoc(userBettingTabsRef);
-
       if (docSnap.exists() && docSnap.data().tabs) {
-        // Find the tab with the matching tabId
         return {
           userUid: user.uid,
           userName: user.displayName,
@@ -188,16 +181,14 @@ const BettingMatches = ({
       }
     });
 
-    // Wait for all queries to complete
     const tabs = await Promise.all(queries);
 
-    // Filter out any undefined or null results
     return tabs.filter((tab) => tab != null);
   }
 
   useEffect(() => {
     if (activeTab && activeTab.participants) {
-      const tabIdToSearch = activeTab.id; // Use the actual tab id you're searching for
+      const tabIdToSearch = activeTab.id;
       fetchTabsWithTabId(tabIdToSearch, activeTab.participants).then((tabs) => {
         setFriendGamesTabs(tabs);
       });
@@ -206,13 +197,10 @@ const BettingMatches = ({
 
   console.log(friendGamesTabs);
 
-  // Oblicz sumę punktów
   const totalPoints = matchesBetting.reduce(
     (sum, match) => sum + (match.points || 0),
     0
   );
-
-  // Aktualizacja czasu do rozpoczęcia najbliższego meczu
 
   useEffect(() => {
     if (matchesBetting.length > 0) {
@@ -221,9 +209,8 @@ const BettingMatches = ({
       );
       setClosestMatch(closest);
     }
-  }, [matchesBetting]); // Add matchesB
+  }, [matchesBetting]);
 
-  // State to track whether betting time has expired
   const [bettingTimeExpired, setBettingTimeExpired] = useState(false);
 
   useEffect(() => {
@@ -232,14 +219,12 @@ const BettingMatches = ({
     }
   }, [timeUntilNextMatch]);
 
-  // Separate useEffect to handle changes in 'betClosed'
   useEffect(() => {
     if (
       closestMatch &&
       (closestMatch.match.status.type === "inprogress" ||
         closestMatch.match.status.type === "finished")
     ) {
-      // Perform any actions needed when betting is closed
       onSaveBet();
     }
   }, []);
@@ -249,7 +234,6 @@ const BettingMatches = ({
 
     const calculateNextMatchTime = () => {
       if (matchesBetting.length > 0 && closestMatch && closestMatch.match) {
-        // Make sure closestMatch and its match property are defined
         const nextMatchDate = new Date(
           closestMatch.match.startTimestamp * 1000
         );
@@ -304,7 +288,7 @@ const BettingMatches = ({
       };
 
       updateTimer();
-      const interval = setInterval(updateTimer, 60000); // aktualizacja co 1 minutę
+      const interval = setInterval(updateTimer, 60000);
 
       return () => clearInterval(interval);
     }
@@ -313,9 +297,9 @@ const BettingMatches = ({
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60000); // aktualizacja co 1 minutę
+    }, 60000);
 
-    return () => clearInterval(interval); // Czyszczenie interwału
+    return () => clearInterval(interval);
   }, []);
 
   const getTimeUntilMatch = (timestamp) => {
@@ -337,7 +321,7 @@ const BettingMatches = ({
   const convertDate = (timestamp) => {
     let date = new Date(timestamp * 1000);
     let day = date.getDate().toString().padStart(2, "0");
-    let month = (date.getMonth() + 1).toString().padStart(2, "0"); // January is 0!
+    let month = (date.getMonth() + 1).toString().padStart(2, "0");
     let year = date.getFullYear();
     let hours = date.getHours().toString().padStart(2, "0");
     let minutes = date.getMinutes().toString().padStart(2, "0");
@@ -345,7 +329,6 @@ const BettingMatches = ({
   };
 
   const handleSaveBet = () => {
-    // Call the onSaveBet function passed from TabsBar
     onSaveBet();
   };
 
@@ -354,7 +337,7 @@ const BettingMatches = ({
 
   console.log(user.uid);
   console.log(activeTab);
-  // Check if there's a received invitation
+
   useEffect(() => {
     if (
       activeTab.invitations &&
@@ -365,17 +348,13 @@ const BettingMatches = ({
     }
   }, [activeTab, user.uid]);
 
-  // Handle Accept
-  // Handle Accept
   const handleAccept = async () => {
     const firestore = getFirestore();
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
     try {
-      // Update the current user's invitation status to 'accepted'
       await updateInvitationStatus(userBettingTabRef, "accepted");
 
-      // Update the invitation status for other participants
       for (const participant of activeTab.participants) {
         if (participant.uid !== user.uid) {
           const participantTabRef = doc(
@@ -394,7 +373,6 @@ const BettingMatches = ({
     }
   };
 
-  // Function to update the invitation status
   const updateInvitationStatus = async (tabRef, status) => {
     const docSnap = await getDoc(tabRef);
     if (docSnap.exists()) {
@@ -407,25 +385,18 @@ const BettingMatches = ({
     }
   };
 
-  // Inside BettingMatches component
-
-  // Handle Reject
-  // Handle Reject
   const handleReject = () => {
     const firestore = getFirestore();
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
-    // Update the invitation status to 'rejected' for the current user
     getDoc(userBettingTabRef).then((docSnap) => {
       if (docSnap.exists()) {
         let tabs = docSnap.data().tabs;
         let tabToUpdateIndex = tabs.findIndex((tab) => tab.id === activeTab.id);
 
         if (tabToUpdateIndex !== -1) {
-          // Update the invitation status to 'rejected'
           tabs[tabToUpdateIndex].invitations[user.uid].status = "rejected";
 
-          // Save the updated tabs back to Firestore for the current user
           updateDoc(userBettingTabRef, { tabs })
             .then(() => {
               console.log("Invitation rejected by the user.");
@@ -436,7 +407,6 @@ const BettingMatches = ({
       }
     });
 
-    // Update the status in all participants' tabs to reflect the rejection
     activeTab.participants.forEach((participant) => {
       if (participant.uid !== user.uid) {
         const participantTabRef = doc(
@@ -445,7 +415,6 @@ const BettingMatches = ({
           participant.uid
         );
 
-        // Fetch the current participant's betting tabs
         getDoc(participantTabRef).then((participantDocSnap) => {
           if (participantDocSnap.exists()) {
             let participantTabs = participantDocSnap.data().tabs;
@@ -454,12 +423,10 @@ const BettingMatches = ({
             );
 
             if (participantTabToUpdateIndex !== -1) {
-              // Update the invitation status to 'rejected'
               participantTabs[participantTabToUpdateIndex].invitations[
                 user.uid
               ].status = "rejected";
 
-              // Save the updated tabs back to Firestore for the participant
               updateDoc(participantTabRef, { tabs: participantTabs })
                 .then(() => {
                   console.log(
@@ -489,7 +456,7 @@ const BettingMatches = ({
 
   const handleDeleteBet = () => {
     setShowDeleteConfirmationModal(true);
-    setSelectedBetIdForDeletion(activeTab.id); // Zakładając, że id zakładu do usunięcia to 'activeTab.id'
+    setSelectedBetIdForDeletion(activeTab.id);
   };
 
   const confirmDeleteBet = async () => {
@@ -499,14 +466,12 @@ const BettingMatches = ({
     const userBettingTabRef = doc(firestore, "userBettingTabs", user.uid);
 
     try {
-      // Pobierz aktualne zakładki
       const docSnap = await getDoc(userBettingTabRef);
       if (docSnap.exists()) {
         let tabs = docSnap.data().tabs;
-        // Usuń zakład o wybranym ID
+
         tabs = tabs.filter((tab) => tab.id !== selectedBetIdForDeletion);
 
-        // Zaktualizuj zakładki w Firestore
         await updateDoc(userBettingTabRef, { tabs });
         console.log("Bet deleted successfully.");
       }
@@ -514,7 +479,6 @@ const BettingMatches = ({
       console.error("Error deleting bet: ", error);
     }
 
-    // Zamknij modal i wyczyść stan
     setShowDeleteConfirmationModal(false);
     setSelectedBetIdForDeletion(null);
   };
@@ -534,7 +498,6 @@ const BettingMatches = ({
         const q = query(matchesRef, where("id", "==", match.id));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           let newMatches = {};
-          let matchess = [];
           querySnapshot.forEach((doc) => {
             const matchData = doc.data();
             newMatches = { match: matchData, ...match };
@@ -561,29 +524,26 @@ const BettingMatches = ({
   const creator = activeTab.participants.filter(
     (creator) => creator.uid === activeTab.creator
   );
-  // Find the user(s) who have rejected the invitation
+
   const rejectedUsers = activeTab.participants.filter(
     (participant) =>
       activeTab.invitations[participant.uid]?.status === "rejected"
   );
 
-  // Extract the display names of the rejected users
   const rejectedUserNames = rejectedUsers.map(
     (user) => user.displayName || user.email.split("@")[0]
   );
-  // Find the users who have not yet accepted the invitation
+
   const pendingInvitations = activeTab.participants.filter(
     (participant) =>
       participant.uid !== activeTab.creator &&
       activeTab.invitations[participant.uid]?.status !== "accepted"
   );
 
-  // Extract the display names of the users with pending invitations
   const pendingUserNames = pendingInvitations.map(
     (user) => user.displayName || user.email.split("@")[0]
   );
 
-  // Check if all invitations have been accepted
   const allInvitationsAccepted = Object.values(activeTab.invitations).every(
     (invitation) => invitation.status === "accepted"
   );
@@ -591,19 +551,19 @@ const BettingMatches = ({
   console.log(matchesBetting);
   console.log(friendGamesTabs);
 
-  const kuba = [];
-  const buba = [];
+  const tab1 = [];
+  const tab2 = [];
 
   matchesBetting.forEach((tab) => {
     console.log(tab);
 
-    kuba.push({ ...tab, userUid: user.uid });
+    tab1.push({ ...tab, userUid: user.uid });
   });
 
   friendGamesTabs.forEach((tab) => {
     tab?.tab?.matches.forEach((mecz) => {
       if (tab.userUid !== user.uid)
-        buba.push({
+        tab2.push({
           ...mecz,
           userUid: tab.userUid,
           displayName: tab.userName,
@@ -611,11 +571,11 @@ const BettingMatches = ({
     });
   });
 
-  console.log(buba);
-  console.log(kuba);
+  console.log(tab2);
+  console.log(tab1);
 
-  kuba.forEach((tab) => {
-    const matchingMecze = buba.filter((mecz) => tab.id === mecz.id);
+  tab1.forEach((tab) => {
+    const matchingMecze = tab2.filter((mecz) => tab.id === mecz.id);
     if (matchingMecze.length > 0) {
       tab.mecze = matchingMecze.map((matchingMecz) => ({
         userUid: matchingMecz.userUid,
@@ -627,7 +587,7 @@ const BettingMatches = ({
     }
   });
 
-  console.log(kuba);
+  console.log(tab1);
   console.log(matchesBetting);
   const allMatchesFinished = matchesBetting.every(
     (match) => match.match.status.type === "finished"
@@ -669,8 +629,6 @@ const BettingMatches = ({
                         <span className="opponent-name">
                           {userParticipant?.displayName}
                         </span>
-                        {/* If you have a remove functionality add it here /}
-{/ <button className="opponent-remove-btn">Usuń</button> */}
                       </li>
                     );
                   }
@@ -681,37 +639,18 @@ const BettingMatches = ({
           )}
 
           <div className="users-table">
-            {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
-                <div className="buttons-container">
-                  <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-                  <FilterButton></FilterButton>
-                </div> */}
-
             <div className="users-table-header betting-text-style">
               <div className="header-item">Liga</div>
               <div className="header-item">
                 Gospodarze <div>Goście</div>
               </div>
               <div className="header-item">Obstawiony wynik</div>
-              {/* {friendGamesTabs &&
-                friendGamesTabs?.map(
-                  (userParticipant) =>
-                    userParticipant.userUid !== user.uid && (
-                      <div
-                        className="header-item"
-                        key={userParticipant?.userUid}
-                      >
-                        {userParticipant?.userName}
-                      </div>
-                    )
-                )} */}
               <div className="header-item">Wynik meczu</div>
               <div className="header-item">Data</div>
-
               <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body betting-text-style">
-              {kuba.map((user, index) => (
+              {tab1.map((user) => (
                 <>
                   <div className="table-row " key={user.match.id}>
                     <div className="row-item">
@@ -755,17 +694,6 @@ const BettingMatches = ({
                         )}
                       </>
                     </div>
-                    {/* {(user?.mecze?.map((mecz, index) => (
-                      mecz.betHomeScore && mecz.betAwayScore ?(
-                      <div className="row-item" key={index}>
-                        <div>{mecz.betHomeScore}</div>
-                        <div>{mecz.betAwayScore}</div>
-                        </div>
-                      )
-                    : (
-                          <div>Nieobstawiono</div>
-                        ))))} */}
-
                     <div className="row-item">
                       {user.match.status.type !== "notstarted" ? (
                         <>
@@ -829,7 +757,7 @@ const BettingMatches = ({
             user={user}
             activeTab={activeTab}
             friendGamesTabs={friendGamesTabs}
-            kuba={kuba}
+            tab1={tab1}
             closestMatch={closestMatch}
             isBetClosed={isBetClosed}
             allMatchesFinished={allMatchesFinished}
@@ -841,7 +769,7 @@ const BettingMatches = ({
             awayTeamLogo={awayTeamLogo}
           ></OtherUsersBettings>
           <h2 className="podium-title podium-title1">Ranking:</h2>
-          <PodiumForFriendsBets kuba={kuba}></PodiumForFriendsBets>
+          <PodiumForFriendsBets tab1={tab1}></PodiumForFriendsBets>
         </>
       ) : (
         <>
@@ -866,12 +794,6 @@ const BettingMatches = ({
           )}
 
           <div className="users-table">
-            {/* <SearchBar onSearch={setSearchQuery}></SearchBar>
-                <div className="buttons-container">
-                  <RemoveButton onClick={handleRemoveClick}></RemoveButton>{" "}
-                  <FilterButton></FilterButton>
-                </div> */}
-
             <div className="users-table-header betting-text-style">
               <div className="header-item">Liga</div>
               <div className="header-item">
@@ -885,7 +807,7 @@ const BettingMatches = ({
               <div className="header-item">Punkty</div>
             </div>
             <div className="users-table-body betting-text-style">
-              {matchesBetting.map((user, index) => (
+              {matchesBetting.map((user) => (
                 <div className="table-row " key={user.match.id}>
                   <div className="row-item">
                     <img
@@ -1044,7 +966,7 @@ const BettingMatches = ({
           </div>
         </div>
       )}
-      {/* Modal do potwierdzenia usunięcia zakładu */}
+
       {showDeleteConfirmationModal && (
         <div className="modal-backdrop">
           <div className="modal-content betting-text-style">
@@ -1071,3 +993,22 @@ const BettingMatches = ({
 };
 
 export default BettingMatches;
+
+BettingMatches.propTypes = {
+  selectedMatchesId: PropTypes.array,
+  onBetClick: PropTypes.func.isRequired,
+  onSaveBet: PropTypes.func.isRequired,
+  isBetClosed: PropTypes.bool,
+  activeTab: PropTypes.shape({
+    id: PropTypes.string,
+    creator: PropTypes.string,
+    participants: PropTypes.arrayOf(
+      PropTypes.shape({
+        uid: PropTypes.string,
+        displayName: PropTypes.string,
+      })
+    ),
+    invitations: PropTypes.object,
+    isGameWithFriends: PropTypes.bool,
+  }),
+};

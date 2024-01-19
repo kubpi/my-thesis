@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
+import { useState, useEffect } from "react";
 import {
   collection,
   query,
@@ -8,15 +9,10 @@ import {
 } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import "../../css/CreateTeamModal.css"; // Upewnij się, że ścieżka jest poprawna
+import "../../css/CreateTeamModal.css";
 import { getAuth } from "firebase/auth";
 
-const CreateTeamModal = ({
-  isOpen,
-  onClose,
-  onCreateTab,
-  onUsersSelected,
-}) => {
+const CreateTeamModal = ({ isOpen, onClose, onUsersSelected }) => {
   const auth = getAuth();
   const loggedInUserId = auth.currentUser;
   console.log(loggedInUserId);
@@ -28,7 +24,6 @@ const CreateTeamModal = ({
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
-    // Usuń komunikat o błędzie, gdy użytkownik wprowadza nowe dane do pola wyszukiwania
     setErrorMessage("");
   };
 
@@ -64,11 +59,11 @@ const CreateTeamModal = ({
   const handleAddUserToTab = (user) => {
     setSelectedUsers((prevUsers) => {
       if (prevUsers.find((u) => u.uid === user.uid)) {
-        return prevUsers; // User is already selected
+        return prevUsers;
       }
-      setSearchTerm(""); // Clear the search term
-      setSearchResults([]); // Clear the search results
-      return [...prevUsers, user]; // Add new user to the list
+      setSearchTerm("");
+      setSearchResults([]);
+      return [...prevUsers, user];
     });
   };
 
@@ -98,7 +93,6 @@ const CreateTeamModal = ({
     setSelectedUsers(selectedUsers.filter((user) => user.uid !== userId));
   };
 
-  // Efekt, który wywołuje się przy zmianie searchTerm i czyści komunikat o błędzie
   useEffect(() => {
     setErrorMessage("");
   }, [searchTerm]);
@@ -176,3 +170,9 @@ const CreateTeamModal = ({
 };
 
 export default CreateTeamModal;
+
+CreateTeamModal.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onUsersSelected: PropTypes.func,
+};

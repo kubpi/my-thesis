@@ -1,12 +1,18 @@
-import { createContext, useState, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import PropTypes from "prop-types";
+import { createContext, useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 export const FavoritesContext = createContext();
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
-  //const [favoritesMatches, setFavoritesMatches] = useState([]);
   const firestore = getFirestore();
   const auth = getAuth();
 
@@ -14,7 +20,7 @@ export const FavoritesProvider = ({ children }) => {
     const fetchFavorites = async () => {
       const user = auth.currentUser;
       if (user) {
-        const docRef = doc(firestore, 'userFavorites', user.uid);
+        const docRef = doc(firestore, "userFavorites", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -22,23 +28,18 @@ export const FavoritesProvider = ({ children }) => {
         }
       }
 
-      console.log(favorites)
+      console.log(favorites);
     };
 
     fetchFavorites();
   }, [auth.currentUser]);
 
- 
-  
   const addFavorite = async (match) => {
     const user = auth.currentUser;
     if (user) {
-
       const newFavorites = [...favorites, match.id];
-      //console.log(newFavorites)
       setFavorites(newFavorites);
-
-      const docRef = doc(firestore, 'userFavorites', user.uid);
+      const docRef = doc(firestore, "userFavorites", user.uid);
       await setDoc(docRef, { matches: newFavorites }, { merge: true });
     }
   };
@@ -46,33 +47,34 @@ export const FavoritesProvider = ({ children }) => {
   const removeFavorite = async (matchIds) => {
     const user = auth.currentUser;
     if (user) {
-      // Filter out the matches that are not in the matchIds array
-      const newFavorites = favorites.filter((match) => !matchIds.includes(match));
+      const newFavorites = favorites.filter(
+        (match) => !matchIds.includes(match)
+      );
       setFavorites(newFavorites);
-  
-      // Get a reference to the user's favorites document
-      const docRef = doc(firestore, 'userFavorites', user.uid);
-  
-      // Update the document in Firestore
+      const docRef = doc(firestore, "userFavorites", user.uid);
       await updateDoc(docRef, { matches: newFavorites });
     }
   };
-  
+
   const removeFavoriteid = async (matchId) => {
-  const user = auth.currentUser;
-  if (user) {
-    const newFavorites = favorites.filter((match) => match !== matchId);
-    setFavorites(newFavorites);
+    const user = auth.currentUser;
+    if (user) {
+      const newFavorites = favorites.filter((match) => match !== matchId);
+      setFavorites(newFavorites);
 
-    const docRef = doc(firestore, 'userFavorites', user.uid);
-    await updateDoc(docRef, { matches: newFavorites });
-  }
-};
-
+      const docRef = doc(firestore, "userFavorites", user.uid);
+      await updateDoc(docRef, { matches: newFavorites });
+    }
+  };
 
   return (
-    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite,removeFavoriteid }}>
+    <FavoritesContext.Provider
+      value={{ favorites, addFavorite, removeFavorite, removeFavoriteid }}
+    >
       {children}
     </FavoritesContext.Provider>
   );
+};
+FavoritesProvider.propTypes = {
+  children: PropTypes.node,
 };

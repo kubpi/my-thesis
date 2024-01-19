@@ -7,7 +7,7 @@ import { getAuth } from "firebase/auth";
 
 export function HeroSection() {
   const auth = getAuth();
-  const [user, loading, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
   function handleRegisterLink() {
@@ -15,10 +15,6 @@ export function HeroSection() {
     setRegisterModalIsOpen(true);
   }
 
-  function handleForgotPassword() {
-    // Logic for forgot password
-    // Possibly set another modal state for forgot password or redirect
-  }
   return (
     <>
       <div className="container15">
@@ -73,7 +69,6 @@ export function HeroSection() {
         isOpen={loginModalIsOpen}
         onRequestClose={() => setLoginModalIsOpen(false)}
         onRegisterClick={handleRegisterLink}
-        onForgotPasswordClick={handleForgotPassword}
       />
       <RegisterModal
         isOpen={registerModalIsOpen}

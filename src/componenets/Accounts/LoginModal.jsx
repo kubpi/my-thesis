@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Modal from "react-modal";
 import { useState } from "react";
 import {
@@ -151,3 +152,9 @@ const LoginModal = ({ isOpen, onRequestClose, onRegisterClick }) => {
 };
 
 export default LoginModal;
+
+LoginModal.propTypes = {
+  isOpen: PropTypes.bool,
+  onRequestClose: PropTypes.func,
+  onRegisterClick: PropTypes.func,
+};

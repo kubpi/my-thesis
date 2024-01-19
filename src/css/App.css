@@ -59,11 +59,6 @@ body {
   color: white;
 }
 
-/* .nav-item{
-  padding: 0px 10px;
- 
-} */
-
 .navbar-brand {
   color: #fff;
   font-size: 20px;
@@ -162,7 +157,6 @@ body {
 .upcomming-matches {
   color: #fff;
   text-align: center;
-  /* h2 */
   font-family: Outfit;
   font-size: 57px;
   font-style: normal;
@@ -175,12 +169,11 @@ body {
   color: #fff;
   text-align: center;
 
-  /* SUBHEADER */
   font-family: Outfit;
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
-  line-height: 27.5px; /* 152.778% */
+  line-height: 27.5px;
   letter-spacing: 1.44px;
   text-transform: uppercase;
 }

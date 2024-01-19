@@ -1,4 +1,3 @@
-/* Main container for everything */
 .main-container {
   background-color: #fff;
   padding: 40px;
@@ -11,33 +10,29 @@
   align-items: center;
 }
 
-/* Podium title styles */
 .podium-title {
   font-size: 28px;
-  color: #030303; /* Gold color for the title */
+  color: #030303;
   text-align: center;
-  margin-bottom: 30px; /* Space below the title */
+  margin-bottom: 30px;
 }
 
-/* Podium styles */
 .podium-container {
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* Align the bases of the podium steps */
+  align-items: flex-end;
   gap: 15px;
   margin-top: 30px;
 }
 
-/* Podium styles */
 .podium {
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* Aligns the base of podium steps */
+  align-items: flex-end;
   gap: 15px;
   margin-top: 30px;
 }
 
-/* Individual podium places */
 .podium-place {
   display: flex;
   flex-direction: column;
@@ -46,32 +41,31 @@
   border-radius: 10px;
   padding: 20px;
   position: relative;
-  background-color: #e0e0e0; /* Neutral background color */
+  background-color: #e0e0e0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .podium-place:hover {
-  transform: scale(1.05); /* Slightly scale up the podium place */
-  z-index: 10; /* Raise above other elements */
+  transform: scale(1.05);
+  z-index: 10;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
-/* Heights for podium places */
+
 .first-place {
   height: 250px;
-  order: 2; /* Centers the first place */
+  order: 2;
 }
 
 .second-place {
   height: 200px;
-  order: 1; /* Positions the second place to the left */
+  order: 1;
 }
 
 .third-place {
   height: 200px;
-  order: 3; /* Positions the third place to the right */
+  order: 3;
 }
 
-/* Colors for each place */
 .first-place {
   background-color: #ffd700;
 }
@@ -82,7 +76,6 @@
   background-color: #cd7f32;
 }
 
-/* Number styles */
 .podium-number {
   position: absolute;
   bottom: 100%;
@@ -93,10 +86,10 @@
   transition: transform 0.3s ease-in-out, text-shadow 0.3s ease;
 }
 .podium-place:hover .podium-number {
-  transform: translateY(-5px); /* Move the number slightly up */
+  transform: translateY(-5px);
   text-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
 }
-/* Styles for the list of remaining places */
+
 .additional-rankings {
   width: 100%;
   list-style: none;
@@ -110,7 +103,7 @@
   justify-content: space-between;
   padding: 10px;
   margin-bottom: 5px;
-  background-color: #f7f7f7; /* Light gray background */
+  background-color: #f7f7f7;
   border-radius: 5px;
   transition: all 0.3s;
 }
@@ -140,9 +133,8 @@
   font-size: 16px;
   font-weight: bold;
   color: #333;
-
 }
-.points{
+.points {
   margin-right: 10px;
 }
 .pagination-controls {
@@ -189,43 +181,43 @@
   }
 
   .pagination-controls button {
-    margin-bottom: 10px; /* Space between buttons */
+    margin-bottom: 10px;
   }
 }
-/* Podium places styles for responsive layout */
+
 @media (max-width: 768px) {
   .main-container {
     padding: 20px;
   }
 
-  .podium-container, .podium {
+  .podium-container,
+  .podium {
     flex-direction: column;
-    align-items: center; /* Center align the podium places */
+    align-items: center;
   }
 
-  /* Adjust the order when in single-column layout */
-  .first-place, .second-place, .third-place {
-    order: 0; /* Reset the order for all places */
-    height: auto; /* Allow height to adjust to content */
-    margin-bottom: 15px; /* Add space between the podium places */
+  .first-place,
+  .second-place,
+  .third-place {
+    order: 0;
+    height: auto;
+    margin-bottom: 15px;
   }
 
-  /* Restyle the podium number to fit the new layout */
   .podium-number {
-    position: static; /* Take it out of absolute positioning */
-    font-size: 1.5em; /* Adjust the font size */
-    margin-bottom: 5px; /* Add space below the number */
+    position: static;
+    font-size: 1.5em;
+    margin-bottom: 5px;
   }
 
-  /* Restyle pagination controls for a single-column layout */
   .pagination-controls {
     flex-direction: column;
-    align-items: center; /* Center align the buttons */
+    align-items: center;
   }
 
   .pagination-controls button {
-    width: 100%; /* Full width buttons */
-    margin-bottom: 10px; /* Space between buttons */
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
@@ -236,29 +228,25 @@
 
 .podium-place:hover .rank-name,
 .podium-place:hover .points {
-  color: #212121; /* Darker color for better readability */
-  transform: scale(1.1); /* Slightly scale up the text */
+  color: #212121;
+  transform: scale(1.1);
 }
 
-/* Styling for additional rankings to add a hover effect */
 .additional-place:hover {
-  transform: translateY(-3px); /* Slightly raise the list item */
-  background-color: #eeeeee; /* Slightly lighter background */
+  transform: translateY(-3px);
+  background-color: #eeeeee;
 }
 
-/* Pagination button enhancements */
 .pagination-controls button:hover {
-  transform: scale(1.1); /* Slightly scale up the button */
+  transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Active pagination button styles to make it stand out more */
 .pagination-controls button.active {
   transform: scale(1.2);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Add a subtle pulse animation to the first place to draw attention */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0px rgba(255, 215, 0, 0.7);

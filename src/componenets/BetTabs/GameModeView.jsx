@@ -1,6 +1,7 @@
+import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
-import "../../css/GameModeView.css"; // Make sure to create this CSS file with your styles
+import "../../css/GameModeView.css";
 
 const GameModeView = ({ isOpen, onClose, onSelectSolo, onSelectTeam }) => {
   if (!isOpen) return null;
@@ -30,3 +31,10 @@ const GameModeView = ({ isOpen, onClose, onSelectSolo, onSelectTeam }) => {
 };
 
 export default GameModeView;
+
+GameModeView.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onSelectSolo: PropTypes.func,
+  onSelectTeam: PropTypes.func,
+};

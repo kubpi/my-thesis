@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "../../css/TabsBar.css";
 import { useState, useEffect, useContext } from "react";
 import {
@@ -129,7 +130,7 @@ function TabsBar() {
         return tab;
       });
     });
-  }, [favorites.length]); // Dep
+  }, [favorites.length]);
 
   useEffect(() => {
     if (user) {
@@ -387,7 +388,6 @@ function TabsBar() {
           </div>
           <div className="row tab-content r">{renderActiveTabContent()}</div>
         </div>
-        {/* Modal do dodawania nowej zakładki */}
         {isAddTabModalOpen && (
           <div className="modal-backdrop">
             <div className="game-mode-content">
@@ -404,22 +404,20 @@ function TabsBar() {
                     {tab.isGameWithFriends && (
                       <FontAwesomeIcon icon={faUsers} />
                     )}{" "}
-                    {/* Dodajemy ikonę przyjaciół */}
                     {tab.name}
                   </button>
                 ))}
                 <button
                   className="game-mode-button solo"
                   onClick={() => {
-                    setIsGameModeOpen(true); // To open GameModeView
-                    setIsBettingOpen(false); // Ensure BettingView is closed
-                    handleCloseAddTabModal(); // Close modal
+                    setIsGameModeOpen(true);
+                    setIsBettingOpen(false);
+                    handleCloseAddTabModal();
                   }}
                 >
                   Stwórz nowy zakład
                 </button>
               </div>
-              {/* Move the close button here, inside the `game-mode-content` div */}
               <button className="close-button" onClick={handleCloseAddTabModal}>
                 <FontAwesomeIcon icon={faTimes} />
               </button>
@@ -443,7 +441,7 @@ function TabsBar() {
             setSelectedMatches={setSelectedMatches}
             onAddTab={handleAddTabWithMatches}
             onBetClick={handleBetClick}
-            teamUsers={teamUsers} // Pass the selected team users to BettingView
+            teamUsers={teamUsers}
           />
         )}
         {isMatchInputOpen && (
@@ -452,7 +450,6 @@ function TabsBar() {
             match={selectedMatchForBetting}
             onClose={() => setIsMatchInputOpen(false)}
             onSubmitScore={onSubmitScore}
-            // ... Other props as needed ...
           />
         )}
         {isCreateTeamModalOpen && (
@@ -460,7 +457,7 @@ function TabsBar() {
             isOpen={isCreateTeamModalOpen}
             onClose={() => setIsCreateTeamModalOpen(false)}
             onCreateTab={handleAddTabWithMatches}
-            onUsersSelected={handleUsersSelectedForTeam} // Pass the function here
+            onUsersSelected={handleUsersSelectedForTeam}
           />
         )}
       </div>
@@ -470,3 +467,18 @@ function TabsBar() {
 }
 
 export default TabsBar;
+
+TabsBar.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string,
+  }),
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ),
+  onTabClick: PropTypes.func,
+  onTabClose: PropTypes.func,
+};

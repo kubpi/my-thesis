@@ -44,7 +44,6 @@
 
 .team-container:hover {
   background: rgba(65, 90, 74, 0.6);
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .fadeanime {
@@ -74,8 +73,8 @@
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  justify-content: space-between; /* Dodano aby rozdzielić nazwę drużyny i wynik */
-  width: 100%; /* Dodano aby rozciągnąć do maksymalnej szerokości */
+  justify-content: space-between;
+  width: 100%;
 }
 
 .team-logo {
@@ -88,51 +87,46 @@
 .team-name {
   font-size: 20px;
   font-weight: 500;
-  flex: 1; /* Pozwala nazwie drużyny rozciągnąć się */
+  flex: 1;
 }
 
 .round {
   display: flex;
-  align-items: center; /* To zapewnia wyśrodkowanie w pionie */
-  justify-content: center; /* Wyśrodkowanie w poziomie */
+  align-items: center;
+  justify-content: center;
   font-size: 20px;
   font-weight: 500;
   background-color: white;
   color: #689577;
-  padding: 12px 20px 0px 20px; /* Zwiększone padding na górze i zmniejszone na dole */
+  padding: 12px 20px 0px 20px;
   border-radius: 15px;
-  margin: 40px 0 15px 0; /* Zaktualizowany margines */
+  margin: 40px 0 15px 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
 .score {
-  width: 50px; /* ustawić stałą szerokość */
-  height: 50px; /* ustawić stałą wysokość */
-  display: flex; /* dodano aby wyśrodkować tekst w pionie i poziomie */
-  align-items: center; /* wyśrodkowanie pionowe */
-  justify-content: center; /* wyśrodkowanie poziome */
- 
-  /* border-radius: 25px; zaokrąglone rogi */
-  border-radius: 10px; 
-  margin-left: 15px; 
-  font-weight: bold; 
-  color: white; /* biały kolor tekstu */
-  margin: 0 20px; /* Dodano stały margines po wyniku i przed czasem */
-}
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  border-radius: 10px;
+  margin-left: 15px;
+  font-weight: bold;
+  color: white;
+  margin: 0 20px;
+}
 
 .match-time {
   display: flex;
   align-items: center;
   font-size: 20px;
   font-weight: 500;
-  
 }
 
 .clock-icon {
   margin-right: 20px;
-  
 }
 
 .independent-height {
@@ -157,67 +151,62 @@
 }
 
 .match-live {
-  background-color: rgba(0, 64, 255, 0.297)/* Lub jakiś inny kolor dla meczu na żywo */
+  background-color: rgba(0, 64, 255, 0.297);
 }
-
-/* Add this to your Matches.css */
 
 .favorite-button {
   background: none;
   border: none;
   cursor: pointer;
   color: red;
-  font-size: 24px; /* Adjust size as needed */
+  font-size: 24px;
 }
 
 .favorite-button:focus {
   outline: none;
 }
-/* Style for the select dropdown */
+
 .select-league {
   display: block;
-  width: 100%; /* Full width */
-  max-width: 300px; /* Maximum width, adjust as needed */
-  margin: 20px auto; /* Centered with some margin */
-  padding: 10px 15px; /* Padding for better readability */
-  background-color: #689577; /* Background color that matches your theme */
-  color: white; /* Text color */
-  border-radius: 5px; /* Slightly rounded corners */
-  border: 2px solid #456a58; /* Border color slightly darker than the background */
-  font-size: 16px; /* Reasonable font size */
-  cursor: pointer; /* Cursor indicates it's clickable */
-  transition: all 0.3s ease; /* Smooth transition for interactions */
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 10px 15px;
+  background-color: #689577;
+  color: white;
+  border-radius: 5px;
+  border: 2px solid #456a58;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .select-league:hover {
-  background-color: #567e6a; /* Slightly darker on hover */
+  background-color: #567e6a;
 }
 
 .select-league:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow to indicate focus */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-/* If you are using a modern browser, you can also style the dropdown arrow */
 .select-league::-ms-expand {
-  display: none; /* Removes the default arrow in IE */
+  display: none;
 }
 
 .select-league-appearance {
-  -webkit-appearance: none; /* Removes the default arrow in WebKit browsers */
-  -moz-appearance: none; /* Removes the default arrow in Mozilla browsers */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
-  background-image: url('path_to_custom_arrow_icon.svg'); /* Path to your custom arrow icon */
+  background-image: url("path_to_custom_arrow_icon.svg");
   background-repeat: no-repeat;
   background-position: right 10px center;
 }
 
-/* Style for options */
 .select-league option {
-  background-color: white; /* Background color for options */
-  color: #456a58; /* Text color that contrasts with the background */
+  background-color: white;
+  color: #456a58;
 }
-/* NoMatchesTile.css */
 
 .no-matches-tile {
   padding: 20px;
@@ -226,18 +215,18 @@
   color: white;
   border-radius: 10px;
   margin: 20px auto;
-  width: 80%; /* Adjust based on your layout */
+  width: 80%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-/* Style for the "Brak meczów dzisiejszego dnia" message */
+
 .no-matches-info {
   text-align: center;
   font-size: 24px;
   font-weight: 500;
-  color: #456a58; /* Adjust the color to match your theme */
+  color: #456a58;
   margin-top: 20px;
   padding: 20px;
   border-radius: 10px;
-  background-color: #f5f5f5; /* Background color for the message */
+  background-color: #f5f5f5;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

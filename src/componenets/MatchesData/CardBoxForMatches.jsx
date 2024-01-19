@@ -1,64 +1,61 @@
+import PropTypes from "prop-types";
 import "../../css/Matches.css";
 import { Teams } from "./Teams";
 import React, { useEffect, useState } from "react";
-
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "firebase/auth";
-import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export function CardBoxForMatches(props) {
   const auth = getAuth();
-  const [user, loading, error] = useAuthState(auth);
-  const [logos, setLogos] = useState({});
+  const [user] = useAuthState(auth);
 
   const matches = props.matches;
   let tournamentId = props.tournamentId;
 
-  const [tournamentLogo, setTournamentLogo] = useState('');
-console.log(tournamentId)
-useEffect(() => {
-  const fetchTournamentLogo = async () => {
-    // Check if the logo URL is already in local storage
-    const storedLogos = JSON.parse(localStorage.getItem('tournamentLogos')) || {};
-    const storage = getStorage();
+  const [tournamentLogo, setTournamentLogo] = useState("");
+  console.log(tournamentId);
+  useEffect(() => {
+    const fetchTournamentLogo = async () => {
+      const storedLogos =
+        JSON.parse(localStorage.getItem("tournamentLogos")) || {};
+      const storage = getStorage();
 
-    if (storedLogos[props.tournamentId]) {
-      // Use the URL from local storage if it exists
-      setTournamentLogo(storedLogos[props.tournamentId]);
-    } else {
-      // If not, fetch it from Firebase and store it in local storage
-      const logoRef = ref(storage, `tournamentsLogos/${props.tournamentId}.png`);
-      try {
-        const url = await getDownloadURL(logoRef);
-        setTournamentLogo(url);
-        storedLogos[props.tournamentId] = url;
-        localStorage.setItem('tournamentLogos', JSON.stringify(storedLogos));
-      } catch (error) {
-        console.error("Error fetching tournament logo: ", error);
-        // Optionally, set a default logo in case of an error
-        setTournamentLogo('path_to_default_logo.png');
+      if (storedLogos[props.tournamentId]) {
+        setTournamentLogo(storedLogos[props.tournamentId]);
+      } else {
+        const logoRef = ref(
+          storage,
+          `tournamentsLogos/${props.tournamentId}.png`
+        );
+        try {
+          const url = await getDownloadURL(logoRef);
+          setTournamentLogo(url);
+          storedLogos[props.tournamentId] = url;
+          localStorage.setItem("tournamentLogos", JSON.stringify(storedLogos));
+        } catch (error) {
+          console.error("Error fetching tournament logo: ", error);
+
+          setTournamentLogo("path_to_default_logo.png");
+        }
       }
-    }
-  };
+    };
 
-  fetchTournamentLogo();
-}, [props.tournamentId]);
+    fetchTournamentLogo();
+  }, [props.tournamentId]);
 
-
-
-  // Sortowanie meczów, mecze w trakcie będą pierwsze
   const sortedMatches = matches.slice().sort((a, b) => {
     if (a.status.type === "inprogress" && b.status.type !== "inprogress") {
-      return -1; // a przed b
+      return -1;
     } else if (
       a.status.type !== "inprogress" &&
       b.status.type === "inprogress"
     ) {
-      return 1; // b przed a
+      return 1;
     }
-    return 0; // bez zmiany kolejności
+    return 0;
   });
-  // Deklaracja zmiennej do śledzenia poprzedniej kolejki
+
   let prevRound = null;
 
   return (
@@ -68,13 +65,11 @@ useEffect(() => {
         style={{ width: "25rem", background: "#689577", position: "relative" }}
       >
         <div className="football-logo">
-          {/* Use tournamentLogo for the src attribute */}
           <img src={tournamentLogo} alt="Tournament Logo" />
         </div>
 
         <div className="card-body">
           {sortedMatches.map((match) => {
-            // Jeśli bieżąca kolejka jest inna niż poprzednia, ustaw poprzednią kolej na bieżącą i wyświetl nazwę kolejki
             const isNewRound = prevRound !== match?.roundInfo?.round;
             prevRound = match?.roundInfo?.round;
 
@@ -108,8 +103,6 @@ useEffect(() => {
                   ) : (
                     <div></div>
                   )}
-
-                  {/* Filled heart if favorite, empty heart if not */}
                 </button>
                 <Teams
                   homeTeam={match?.homeTeam}
@@ -125,7 +118,6 @@ useEffect(() => {
                   currentPeriodStartTimestamp={
                     match?.time?.currentPeriodStartTimestamp
                   }
-                 
                 />
               </React.Fragment>
             );
@@ -135,8 +127,29 @@ useEffect(() => {
     </>
   );
 }
-
-// CardBoxForMatches.propTypes = {
-//   matches: PropTypes.arrayOf(PropTypes.object).isRequired,
-
-// };
+CardBoxForMatches.propTypes = {
+  matches: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      homeTeam: PropTypes.object,
+      awayTeam: PropTypes.object,
+      homeScore: PropTypes.object,
+      awayScore: PropTypes.object,
+      startTimestamp: PropTypes.number,
+      statusTime: PropTypes.string,
+      time: PropTypes.object,
+      changes: PropTypes.object,
+      status: PropTypes.shape({
+        description: PropTypes.string,
+        type: PropTypes.string.isRequired,
+      }).isRequired,
+      roundInfo: PropTypes.shape({
+        round: PropTypes.number,
+      }),
+    })
+  ).isRequired,
+  tournamentId: PropTypes.string,
+  isFavorite: PropTypes.func,
+  addToFavorites: PropTypes.func,
+  removeFromFavorites: PropTypes.func,
+};
