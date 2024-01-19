@@ -1,3 +1,5 @@
+export const endpoint = "http://localhost:3000/";
+
 export const tournaments = [
   { id: 8, name: "laLiga", season: 52376 },
   { id: 17, name: "premierLeague", season: 52186 },
@@ -14,7 +16,7 @@ export const sendMatches = async (matches, endpoint) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ matches }), // Zserializuj tablicę meczów do formatu JSON
+      body: JSON.stringify({ matches }),
     });
 
     if (!response.ok) {

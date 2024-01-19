@@ -1,7 +1,7 @@
 import { CardBoxForMatches } from "./CardBoxForMatches";
 import { useState, useEffect, useContext } from "react";
 import { DateSlider } from "../Slider/DateSlider";
-import { tournaments, sendMatches } from "../../Services/apiService";
+import { tournaments, sendMatches, endpoint } from "../../Services/apiService";
 import "../../css/Matches.css";
 import { FavoritesContext } from "../../Context/FavoritesContext";
 import {
@@ -33,7 +33,7 @@ export function MatchesSection() {
   const [selectedNextDate, setSelectedNextDate] = useState(apiFormatNextDate);
   const [selectedLeague, setSelectedLeague] = useState("");
 
-  const endpoint = "http://localhost:3000/";
+  
   const handleLeagueSelect = (event) => {
     setSelectedLeague(event.target.value);
   };
