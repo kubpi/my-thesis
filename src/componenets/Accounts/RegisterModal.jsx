@@ -8,8 +8,8 @@ const RegisterModal = ({ isOpen, onRequestClose }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [registerError, setRegisterError] = useState(""); // Dodano nowy stan dla błędów rejestracji
-  const [passwordError, setPasswordError] = useState(""); // Dodano nowy stan dla błędów hasła
+  const [registerError, setRegisterError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const auth = getAuth();
   const firestore = getFirestore();
 

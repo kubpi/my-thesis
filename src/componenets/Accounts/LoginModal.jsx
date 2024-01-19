@@ -9,11 +9,7 @@ import {
 } from "firebase/auth";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 
-const LoginModal = ({
-  isOpen,
-  onRequestClose,
-  onRegisterClick,
-}) => {
+const LoginModal = ({ isOpen, onRequestClose, onRegisterClick }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
@@ -22,19 +18,18 @@ const LoginModal = ({
   const auth = getAuth();
   const firestore = getFirestore();
   const validateEmail = (email) => {
-    if (!email.includes('@')) {
-      setEmailError('Nieprawidłowy format e-maila.');
+    if (!email.includes("@")) {
+      setEmailError("Nieprawidłowy format e-maila.");
       return false;
     } else {
-      setEmailError('');
+      setEmailError("");
       return true;
     }
   };
-  
+
   const handleForgotPassword = (e) => {
     e.preventDefault();
     if (email) {
-      // Check if email state is not empty
       sendPasswordResetEmail(auth, email)
         .then(() => {
           alert("Password reset email sent! Check your inbox.");
@@ -58,7 +53,6 @@ const LoginModal = ({
   };
 
   const validateForm = (email, password) => {
-    // Simple validation check
     const isValid = email.length > 0 && password.length > 0;
     setIsFormValid(isValid);
   };
@@ -67,14 +61,13 @@ const LoginModal = ({
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then(() => {
-     
         const createUserProfile = async (userAuth) => {
           const userRef = doc(firestore, "users", userAuth.uid);
 
           const userProfile = {
             displayName: userAuth.displayName || userAuth.email.split("@")[0],
             email: userAuth.email,
-            createdAt: new Date(),    
+            createdAt: new Date(),
           };
 
           await setDoc(userRef, userProfile);
@@ -141,7 +134,9 @@ const LoginModal = ({
           Zaloguj się
         </button>
       </form>
-      <button type="submit" onClick={signInWithGoogle}>Sign in with Google</button>
+      <button type="submit" onClick={signInWithGoogle}>
+        Sign in with Google
+      </button>
       <div className="login-help-links">
         <a href="#" onClick={handleForgotPassword}>
           Zapomniałeś(aś) hasła?
